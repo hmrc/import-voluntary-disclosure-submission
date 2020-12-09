@@ -1,8 +1,14 @@
-package uk.gov.hmrc.importvoluntarydisclosuresubmission.config
+/*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ */
 
-import javax.inject.{Inject, Singleton}
+package config
+
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {

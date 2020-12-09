@@ -1,10 +1,15 @@
-package uk.gov.hmrc.importvoluntarydisclosuresubmission.controllers
+/*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ */
 
-import javax.inject.{Inject, Singleton}
+package controllers
+
+import config.AppConfig
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
-import uk.gov.hmrc.importvoluntarydisclosuresubmission.config.AppConfig
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton()
