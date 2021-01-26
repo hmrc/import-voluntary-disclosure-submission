@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package uk.controllers
+package controllers
 
 import config.AppConfig
-import controllers.MicroserviceHelloWorldController
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
