@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
+import models.TraderAddress
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
@@ -27,7 +29,13 @@ class ImporterAddressController @Inject()(cc: ControllerComponents)
   extends BackendController(cc) {
 
   def onLoad(id: String): Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok("Hello world"))
+    val traderAddress = TraderAddress(Some("first"), Some("second"), Some("third"), Some("fourth"))
+    Future.successful(Ok(Json.obj(
+      "streetAndNumber" -> traderAddress.streetAndNumber,
+      "city" -> traderAddress.city,
+      "postalCode" -> traderAddress.postalCode,
+      "countryCode" -> traderAddress.countryCode
+    )))
 
   }
 
