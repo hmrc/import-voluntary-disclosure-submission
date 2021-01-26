@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package controllers
+package base
 
-import base.SpecBase
-import play.api.http.Status
-import play.api.test.Helpers
-import play.api.test.Helpers._
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
 
-class MicroserviceHelloWorldControllerSpec extends SpecBase {
-
-  private val controller = new MicroserviceHelloWorldController(appConfig, controllerComponents)
-
-  "GET /" should {
-    "return 200" in {
-      val result = controller.hello()(fakeRequest)
-      status(result) shouldBe Status.OK
-    }
-  }
+trait MaterializerSupport {
+  implicit val system: ActorSystem = ActorSystem("Sys")
+  implicit val materializer: ActorMaterializer = ActorMaterializer()
 }

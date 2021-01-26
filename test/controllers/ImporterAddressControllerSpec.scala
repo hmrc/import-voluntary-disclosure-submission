@@ -17,18 +17,12 @@
 package controllers
 
 import base.SpecBase
-import play.api.http.Status
-import play.api.test.Helpers
-import play.api.test.Helpers._
+import mocks.services.MockImporterAddressService
 
-class MicroserviceHelloWorldControllerSpec extends SpecBase {
+class ImporterAddressControllerSpec extends SpecBase{
 
-  private val controller = new MicroserviceHelloWorldController(appConfig, controllerComponents)
-
-  "GET /" should {
-    "return 200" in {
-      val result = controller.hello()(fakeRequest)
-      status(result) shouldBe Status.OK
-    }
+  trait Test extends MockImporterAddressService {
+    lazy val controller = new ImporterAddressController(controllerComponents, mockImporterAddressService)()
   }
+
 }
