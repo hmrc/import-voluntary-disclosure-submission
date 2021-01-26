@@ -40,7 +40,7 @@ object ImporterAddressHttpParser {
             valid => Right(valid)
           )
         case status =>
-          logger.error("Failed to validate JSON with status: " + status + " body: " + response.body)
+          logger.error("Error: " + status + " body: " + response.body)
           Left(ErrorModel(status, "Downstream error returned when retrieving TraderAddress model from back end"))
       }
     }

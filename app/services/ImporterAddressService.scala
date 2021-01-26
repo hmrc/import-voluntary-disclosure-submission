@@ -32,7 +32,6 @@ class ImporterAddressService @Inject()(importerAddressConnector: ImporterAddress
 
   def retrieveAddress(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ErrorModel, TraderAddress]] = {
     importerAddressConnector.getAddress(id)
-
   }
 
 }

@@ -18,19 +18,18 @@ package models
 
 import play.api.libs.json.{Format, Json, Reads, _}
 
-// TODO - change mandatory ones to non optionals
-case class TraderAddress(streetAndNumber: Option[String], city: Option[String], postalCode: Option[String], countryCode: Option[String])
+case class TraderAddress(streetAndNumber: String, city: String, postalCode: Option[String], countryCode: String)
 
 object TraderAddress {
 
   implicit val reads: Reads[TraderAddress] = for {
-    streetAndNumber <- (__ \\ "streetAndNumber").readNullable[String]
-    city <- (__ \\ "city").readNullable[String]
+    streetAndNumber <- (__ \\ "streetAndNumber").read[String]
+    city <- (__ \\ "city").read[String]
     postalCode <- (__ \\ "postalCode").readNullable[String]
-    countryCode <- (__ \\ "countryCode").readNullable[String]
+    countryCode <- (__ \\ "countryCode").read[String]
   } yield {
     (streetAndNumber, city, postalCode, countryCode) match {
-      case (None, None, None, None) => TraderAddress(Some(""), Some(""), None, Some(""))
+      case (_, _, None, _) => TraderAddress(streetAndNumber, city, Some(""), countryCode)
       case (_, _, _, _) => TraderAddress(streetAndNumber, city, postalCode, countryCode)
     }
   }

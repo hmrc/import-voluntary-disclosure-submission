@@ -29,7 +29,7 @@ class ImporterAddressController @Inject()(cc: ControllerComponents)
   extends BackendController(cc) {
 
   def onLoad(id: String): Action[AnyContent] = Action.async { implicit request =>
-    val traderAddress = TraderAddress(Some("first"), Some("second"), Some("third"), Some("fourth"))
+    val traderAddress = TraderAddress("first", "second", Some("third"), "fourth")
     Future.successful(Ok(Json.obj(
       "streetAndNumber" -> traderAddress.streetAndNumber,
       "city" -> traderAddress.city,
