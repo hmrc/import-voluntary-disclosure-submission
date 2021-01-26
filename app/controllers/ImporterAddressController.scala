@@ -17,6 +17,7 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
+import models.ErrorModel
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.ImporterAddressService
@@ -36,7 +37,7 @@ class ImporterAddressController @Inject()(cc: ControllerComponents, importAddres
         "postalCode" -> traderAddress.postalCode,
         "countryCode" -> traderAddress.countryCode
       ))
-      case Left(_) => Ok("")
+      case Left(_) => BadRequest("Could not retrieve address")
     }
 
   }

@@ -31,13 +31,7 @@ class ImporterAddressControllerSpec extends SpecBase with MockImporterAddressSer
 
   "Importer Address Controller" should {
     "return OK and the correct Json" in {
-      val response: Either[ErrorModel, TraderAddress] = try {
-        Right(TraderAddress("first", "second", Some("third"), "fourth"))
-      } catch {
-        case e: Exception =>
-          Left(ErrorModel(400, "Could not retrieve address"))
-      }
-      setupMockRetrieveAddress(response)
+      setupMockRetrieveAddress(Right(TraderAddress("first", "second", Some("third"), "fourth")))
       val result = Controller.onLoad("1")(fakeRequest)
       status(result) mustEqual Status.OK
       contentAsJson(result) mustEqual Json.obj(
@@ -46,6 +40,12 @@ class ImporterAddressControllerSpec extends SpecBase with MockImporterAddressSer
         "postalCode" -> Some("third"),
         "countryCode" -> "fourth"
       )
+    }
+
+    "return error model" in {
+      setupMockRetrieveAddress(Left(ErrorModel(400, "Could not retrieve address")))
+      val result = Controller.onLoad("1")(fakeRequest)
+      status(result) mustEqual Status.BAD_REQUEST
     }
 
   }
