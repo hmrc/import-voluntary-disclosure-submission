@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,36 @@ package controllers
 
 import base.SpecBase
 import mocks.services.MockImporterAddressService
+import models.{ErrorModel, TraderAddress}
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.http.Status
+import play.api.libs.json.Json
+import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 
-class ImporterAddressControllerSpec extends SpecBase{
+class ImporterAddressControllerSpec extends SpecBase with MockImporterAddressService {
 
-  trait Test extends MockImporterAddressService {
-    lazy val controller = new ImporterAddressController(controllerComponents, mockImporterAddressService)()
+  object Controller extends ImporterAddressController(controllerComponents, mockImporterAddressService)
+
+
+  "Importer Address Controller" should {
+    "return OK and the correct Json" in {
+      val response: Either[ErrorModel, TraderAddress] = try {
+        Right(TraderAddress("first", "second", Some("third"), "fourth"))
+      } catch {
+        case e: Exception =>
+          Left(ErrorModel(400, "Could not retrieve address"))
+      }
+      setupMockRetrieveAddress(response)
+      val result = Controller.onLoad("1")(fakeRequest)
+      status(result) mustEqual Status.OK
+      contentAsJson(result) mustEqual Json.obj(
+        "streetAndNumber" -> "first",
+        "city" -> "second",
+        "postalCode" -> Some("third"),
+        "countryCode" -> "fourth"
+      )
+    }
+
   }
 
 }

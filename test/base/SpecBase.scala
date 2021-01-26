@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,19 @@
 package base
 
 import config.AppConfig
+import org.scalatest.concurrent.PatienceConfiguration.Timeout
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.{AnyContentAsEmpty, ControllerComponents}
 import play.api.test.CSRFTokenHelper.CSRFRequest
+import play.api.test.Helpers.baseApplicationBuilder.injector
 import play.api.test.{FakeRequest, Helpers}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+import scala.concurrent.duration.Duration
 
 trait SpecBase extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with MaterializerSupport {
 
@@ -41,5 +45,7 @@ trait SpecBase extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with M
   val appConfig = new AppConfig(configuration, serviceConfig)
 
   val controllerComponents: ControllerComponents = Helpers.stubControllerComponents()
+
+//  implicit val timeout: Timeout = injector.instanceOf[Timeout]
 
 }

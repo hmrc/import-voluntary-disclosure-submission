@@ -1,1 +1,1 @@
-GET        /address/:id        controllers.ImporterAddressController.onLoad(id: String)
+GET        /address        controllers.ImporterAddressController.onLoad(id: String ?= "")
