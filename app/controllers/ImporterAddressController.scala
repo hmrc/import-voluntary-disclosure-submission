@@ -17,25 +17,27 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-import models.TraderAddress
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import services.ImporterAddressService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton()
-class ImporterAddressController @Inject()(cc: ControllerComponents)
+class ImporterAddressController @Inject()(cc: ControllerComponents, importAddressService: ImporterAddressService)
   extends BackendController(cc) {
 
   def onLoad(id: String): Action[AnyContent] = Action.async { implicit request =>
-    val traderAddress = TraderAddress("first", "second", Some("third"), "fourth")
-    Future.successful(Ok(Json.obj(
-      "streetAndNumber" -> traderAddress.streetAndNumber,
-      "city" -> traderAddress.city,
-      "postalCode" -> traderAddress.postalCode,
-      "countryCode" -> traderAddress.countryCode
-    )))
+    importAddressService.retrieveAddress(id).map {
+      case Right(traderAddress) => Ok(Json.obj(
+        "streetAndNumber" -> traderAddress.streetAndNumber,
+        "city" -> traderAddress.city,
+        "postalCode" -> traderAddress.postalCode,
+        "countryCode" -> traderAddress.countryCode
+      ))
+      case Left(_) => Ok("")
+    }
 
   }
 
