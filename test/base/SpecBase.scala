@@ -17,10 +17,12 @@
 package base
 
 import config.AppConfig
-import org.scalatest.concurrent.PatienceConfiguration.Timeout
-import org.scalatest.matchers.should.Matchers
+import org.scalamock.scalatest.MockFactory
+import org.scalatest.TryValues
+import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{AnyContentAsEmpty, ControllerComponents}
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.Helpers.baseApplicationBuilder.injector
@@ -29,9 +31,13 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import scala.concurrent.duration.Duration
-
-trait SpecBase extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with MaterializerSupport {
+trait SpecBase extends AnyWordSpec
+  with GuiceOneAppPerSuite
+  with TryValues
+  with ScalaFutures
+  with IntegrationPatience
+  with MaterializerSupport
+  with MockFactory {
 
   val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/foo")
     .withSession(SessionKeys.sessionId -> "foo")
@@ -46,7 +52,7 @@ trait SpecBase extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with M
 
   val controllerComponents: ControllerComponents = Helpers.stubControllerComponents()
 
-//  implicit val hc: HeaderCarrier = injector.instanceOf[HeaderCarrier]
+  implicit lazy val messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 

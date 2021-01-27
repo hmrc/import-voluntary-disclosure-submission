@@ -17,8 +17,8 @@
 package controllers
 
 import base.SpecBase
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status
-import play.api.test.Helpers
 import play.api.test.Helpers._
 
 class MicroserviceHelloWorldControllerSpec extends SpecBase {
@@ -28,7 +28,7 @@ class MicroserviceHelloWorldControllerSpec extends SpecBase {
   "GET /" should {
     "return 200" in {
       val result = controller.hello()(fakeRequest)
-      status(result) shouldBe Status.OK
+      status(result) mustBe Status.OK
     }
   }
 }

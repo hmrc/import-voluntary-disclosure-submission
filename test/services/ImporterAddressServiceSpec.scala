@@ -14,43 +14,33 @@
  * limitations under the License.
  */
 
-package connectors
+package services
 
 import base.SpecBase
-import connectors.httpParsers.ResponseHttpParser.HttpGetResult
-import mocks.MockHttp
+import com.codahale.metrics.SharedMetricRegistries
+import connectors.MockImporterAddressConnector
 import models.TraderAddress
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
-class ImporterAddressConnectorSpec extends SpecBase with MockHttp {
 
-  val errorModel: HttpResponse = HttpResponse(Status.NOT_FOUND, "Error Message")
+class ImporterAddressServiceSpec extends SpecBase with MockImporterAddressConnector {
 
   val traderAddress: TraderAddress = TraderAddress("first", "second", Some("third"), "fourth")
 
-  object Connector extends ImporterAddressConnector(mockHttp, appConfig)
-
-  "Importer Address Connector" should {
-
-    def getAddressResult(): Future[HttpGetResult[TraderAddress]] = Connector.getAddress("1")
-
-    "return the Right response" in {
-      setupMockHttpGet(Connector.getAddressUrl("1"))(Right(traderAddress))
-      await(getAddressResult()) mustBe Right(traderAddress)
-    }
-
-    "return the error response" in {
-      setupMockHttpGet(Connector.getAddressUrl("1"))(Left(errorModel))
-      await(getAddressResult()) mustBe Left(errorModel)
-    }
-
+  def setup(traderAddressResponse: TraderAddressResponse): ImporterAddressService = {
+    setupMockGetAddress(traderAddressResponse)
+    new ImporterAddressService(mockAddressLookupConnector, messagesApi, appConfig)
   }
 
+  "connector call is successful" should {
+    lazy val service = setup(Right(traderAddress))
+    lazy val result = service.retrieveAddress("1")
 
+    "return successful RetrieveAddressResponse" in {
+      await(result) mustBe Right(traderAddress)
+    }
+  }
 }
