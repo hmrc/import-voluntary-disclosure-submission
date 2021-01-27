@@ -45,7 +45,7 @@ class ImporterAddressControllerSpec extends SpecBase with MockImporterAddressSer
     "return error model" in {
       setupMockRetrieveAddress(Left(ErrorModel(400, "Could not retrieve address")))
       val result = Controller.onLoad("1")(fakeRequest)
-      status(result) mustEqual Status.BAD_REQUEST
+      status(result) mustEqual Status.NOT_FOUND
     }
 
   }
