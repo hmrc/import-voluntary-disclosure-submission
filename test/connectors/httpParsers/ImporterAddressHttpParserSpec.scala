@@ -44,7 +44,7 @@ class ImporterAddressHttpParserSpec extends SpecBase {
 
   val traderAddress: TraderAddress = TraderAddress("first", "second", Some("third"), "fourth")
 
-  val traderAddressWithoutPostcode: TraderAddress = TraderAddress("first", "second", None, "fourth")
+  val traderAddressWithoutPostcode: TraderAddress = TraderAddress("first", "second", Some("None"), "fourth")
 
   "Importer Address HttpParser" should {
 
