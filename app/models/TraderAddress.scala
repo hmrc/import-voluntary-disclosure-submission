@@ -29,7 +29,7 @@ object TraderAddress {
     countryCode <- (__ \\ "countryCode").read[String]
   } yield {
     (streetAndNumber, city, postalCode, countryCode) match {
-      case (_, _, None, _) => TraderAddress(streetAndNumber, city, Some(""), countryCode)
+      case (_, _, Some("None"), _) => TraderAddress(streetAndNumber, city, None, countryCode)
       case (_, _, _, _) => TraderAddress(streetAndNumber, city, postalCode, countryCode)
     }
   }
