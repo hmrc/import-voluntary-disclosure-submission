@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package mocks.services
+package mocks
 
 import base.SpecBase
 import org.scalamock.scalatest.MockFactory

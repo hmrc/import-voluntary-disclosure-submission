@@ -26,7 +26,7 @@ import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.Helpers.baseApplicationBuilder.injector
 import play.api.test.{FakeRequest, Helpers}
 import play.api.{Configuration, Environment}
-import uk.gov.hmrc.http.SessionKeys
+import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.duration.Duration
@@ -46,6 +46,8 @@ trait SpecBase extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with M
 
   val controllerComponents: ControllerComponents = Helpers.stubControllerComponents()
 
-//  implicit val timeout: Timeout = injector.instanceOf[Timeout]
+//  implicit val hc: HeaderCarrier = injector.instanceOf[HeaderCarrier]
+
+  implicit val hc: HeaderCarrier = HeaderCarrier()
 
 }
