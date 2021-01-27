@@ -17,18 +17,15 @@
 package services
 
 import base.SpecBase
-import com.codahale.metrics.SharedMetricRegistries
 import connectors.MockImporterAddressConnector
-import models.TraderAddress
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import utils.ReusableValues
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
-class ImporterAddressServiceSpec extends SpecBase with MockImporterAddressConnector {
-
-  val traderAddress: TraderAddress = TraderAddress("first", "second", Some("third"), "fourth")
+class ImporterAddressServiceSpec extends SpecBase with MockImporterAddressConnector with ReusableValues {
 
   def setup(traderAddressResponse: TraderAddressResponse): ImporterAddressService = {
     setupMockGetAddress(traderAddressResponse)
@@ -37,7 +34,7 @@ class ImporterAddressServiceSpec extends SpecBase with MockImporterAddressConnec
 
   "connector call is successful" should {
     lazy val service = setup(Right(traderAddress))
-    lazy val result = service.retrieveAddress("1")
+    lazy val result = service.retrieveAddress(idOne)
 
     "return successful RetrieveAddressResponse" in {
       await(result) mustBe Right(traderAddress)

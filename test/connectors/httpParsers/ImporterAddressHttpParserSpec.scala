@@ -23,17 +23,9 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HttpResponse
+import utils.ReusableValues
 
-class ImporterAddressHttpParserSpec extends SpecBase {
-
-  val errorModel: HttpResponse = HttpResponse(Status.NOT_FOUND, "Error Message")
-
-  val traderAddressJson: JsObject = Json.obj(
-    "streetAndNumber" -> "first",
-    "city" -> "second",
-    "postalCode" -> Some("third"),
-    "countryCode" -> "fourth"
-  )
+class ImporterAddressHttpParserSpec extends SpecBase with ReusableValues {
 
   val traderAddressJsonWithoutPostcode: JsObject = Json.obj(
     "streetAndNumber" -> "first",
@@ -41,8 +33,6 @@ class ImporterAddressHttpParserSpec extends SpecBase {
     "postalCode" -> Some("None"),
     "countryCode" -> "fourth"
   )
-
-  val traderAddress: TraderAddress = TraderAddress("first", "second", Some("third"), "fourth")
 
   val traderAddressWithoutPostcode: TraderAddress = TraderAddress("first", "second", Some("None"), "fourth")
 

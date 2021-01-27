@@ -21,10 +21,10 @@ import mocks.services.MockImporterAddressService
 import models.{ErrorModel, TraderAddress}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status
-import play.api.libs.json.Json
 import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
+import utils.ReusableValues
 
-class ImporterAddressControllerSpec extends SpecBase with MockImporterAddressService {
+class ImporterAddressControllerSpec extends SpecBase with MockImporterAddressService with ReusableValues {
 
   object Controller extends ImporterAddressController(controllerComponents, mockImporterAddressService)
 
@@ -32,19 +32,14 @@ class ImporterAddressControllerSpec extends SpecBase with MockImporterAddressSer
   "Importer Address Controller" should {
     "return OK and the correct Json" in {
       setupMockRetrieveAddress(Right(TraderAddress("first", "second", Some("third"), "fourth")))
-      val result = Controller.onLoad("1")(fakeRequest)
+      val result = Controller.onLoad(idOne)(fakeRequest)
       status(result) mustEqual Status.OK
-      contentAsJson(result) mustEqual Json.obj(
-        "streetAndNumber" -> "first",
-        "city" -> "second",
-        "postalCode" -> Some("third"),
-        "countryCode" -> "fourth"
-      )
+      contentAsJson(result) mustEqual traderAddressJson
     }
 
     "return error model" in {
       setupMockRetrieveAddress(Left(ErrorModel(400, "Could not retrieve address")))
-      val result = Controller.onLoad("1")(fakeRequest)
+      val result = Controller.onLoad(idOne)(fakeRequest)
       status(result) mustEqual Status.NOT_FOUND
     }
 

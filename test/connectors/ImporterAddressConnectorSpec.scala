@@ -21,32 +21,27 @@ import connectors.httpParsers.ResponseHttpParser.HttpGetResult
 import mocks.MockHttp
 import models.TraderAddress
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.HttpResponse
+import utils.ReusableValues
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ImporterAddressConnectorSpec extends SpecBase with MockHttp {
-
-  val errorModel: HttpResponse = HttpResponse(Status.NOT_FOUND, "Error Message")
-
-  val traderAddress: TraderAddress = TraderAddress("first", "second", Some("third"), "fourth")
+class ImporterAddressConnectorSpec extends SpecBase with MockHttp with ReusableValues {
 
   object Connector extends ImporterAddressConnector(mockHttp, appConfig)
 
   "Importer Address Connector" should {
 
-    def getAddressResult(): Future[HttpGetResult[TraderAddress]] = Connector.getAddress("1")
+    def getAddressResult(): Future[HttpGetResult[TraderAddress]] = Connector.getAddress(idOne)
 
     "return the Right response" in {
-      setupMockHttpGet(Connector.getAddressUrl("1"))(Right(traderAddress))
+      setupMockHttpGet(Connector.getAddressUrl(idOne))(Right(traderAddress))
       await(getAddressResult()) mustBe Right(traderAddress)
     }
 
     "return the error response" in {
-      setupMockHttpGet(Connector.getAddressUrl("1"))(Left(errorModel))
+      setupMockHttpGet(Connector.getAddressUrl(idOne))(Left(errorModel))
       await(getAddressResult()) mustBe Left(errorModel)
     }
 
