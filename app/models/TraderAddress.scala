@@ -22,16 +22,13 @@ case class TraderAddress(streetAndNumber: String, city: String, postalCode: Opti
 
 object TraderAddress {
 
-  implicit val reads: Reads[TraderAddress] = for {
+  val reads: Reads[TraderAddress] = for {
     streetAndNumber <- (__ \\ "streetAndNumber").read[String]
     city <- (__ \\ "city").read[String]
     postalCode <- (__ \\ "postalCode").readNullable[String]
     countryCode <- (__ \\ "countryCode").read[String]
   } yield {
-    (streetAndNumber, city, postalCode, countryCode) match {
-      case (_, _, Some("None"), _) => TraderAddress(streetAndNumber, city, None, countryCode)
-      case (_, _, _, _) => TraderAddress(streetAndNumber, city, postalCode, countryCode)
-    }
+      TraderAddress(streetAndNumber, city, postalCode, countryCode)
   }
 
   implicit val format: Format[TraderAddress] = Json.format[TraderAddress]
