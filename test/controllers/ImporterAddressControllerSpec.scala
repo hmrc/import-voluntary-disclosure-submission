@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import mocks.services.MockImporterAddressService
-import models.{ErrorModel, TraderAddress}
+import models.ErrorModel
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status
 import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
@@ -31,7 +31,7 @@ class ImporterAddressControllerSpec extends SpecBase with MockImporterAddressSer
 
   "Importer Address Controller" should {
     "return OK and the correct Json" in {
-      setupMockRetrieveAddress(Right(TraderAddress("first", "second", Some("third"), "fourth")))
+      setupMockRetrieveAddress(Right(traderAddress))
       val result = Controller.onLoad(idOne)(fakeRequest)
       status(result) mustEqual Status.OK
       contentAsJson(result) mustEqual traderAddressJson
