@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package config
+package mocks
 
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import base.SpecBase
+import org.scalamock.scalatest.MockFactory
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
 
-import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
+trait MockHttp extends SpecBase with MockFactory {
 
-  val authBaseUrl: String = servicesConfig.baseUrl("auth")
+  val mockHttp: HttpClient = mock[HttpClient]
 
-  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
-
-  lazy val sub09: String = servicesConfig.baseUrl("import-voluntary-disclosure-stub") // change from stub to sub09
+  def setupMockHttpGet[T](url: String)(response: T): Unit =
+    (mockHttp.GET[T](_: String)(_: HttpReads[T], _: HeaderCarrier, _: ExecutionContext))
+      .expects(*, *, *, *)
+      .returns(Future.successful(response))
 
 }

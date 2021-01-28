@@ -14,20 +14,24 @@
  * limitations under the License.
  */
 
-package controllers
+package services
 
 import config.AppConfig
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
-
+import connectors.ImporterAddressConnector
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import models.{ErrorModel, TraderAddress}
+import play.api.i18n.MessagesApi
+import uk.gov.hmrc.http.HeaderCarrier
 
-@Singleton()
-class MicroserviceHelloWorldController @Inject()(appConfig: AppConfig, cc: ControllerComponents)
-    extends BackendController(cc) {
+import scala.concurrent.{ExecutionContext, Future}
 
-  def hello(): Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok("Hello world"))
+@Singleton
+class ImporterAddressService @Inject()(importerAddressConnector: ImporterAddressConnector,
+                                       implicit val messagesApi: MessagesApi,
+                                       implicit val appConfig: AppConfig) {
+
+  def retrieveAddress(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ErrorModel, TraderAddress]] = {
+    importerAddressConnector.getAddress(id)
   }
+
 }

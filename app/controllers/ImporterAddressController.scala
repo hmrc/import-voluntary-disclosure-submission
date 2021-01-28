@@ -16,18 +16,29 @@
 
 package controllers
 
-import config.AppConfig
+import javax.inject.{Inject, Singleton}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import services.ImporterAddressService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton()
-class MicroserviceHelloWorldController @Inject()(appConfig: AppConfig, cc: ControllerComponents)
-    extends BackendController(cc) {
+class ImporterAddressController @Inject()(cc: ControllerComponents, importAddressService: ImporterAddressService)
+  extends BackendController(cc) {
 
-  def hello(): Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok("Hello world"))
+  def onLoad(id: String): Action[AnyContent] = Action.async { implicit request =>
+    importAddressService.retrieveAddress(id).map {
+      case Right(traderAddress) => Ok(Json.obj(
+        "streetAndNumber" -> traderAddress.streetAndNumber,
+        "city" -> traderAddress.city,
+        "postalCode" -> traderAddress.postalCode,
+        "countryCode" -> traderAddress.countryCode
+      ))
+      case Left(_) => NotFound("Could not retrieve address")
+    }
+
   }
+
 }

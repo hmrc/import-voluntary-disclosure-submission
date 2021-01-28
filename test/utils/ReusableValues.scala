@@ -14,21 +14,26 @@
  * limitations under the License.
  */
 
-package config
+package utils
 
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import models.TraderAddress
+import play.api.http.Status
+import play.api.libs.json.{JsObject, Json}
+import uk.gov.hmrc.http.HttpResponse
 
-import javax.inject.{Inject, Singleton}
+trait ReusableValues {
 
-@Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
+  val idOne: String = "1"
 
-  val authBaseUrl: String = servicesConfig.baseUrl("auth")
+  val traderAddress: TraderAddress = TraderAddress("first", "second", Some("third"), "fourth")
 
-  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
+  val errorModel: HttpResponse = HttpResponse(Status.NOT_FOUND, "Error Message")
 
-  lazy val sub09: String = servicesConfig.baseUrl("import-voluntary-disclosure-stub") // change from stub to sub09
+  val traderAddressJson: JsObject = Json.obj(
+    "streetAndNumber" -> "first",
+    "city" -> "second",
+    "postalCode" -> Some("third"),
+    "countryCode" -> "fourth"
+  )
 
 }

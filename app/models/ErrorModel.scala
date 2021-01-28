@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package config
+package models
 
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import play.api.libs.json.{Format, Json}
 
-import javax.inject.{Inject, Singleton}
+case class ErrorModel(status: Int, message: String)
 
-@Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
-
-  val authBaseUrl: String = servicesConfig.baseUrl("auth")
-
-  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
-
-  lazy val sub09: String = servicesConfig.baseUrl("import-voluntary-disclosure-stub") // change from stub to sub09
-
+object ErrorModel {
+  implicit val format: Format[ErrorModel] = Json.format[ErrorModel]
 }

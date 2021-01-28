@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package config
+package controllers
 
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import base.SpecBase
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.http.Status
+import play.api.test.Helpers._
 
-import javax.inject.{Inject, Singleton}
+class MicroserviceHelloWorldControllerSpec extends SpecBase {
 
-@Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
+  private val controller = new MicroserviceHelloWorldController(appConfig, controllerComponents)
 
-  val authBaseUrl: String = servicesConfig.baseUrl("auth")
-
-  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
-
-  lazy val sub09: String = servicesConfig.baseUrl("import-voluntary-disclosure-stub") // change from stub to sub09
-
+  "GET /" should {
+    "return 200" in {
+      val result = controller.hello()(fakeRequest)
+      status(result) mustBe Status.OK
+    }
+  }
 }
