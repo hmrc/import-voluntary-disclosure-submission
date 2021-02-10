@@ -30,5 +30,7 @@ class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig)
   val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
 
   lazy val sub09: String = servicesConfig.baseUrl("import-voluntary-disclosure-stub") // change from stub to sub09
+  lazy val eisBaseUrl: String = servicesConfig.baseUrl("eis")
+  lazy val createCaseToken: String = config.get[String]("microservice.services.eis.tokens.create")
 
 }

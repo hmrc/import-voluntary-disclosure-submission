@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
-package connectors.httpParsers
+package models.responses
 
-import models.ErrorModel
+import play.api.libs.json._
 
-object ResponseHttpParser {
-  type HttpGetResult[T] = Either[ErrorModel, T]
-  type ExternalResponse[T] = Either[ErrorModel, T]
+case class CreateCaseResponse(id: String)
+
+object CreateCaseResponse {
+  implicit val reads: Reads[CreateCaseResponse] = (json: JsValue) => {
+    (json \ "CaseID").validate[String].fold(
+      error => JsError(error),
+      caseId => JsSuccess(CreateCaseResponse(caseId))
+    )
+  }
 }

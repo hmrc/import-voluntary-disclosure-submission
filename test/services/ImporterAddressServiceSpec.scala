@@ -29,7 +29,7 @@ class ImporterAddressServiceSpec extends SpecBase with MockImporterAddressConnec
 
   def setup(traderAddressResponse: TraderAddressResponse): ImporterAddressService = {
     setupMockGetAddress(traderAddressResponse)
-    new ImporterAddressService(mockAddressLookupConnector, messagesApi, appConfig)
+    new ImporterAddressService(mockAddressLookupConnector)
   }
 
   "connector call is successful" should {

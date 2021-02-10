@@ -18,6 +18,7 @@ package mocks
 
 import base.SpecBase
 import org.scalamock.scalatest.MockFactory
+import play.api.libs.json.Writes
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -26,6 +27,13 @@ trait MockHttp extends SpecBase with MockFactory {
 
   val mockHttp: HttpClient = mock[HttpClient]
 
+  object MockedHttp {
+    def post[I,O](url: String, response: O): Any = {
+      (mockHttp.POST[I,O](_: String, _: I, _: Seq[(String, String)])(_: Writes[I], _: HttpReads[O], _: HeaderCarrier, _: ExecutionContext))
+        .expects(*, *, *, *, *, *, *)
+        .returns(Future.successful(response))
+    }
+  }
   def setupMockHttpGet[T](url: String)(response: T): Unit =
     (mockHttp.GET[T](_: String)(_: HttpReads[T], _: HeaderCarrier, _: ExecutionContext))
       .expects(*, *, *, *)
