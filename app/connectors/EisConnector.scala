@@ -32,14 +32,14 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EisConnector @Inject()(val http: HttpClient,
+class EisConnector @Inject()(http: HttpClient,
                              implicit val appConfig: AppConfig) {
 
   private val httpDateFormat = DateTimeFormatter
     .ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH)
     .withZone(ZoneId.of("GMT"))
 
-  private[connectors] val createCaseUrl = s"${appConfig.eisBaseUrl}/cpr/caserequest/c18/create/v1"
+  private[connectors] lazy val createCaseUrl = s"${appConfig.eisBaseUrl}/cpr/caserequest/c18/create/v1"
 
   private[connectors] def eisHeaderCarrier()(implicit hc: HeaderCarrier): HeaderCarrier = hc
     .copy(authorization = Some(Authorization(s"Bearer ${appConfig.createCaseToken}")))
