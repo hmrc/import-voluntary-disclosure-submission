@@ -14,29 +14,31 @@
  * limitations under the License.
  */
 
-package mocks
+package mocks.services
 
-import base.SpecBase
+import connectors.httpParsers.ResponseHttpParser.ExternalResponse
+import models.CaseDetails
+import models.responses.CreateCaseResponse
+import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import play.api.libs.json.Writes
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
+import services.CreateCaseService
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockHttp extends SpecBase with MockFactory {
+trait MockCreateCaseService extends MockFactory {
 
-  val mockHttp: HttpClient = mock[HttpClient]
+  val mockCreateCaseService: CreateCaseService = mock[CreateCaseService]
 
-  object MockedHttp {
-    def post[I,O](url: String, response: O): Any = {
-      (mockHttp.POST[I,O](_: String, _: I, _: Seq[(String, String)])(_: Writes[I], _: HttpReads[O], _: HeaderCarrier, _: ExecutionContext))
-        .expects(*, *, *, *, *, *, *)
+  object MockedCreateCaseService {
+
+    def createCase(caseDetails: CaseDetails,
+                   response: ExternalResponse[CreateCaseResponse]): CallHandler[Future[ExternalResponse[CreateCaseResponse]]] = {
+      (mockCreateCaseService.createCase(_: CaseDetails)(_: HeaderCarrier, _: ExecutionContext))
+        .expects(caseDetails, *, *)
         .returns(Future.successful(response))
     }
+
   }
-  def setupMockHttpGet[T](url: String)(response: T): Unit =
-    (mockHttp.GET[T](_: String)(_: HttpReads[T], _: HeaderCarrier, _: ExecutionContext))
-      .expects(*, *, *, *)
-      .returns(Future.successful(response))
 
 }

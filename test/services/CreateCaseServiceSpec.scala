@@ -16,28 +16,26 @@
 
 package services
 
-import base.SpecBase
-import connectors.MockImporterAddressConnector
+import base.ServiceSpecBase
+import mocks.connectors.MockEisConnector
+import models.CaseDetails
+import models.responses.CreateCaseResponse
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import utils.ReusableValues
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
-class ImporterAddressServiceSpec extends SpecBase with MockImporterAddressConnector with ReusableValues {
+class CreateCaseServiceSpec extends ServiceSpecBase with MockEisConnector {
 
-  def setup(traderAddressResponse: TraderAddressResponse): ImporterAddressService = {
-    setupMockGetAddress(traderAddressResponse)
-    new ImporterAddressService(mockAddressLookupConnector)
-  }
+  "createCase" should {
 
-  "connector call is successful" should {
-    lazy val service = setup(Right(traderAddress))
-    lazy val result = service.retrieveAddress(idOne)
-
-    "return successful RetrieveAddressResponse" in {
-      await(result) mustBe Right(traderAddress)
+    "return whatever the connector returns" in {
+      val caseDetails = CaseDetails(None)
+      val expectedResponse = Right(CreateCaseResponse("some id"))
+      MockedEisConnector.createCase(caseDetails, expectedResponse)
+      val service = new CreateCaseService(mockEisConnector)
+      await(service.createCase(caseDetails)) mustBe expectedResponse
     }
   }
 }

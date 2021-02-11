@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package connectors.httpParsers
+package models
 
-import models.ErrorModel
+import play.api.libs.json.{Json, OFormat}
 
-object ResponseHttpParser {
-  type HttpGetResult[T] = Either[ErrorModel, T]
-  type ExternalResponse[T] = Either[ErrorModel, T]
+case class CaseDetails(value: Option[String])
+
+object CaseDetails {
+  implicit val formats: OFormat[CaseDetails] = Json.format[CaseDetails]
 }

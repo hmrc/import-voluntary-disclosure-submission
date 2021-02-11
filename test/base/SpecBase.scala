@@ -22,10 +22,8 @@ import org.scalatest.TryValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{AnyContentAsEmpty, ControllerComponents}
 import play.api.test.CSRFTokenHelper.CSRFRequest
-import play.api.test.Helpers.baseApplicationBuilder.injector
 import play.api.test.{FakeRequest, Helpers}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
@@ -51,8 +49,6 @@ trait SpecBase extends AnyWordSpec
   val appConfig = new AppConfig(configuration, serviceConfig)
 
   val controllerComponents: ControllerComponents = Helpers.stubControllerComponents()
-
-  implicit lazy val messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 

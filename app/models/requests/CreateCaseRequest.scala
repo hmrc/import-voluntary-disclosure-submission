@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package connectors.httpParsers
+package models.requests
 
-import models.ErrorModel
+import models.CaseDetails
+import play.api.libs.json.{Json, Writes}
 
-object ResponseHttpParser {
-  type HttpGetResult[T] = Either[ErrorModel, T]
-  type ExternalResponse[T] = Either[ErrorModel, T]
+case class CreateCaseRequest(content: CaseDetails)
+
+object CreateCaseRequest {
+  implicit val writes: Writes[CreateCaseRequest] = Json.writes[CreateCaseRequest]
 }

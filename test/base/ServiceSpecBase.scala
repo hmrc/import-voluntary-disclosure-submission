@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package connectors.httpParsers
+package base
 
-import models.ErrorModel
+import org.scalatest.wordspec.AnyWordSpec
+import uk.gov.hmrc.http.HeaderCarrier
 
-object ResponseHttpParser {
-  type HttpGetResult[T] = Either[ErrorModel, T]
-  type ExternalResponse[T] = Either[ErrorModel, T]
+trait ServiceSpecBase extends AnyWordSpec {
+
+  implicit val hc: HeaderCarrier = HeaderCarrier()
+
 }

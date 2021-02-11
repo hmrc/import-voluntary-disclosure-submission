@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-package connectors.httpParsers
+package services
 
-import models.ErrorModel
+import connectors.EisConnector
+import models.responses.CreateCaseResponse
+import models.{CaseDetails, ErrorModel}
+import uk.gov.hmrc.http.HeaderCarrier
 
-object ResponseHttpParser {
-  type HttpGetResult[T] = Either[ErrorModel, T]
-  type ExternalResponse[T] = Either[ErrorModel, T]
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
+
+@Singleton
+class CreateCaseService @Inject()(connector: EisConnector) {
+
+  def createCase(caseDetails: CaseDetails)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ErrorModel, CreateCaseResponse]] = {
+    connector.createCase(caseDetails)
+  }
+
 }
