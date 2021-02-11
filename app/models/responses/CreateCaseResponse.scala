@@ -21,10 +21,14 @@ import play.api.libs.json._
 case class CreateCaseResponse(id: String)
 
 object CreateCaseResponse {
-  implicit val reads: Reads[CreateCaseResponse] = (json: JsValue) => {
+  val reads: Reads[CreateCaseResponse] = (json: JsValue) => {
     (json \ "CaseID").validate[String].fold(
       error => JsError(error),
       caseId => JsSuccess(CreateCaseResponse(caseId))
     )
   }
+
+  val writes: Writes[CreateCaseResponse] = Json.writes[CreateCaseResponse]
+
+  implicit val formats: Format[CreateCaseResponse] = Format(reads, writes)
 }
