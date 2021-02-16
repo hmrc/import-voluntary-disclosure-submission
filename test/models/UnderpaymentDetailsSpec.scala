@@ -46,7 +46,7 @@ class UnderpaymentDetailsSpec extends ModelSpecBase {
       "entryDetails" -> Json.obj(
         "epu" -> "123",
         "entryNumber" -> "123456A",
-        "entryDate" -> date,
+        "entryDate" -> date
       ),
       "originalCpc" -> "1234567890",
       "traderContactDetails" -> Json.obj(

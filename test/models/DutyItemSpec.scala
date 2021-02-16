@@ -63,7 +63,7 @@ class DutyItemSpec extends ModelSpecBase {
       "Type" -> "A00",
       "PaidAmount" -> "1",
       "DueAmount" -> "2",
-      "OutstandingAmount" -> "1",
+      "OutstandingAmount" -> "1"
     )
 
     "generate the correct JSON" in {
