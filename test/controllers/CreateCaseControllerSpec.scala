@@ -17,9 +17,10 @@
 package controllers
 
 import base.SpecBase
+import data.SampleData
 import mocks.services.MockCreateCaseService
+import models._
 import models.responses.CreateCaseResponse
-import models.{CaseDetails, ErrorModel}
 import org.scalatest.matchers.should.Matchers
 import play.api.http.{ContentTypes, Status}
 import play.api.libs.json.{JsObject, Json}
@@ -29,14 +30,16 @@ import play.mvc.Http.HeaderNames
 
 class CreateCaseControllerSpec extends SpecBase with Matchers {
 
-  trait Test extends MockCreateCaseService {
+  trait Test extends MockCreateCaseService with SampleData {
+
     lazy val target = new CreateCaseController(controllerComponents, mockCreateCaseService)
+
     val validRequest: FakeRequest[JsObject] = FakeRequest(controllers.routes.CreateCaseController.onSubmit())
       .withHeaders(
         HeaderNames.CONTENT_TYPE -> ContentTypes.JSON,
         HeaderNames.ACCEPT -> ContentTypes.JSON
       )
-      .withBody(Json.obj())
+      .withBody(incomingJson)
 
   }
 
@@ -46,20 +49,20 @@ class CreateCaseControllerSpec extends SpecBase with Matchers {
       val successResponse = Right(CreateCaseResponse("some id"))
 
       "return 200 (OK) response" in new Test {
-        MockedCreateCaseService.createCase(CaseDetails(None), successResponse)
+        MockedCreateCaseService.createCase(caseDetails, successResponse)
         private val result = target.onSubmit()(validRequest)
         status(result) shouldBe Status.OK
       }
 
       "return JSON payload" in new Test {
-        MockedCreateCaseService.createCase(CaseDetails(None), successResponse)
+        MockedCreateCaseService.createCase(caseDetails, successResponse)
         private val result = target.onSubmit()(validRequest)
         contentType(result) shouldBe Some(ContentTypes.JSON)
       }
 
 
       "return the correct JSON" in new Test {
-        MockedCreateCaseService.createCase(CaseDetails(None), successResponse)
+        MockedCreateCaseService.createCase(caseDetails, successResponse)
         private val result = target.onSubmit()(validRequest)
         contentAsJson(result) shouldBe Json.obj("id" -> "some id")
       }
@@ -71,20 +74,20 @@ class CreateCaseControllerSpec extends SpecBase with Matchers {
       val failedResponse = Left(ErrorModel(Status.BAD_REQUEST, "some error"))
 
       "return 500 (INTERNAL SERVER ERROR) response" in new Test {
-        MockedCreateCaseService.createCase(CaseDetails(None), failedResponse)
+        MockedCreateCaseService.createCase(caseDetails, failedResponse)
         private val result = target.onSubmit()(validRequest)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
 
       "return JSON payload" in new Test {
-        MockedCreateCaseService.createCase(CaseDetails(None), failedResponse)
+        MockedCreateCaseService.createCase(caseDetails, failedResponse)
         private val result = target.onSubmit()(validRequest)
         contentType(result) shouldBe Some(ContentTypes.JSON)
       }
 
 
       "return the correct JSON" in new Test {
-        MockedCreateCaseService.createCase(CaseDetails(None), failedResponse)
+        MockedCreateCaseService.createCase(caseDetails, failedResponse)
         private val result = target.onSubmit()(validRequest)
         contentAsJson(result) shouldBe Json.obj()
       }

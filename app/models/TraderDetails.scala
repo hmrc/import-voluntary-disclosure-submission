@@ -16,12 +16,11 @@
 
 package models
 
-import models.TraderTypes.TraderType
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 
-case class TraderDetails(traderType: TraderType,
+case class TraderDetails(eori: String,
                          name: String,
                          emailAddress: String,
                          phoneNumber: String,
@@ -34,22 +33,21 @@ case class TraderDetails(traderType: TraderType,
 
 object TraderDetails {
   implicit val reads: Reads[TraderDetails] = (
-    (__ \ "userType").read[TraderType] and
-      (__ \ "traderContactDetails" \ "fullName").read[String] and
-      (__ \ "traderContactDetails" \ "email").read[String] and
-      (__ \ "traderContactDetails" \ "phoneNumber").read[String] and
-      (__ \ "traderAddress" \ "streetAndNumber").read[String] and
-      (__ \ "traderAddress" \ "addressLine2").readNullable[String] and
-      (__ \ "traderAddress" \ "city").read[String] and
-      (__ \ "traderAddress" \ "county").readNullable[String] and
-      (__ \ "traderAddress" \ "countryCode").read[String] and
-      (__ \ "traderAddress" \ "postalCode").read[String]
+    (__ \ "eori").read[String] and
+      (__ \ "contactDetails" \ "fullName").read[String] and
+      (__ \ "contactDetails" \ "email").read[String] and
+      (__ \ "contactDetails" \ "phoneNumber").read[String] and
+      (__ \ "address" \ "streetAndNumber").read[String] and
+      (__ \ "address" \ "addressLine2").readNullable[String] and
+      (__ \ "address" \ "city").read[String] and
+      (__ \ "address" \ "county").readNullable[String] and
+      (__ \ "address" \ "countryCode").read[String] and
+      (__ \ "address" \ "postalCode").read[String]
 
     ) (TraderDetails.apply _)
 
   implicit val writes: Writes[TraderDetails] = (data: TraderDetails) => Json.obj(
-    "Type" -> data.traderType,
-    "EORI" -> "GB000000000000000", // TODO: Needs to come from frontend
+    "EORI" -> data.eori,
     "Name" -> data.name,
     "EstablishmentAddress" -> Json.obj(
       "AddressLine1" -> data.addressLine1,

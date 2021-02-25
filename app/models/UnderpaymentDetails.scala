@@ -38,7 +38,7 @@ case class UnderpaymentDetails(userType: UserType,
 
 object UnderpaymentDetails {
 
-  private val formattedDate = DateTimeFormatter.ofPattern("yyMMdd")
+  private val formattedDate = DateTimeFormatter.ofPattern("yyyyMMdd")
 
   implicit val reads: Reads[UnderpaymentDetails] = (
     (__ \ "userType").read[UserType] and

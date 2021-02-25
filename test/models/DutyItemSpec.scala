@@ -17,7 +17,7 @@
 package models
 
 import base.ModelSpecBase
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
 
 class DutyItemSpec extends ModelSpecBase {
 
@@ -66,8 +66,17 @@ class DutyItemSpec extends ModelSpecBase {
       "OutstandingAmount" -> "1"
     )
 
-    "generate the correct JSON" in {
-      Json.toJson(model) shouldBe json
+    val generatedJson: JsObject = Json.toJson(model).as[JsObject]
+
+    json.keys.foreach { propertyName =>
+
+      s"generate a property named $propertyName" in {
+        generatedJson.keys should contain(propertyName)
+      }
+
+      s"have the correct value for $propertyName" in {
+        (generatedJson \ propertyName).as[JsValue] shouldBe (json \ propertyName).as[JsValue]
+      }
     }
   }
 

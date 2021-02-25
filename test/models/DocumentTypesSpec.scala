@@ -72,28 +72,28 @@ class DocumentTypesSpec extends ModelSpecBase {
   "Writing a DocumentType" should {
 
     "serialise OriginalC88 as 01" in {
-      Json.toJson(OriginalC88) shouldBe JsString("01")
+      Json.toJson(OriginalC88) shouldBe Json.obj("Type" -> "01")
     }
     "serialise OriginalC2 as 02" in {
-      Json.toJson(OriginalC2) shouldBe JsString("02")
+      Json.toJson(OriginalC2) shouldBe Json.obj("Type" -> "02")
     }
     "serialise AmendedSubstituteEntryWorksheet as 03" in {
-      Json.toJson(AmendedSubstituteEntryWorksheet) shouldBe JsString("03")
+      Json.toJson(AmendedSubstituteEntryWorksheet) shouldBe Json.obj("Type" -> "03")
     }
     "serialise AmendedC88 as 04" in {
-      Json.toJson(AmendedC88) shouldBe JsString("04")
+      Json.toJson(AmendedC88) shouldBe Json.obj("Type" -> "04")
     }
     "serialise AmendedC2 as 05" in {
-      Json.toJson(AmendedC2) shouldBe JsString("05")
+      Json.toJson(AmendedC2) shouldBe Json.obj("Type" -> "05")
     }
     "serialise InvoiceAirwayBillPreferenceCertificate as 06" in {
-      Json.toJson(InvoiceAirwayBillPreferenceCertificate) shouldBe JsString("06")
+      Json.toJson(InvoiceAirwayBillPreferenceCertificate) shouldBe Json.obj("Type" -> "06")
     }
     "serialise DefermentAuthorisation as 07" in {
-      Json.toJson(DefermentAuthorisation) shouldBe JsString("07")
+      Json.toJson(DefermentAuthorisation) shouldBe Json.obj("Type" -> "07")
     }
     "serialise Other as 08" in {
-      Json.toJson(Other) shouldBe JsString("08")
+      Json.toJson(Other) shouldBe Json.obj("Type" -> "08")
     }
 
   }

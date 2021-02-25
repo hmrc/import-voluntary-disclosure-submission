@@ -18,8 +18,8 @@ package connectors
 
 import base.SpecBase
 import connectors.httpParsers.ResponseHttpParser.ExternalResponse
+import data.SampleData
 import mocks.MockHttp
-import models.CaseDetails
 import models.requests.CreateCaseRequest
 import models.responses.CreateCaseResponse
 import org.scalatest.matchers.should.Matchers._
@@ -29,7 +29,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class EisConnectorSpec extends SpecBase {
 
-  trait Test extends MockHttp {
+  trait Test extends MockHttp with SampleData {
     lazy val target = new EisConnector(mockHttp, appConfig)
   }
 
@@ -47,22 +47,22 @@ class EisConnectorSpec extends SpecBase {
 
     "generate the correct CustomProcessesHost header required for EIS" in new Test {
       private val headerCarrier = target.eisHeaderCarrier()
-      headerCarrier.extraHeaders should contain ("CustomProcessesHost" -> "Digital")
+      headerCarrier.extraHeaders should contain("CustomProcessesHost" -> "Digital")
     }
 
     "generate the correct Accept header required for EIS" in new Test {
       private val headerCarrier = target.eisHeaderCarrier()
-      headerCarrier.extraHeaders should contain ("accept" -> "application/json")
+      headerCarrier.extraHeaders should contain("accept" -> "application/json")
     }
 
     "generate the correct Correlation ID header required for EIS" in new Test {
       private val headerCarrier = target.eisHeaderCarrier()
-      headerCarrier.extraHeaders.toMap.keys should contain ("x-correlation-id")
+      headerCarrier.extraHeaders.toMap.keys should contain("x-correlation-id")
     }
 
     "generate the correct Date header required for EIS" in new Test {
       private val headerCarrier = target.eisHeaderCarrier()
-      headerCarrier.extraHeaders.toMap.keys should contain ("date")
+      headerCarrier.extraHeaders.toMap.keys should contain("date")
     }
 
   }
@@ -75,7 +75,7 @@ class EisConnectorSpec extends SpecBase {
         val response = Right(CreateCaseResponse("some case ID"))
         MockedHttp.post[CreateCaseRequest, ExternalResponse[CreateCaseResponse]](expectedCreateCaseUrl, response)
 
-        await(target.createCase(CaseDetails(Some("blah")))) shouldBe response
+        await(target.createCase(caseDetails)) shouldBe response
       }
 
     }

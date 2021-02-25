@@ -20,59 +20,48 @@ import base.ModelSpecBase
 import data.SampleData
 import play.api.libs.json._
 
-class UnderpaymentDetailsSpec extends ModelSpecBase with SampleData {
+class CaseDetailsSpec extends ModelSpecBase with SampleData {
 
-  val model: UnderpaymentDetails = underpaymentDetails
+  val model: CaseDetails = caseDetails
 
-  "Reading underpayment details from JSON" when {
+  "Reading case details from JSON" when {
 
     val json: JsObject = incomingJson
 
-    lazy val result: UnderpaymentDetails = json.validate[UnderpaymentDetails] match {
+    lazy val result: CaseDetails = json.validate[CaseDetails] match {
       case JsSuccess(value, _) => value
       case JsError(errors) => fail(s"Failed to read underpayment details from JSON: $errors")
     }
 
     "the JSON is a valid" should {
-      "deserialize the user type" in {
-        result.userType shouldBe model.userType
+      "deserialize the underpayment details" in {
+        result.underpaymentDetails shouldBe model.underpaymentDetails
       }
 
-      "deserialize the isBulkEntry flag" in {
-        result.isBulkEntry shouldBe false
+      "deserialize the duties" in {
+        result.duties shouldBe model.duties
       }
 
-      "deserialize the Entry Processing Unit (EPU)" in {
-        result.entryProcessingUnit shouldBe model.entryProcessingUnit
+      "deserialize the documentsSupplied" in {
+        result.documentsSupplied shouldBe model.documentsSupplied
       }
 
-      "deserialize the entry number" in {
-        result.entryNumber shouldBe model.entryNumber
+      "deserialize the supportingDocuments" in {
+        result.supportingDocuments shouldBe model.supportingDocuments
       }
 
-      "deserialize the entry date" in {
-        result.entryDate shouldBe model.entryDate
+      "deserialize the importer details" in {
+        result.importer shouldBe model.importer
       }
 
-      "deserialize the original customs procedure code (CPC)" in {
-        result.originalCustomsProcedureCode shouldBe model.originalCustomsProcedureCode
-      }
-
-      "deserialize the declarant name" in {
-        result.declarantName shouldBe model.declarantName
-      }
-
-      "deserialize the declarant phone number" in {
-        result.declarantPhoneNumber shouldBe model.declarantPhoneNumber
-      }
     }
   }
 
   "Writing underpayment details as JSON" should {
 
-    val json: JsObject = (outgoingJson \ "UnderpaymentDetails").as[JsObject]
+    val json: JsObject = outgoingJson
 
-    val generatedJson: JsObject = Json.toJson(model).as[JsObject]
+    implicit val generatedJson: JsObject = Json.toJson(model).as[JsObject]
 
     json.keys.foreach { propertyName =>
 
