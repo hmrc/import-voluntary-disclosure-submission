@@ -17,13 +17,15 @@
 package controllers
 
 import models.CaseDetails
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Format.GenericFormat
+import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.mvc.{Action, ControllerComponents}
 import services.CreateCaseService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton()
 class CreateCaseController @Inject()(cc: ControllerComponents,
@@ -31,11 +33,20 @@ class CreateCaseController @Inject()(cc: ControllerComponents,
   extends BackendController(cc) {
 
   def onSubmit(): Action[JsValue] = Action.async(parse.json) { implicit request =>
-    val caseDetails = request.body.as[CaseDetails]
-    service.createCase(caseDetails).map {
-      case Right(response) => Ok(Json.toJson(response))
-      case Left(_) => InternalServerError(Json.obj())
+    request.body.validate[CaseDetails] match {
+      case JsSuccess(value, path) =>
+        service.createCase(value).map {
+          case Right(response) => Ok(Json.toJson(response))
+          case Left(_) => InternalServerError(Json.obj())
+        }
+      case JsError(errors) =>
+        val pathsWithErrors: Map[String, String] = errors.map{ error =>
+          val (path, errors) = error
+          path.toString().substring(1) -> errors.head.message
+        }.toMap
+        Future.successful(BadRequest(Json.obj("errors" -> pathsWithErrors)))
     }
+
 
   }
 

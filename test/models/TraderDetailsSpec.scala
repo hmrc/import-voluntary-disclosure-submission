@@ -17,47 +17,20 @@
 package models
 
 import base.ModelSpecBase
-import play.api.libs.json.{JsObject, Json}
+import data.SampleData
+import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
 
-class TraderDetailsSpec extends ModelSpecBase {
+class TraderDetailsSpec extends ModelSpecBase with SampleData {
 
-  val model: TraderDetails = TraderDetails(
-    traderType = TraderTypes.Importer,
-    name = "John Smith",
-    emailAddress = "email@address.com",
-    phoneNumber = "1234567890",
-    addressLine1 = "1 Some Street",
-    addressLine2 = None,
-    city = "Some City",
-    county = None,
-    countryCode = "GB",
-    postalCode = "ZZ11ZZ"
-  )
+  val model: TraderDetails = caseDetails.importer
 
   "Reading underpayment details from JSON" when {
 
-    val json: JsObject = Json.obj(
-      "userType" -> "importer",
-      "traderContactDetails" -> Json.obj(
-        "fullName" -> "John Smith",
-        "phoneNumber" -> "1234567890",
-        "email" -> "email@address.com"
-      ),
-      "traderAddress" -> Json.obj(
-        "streetAndNumber" -> "1 Some Street",
-        "city" -> "Some City",
-        "countryCode" -> "GB",
-        "postalCode" -> "ZZ11ZZ"
-      )
-    )
+    val json: JsObject = (incomingJson \ "importer").as[JsObject]
 
     lazy val result: TraderDetails = json.as[TraderDetails]
 
     "the JSON is a valid" should {
-      "deserialize the trader type" in {
-        result.traderType shouldBe model.traderType
-      }
-
       "deserialize the trader name" in {
         result.name shouldBe model.name
       }
@@ -96,24 +69,24 @@ class TraderDetailsSpec extends ModelSpecBase {
     }
   }
 
-  "Writing underpayment details JSON" should {
+  "Writing trader details JSON" should {
 
-    val json: JsObject = Json.obj(
-      "Type" -> "01",
-      "EORI" -> "GB000000000000000",
-      "Name" -> "John Smith",
-      "EstablishmentAddress" -> Json.obj(
-        "AddressLine1" -> "1 Some Street",
-        "City" -> "Some City",
-        "CountryCode" -> "GB",
-        "PostalCode" -> "ZZ11ZZ",
-        "TelephoneNumber" -> "1234567890",
-        "EmailAddress" -> "email@address.com"
-      )
-    )
+    val json: JsObject = (outgoingJson \ "TraderList")
+      .as[JsArray]
+      .apply(0)
+      .as[JsObject] - "Type"
 
-    "generate the correct JSON for Importers" in {
-      Json.toJson(model) shouldBe json
+    val generatedJson: JsObject = Json.toJson(model).as[JsObject]
+
+    json.keys.foreach { propertyName =>
+
+      s"generate a property named $propertyName" in {
+        generatedJson.keys should contain(propertyName)
+      }
+
+      s"have the correct value for $propertyName" in {
+        (generatedJson \ propertyName).as[JsValue] shouldBe (json \ propertyName).as[JsValue]
+      }
     }
   }
 

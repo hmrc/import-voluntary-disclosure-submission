@@ -16,19 +16,16 @@
 
 package models
 
-import play.api.libs.json.{JsString, Reads, Writes}
+import play.api.libs.json.{Format, Json}
 
-object EntryTypes extends Enumeration {
+import java.time.LocalDateTime
 
-  type EntryType = Value
+case class SupportingDocument(fileName: String,
+                              downloadUrl: String,
+                              uploadTimestamp: LocalDateTime,
+                              checksum: String,
+                              fileMimeType: String)
 
-  val Multiple: EntryType = Value("moreThanOneEntry")
-  val Single: EntryType = Value("oneEntry")
-
-  implicit val reads: Reads[EntryType] = Reads.enumNameReads(this)
-
-  implicit val writes: Writes[EntryType] = {
-    case Multiple => JsString("01")
-    case Single => JsString("02")
-  }
+object SupportingDocument {
+  implicit val formats: Format[SupportingDocument] = Json.format[SupportingDocument]
 }

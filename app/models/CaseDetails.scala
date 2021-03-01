@@ -16,10 +16,38 @@
 
 package models
 
-import play.api.libs.json.{Json, OFormat}
+import models.DocumentTypes.DocumentType
+import play.api.libs.functional.syntax._
+import play.api.libs.json.Reads._
+import play.api.libs.json._
 
-case class CaseDetails(value: Option[String])
+case class CaseDetails(underpaymentDetails: UnderpaymentDetails,
+                       duties: Seq[DutyItem],
+                       documentsSupplied: Seq[DocumentType],
+                       supportingDocuments: Seq[SupportingDocument],
+                       importer: TraderDetails,
+                       representative: Option[TraderDetails] = None)
 
 object CaseDetails {
-  implicit val formats: OFormat[CaseDetails] = Json.format[CaseDetails]
+  implicit val reads: Reads[CaseDetails] = (
+    __.read[UnderpaymentDetails] and
+      (__ \ "underpaymentDetails").read[Seq[DutyItem]] and
+      (__ \ "supportingDocumentTypes").read[Seq[DocumentType]] and
+      (__ \ "supportingDocuments").read[Seq[SupportingDocument]] and
+      (__ \ "importer").read[TraderDetails] and
+      (__ \ "representative").readNullable[TraderDetails]
+    ) (CaseDetails.apply _)
+
+
+  implicit val writes: Writes[CaseDetails] = (o: CaseDetails) => {
+
+    val importer = Json.toJson(o.importer).as[JsObject] ++ Json.obj("Type" -> TraderTypes.Importer)
+
+    Json.obj(
+      "UnderpaymentDetails" -> o.underpaymentDetails,
+      "DutyTypeList" -> o.duties,
+      "DocumentList" -> o.documentsSupplied,
+      "TraderList" -> Json.arr(importer)
+    )
+  }
 }

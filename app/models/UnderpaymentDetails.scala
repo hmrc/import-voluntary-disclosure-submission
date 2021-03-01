@@ -16,7 +16,6 @@
 
 package models
 
-import models.EntryTypes.EntryType
 import models.UserTypes.UserType
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
@@ -26,7 +25,9 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 case class UnderpaymentDetails(userType: UserType,
-                               entryType: EntryType,
+                               isBulkEntry: Boolean,
+                               isEuropeanUnionDuty: Boolean,
+                               reasonForAmendment: String,
                                entryProcessingUnit: String,
                                entryNumber: String,
                                entryDate: LocalDate,
@@ -37,30 +38,38 @@ case class UnderpaymentDetails(userType: UserType,
 
 object UnderpaymentDetails {
 
-  private val formattedDate = DateTimeFormatter.ofPattern("yyMMdd")
+  private val formattedDate = DateTimeFormatter.ofPattern("yyyyMMdd")
 
   implicit val reads: Reads[UnderpaymentDetails] = (
     (__ \ "userType").read[UserType] and
-      (__ \ "numEntries").read[EntryType] and
+      (__ \ "isBulkEntry").read[Boolean] and
+      (__ \ "isEuropeanUnionDuty").read[Boolean] and
+      (__ \ "additionalInfo").read[String] and
       (__ \ "entryDetails" \ "epu").read[String] and
       (__ \ "entryDetails" \ "entryNumber").read[String] and
       (__ \ "entryDetails" \ "entryDate").read[LocalDate] and
-      (__ \ "originalCpc").read[String] and
-      (__ \ "traderContactDetails" \ "fullName").read[String] and // TODO: needs to come from declarant specific location
-      (__ \ "traderContactDetails" \ "phoneNumber").read[String] // TODO: needs to come from declarant specific location
+      (__ \ "customsProcessingCode").read[String] and
+      (__ \ "declarantContactDetails" \ "fullName").read[String] and // TODO: needs to come from declarant specific location
+      (__ \ "declarantContactDetails" \ "phoneNumber").read[String]
     ) (UnderpaymentDetails.apply _)
 
-  implicit val writes: Writes[UnderpaymentDetails] = (data: UnderpaymentDetails) => Json.obj(
-    "RequestedBy" -> data.userType,
-    "IsBulkEntry" -> data.entryType,
-    "EPU" -> data.entryProcessingUnit,
-    "EntryNumber" -> data.entryNumber,
-    "EntryDate" -> data.entryDate.format(formattedDate),
-    "IsEUDuty" -> "01", // TODO: needs to come from frontend
-    "ReasonForAmendment" -> "Not Applicable", // TODO: needs to come from frontend
-    "OriginalCustomsProcCode" -> data.originalCustomsProcedureCode,
-    "DeclarantDate" -> LocalDate.now().format(formattedDate),
-    "DeclarantPhoneNumber" -> data.declarantPhoneNumber,
-    "DeclarantName" -> data.declarantName
-  )
+  implicit val writes: Writes[UnderpaymentDetails] = (data: UnderpaymentDetails) => {
+
+    val isBulkEntry = if (data.isBulkEntry) "01" else "02"
+    val isEuropeanUnionDuty = if (data.isEuropeanUnionDuty) "01" else "02"
+
+    Json.obj(
+      "RequestedBy" -> data.userType,
+      "IsBulkEntry" -> isBulkEntry,
+      "IsEUDuty" -> isEuropeanUnionDuty,
+      "EPU" -> data.entryProcessingUnit,
+      "EntryNumber" -> data.entryNumber,
+      "EntryDate" -> data.entryDate.format(formattedDate),
+      "ReasonForAmendment" -> data.reasonForAmendment,
+      "OriginalCustomsProcCode" -> data.originalCustomsProcedureCode,
+      "DeclarantDate" -> LocalDate.now().format(formattedDate),
+      "DeclarantPhoneNumber" -> data.declarantPhoneNumber,
+      "DeclarantName" -> data.declarantName
+    )
+  }
 }

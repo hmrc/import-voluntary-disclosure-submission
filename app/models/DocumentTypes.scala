@@ -16,7 +16,7 @@
 
 package models
 
-import play.api.libs.json.{JsString, Reads, Writes}
+import play.api.libs.json.{JsString, Json, Reads, Writes}
 
 object DocumentTypes extends Enumeration {
 
@@ -34,13 +34,13 @@ object DocumentTypes extends Enumeration {
   implicit val reads: Reads[DocumentType] = Reads.enumNameReads(this)
 
   implicit val writes: Writes[DocumentType] = {
-    case OriginalC88 => JsString("01")
-    case OriginalC2 => JsString("02")
-    case AmendedSubstituteEntryWorksheet => JsString("03")
-    case AmendedC88 => JsString("04")
-    case AmendedC2 => JsString("05")
-    case InvoiceAirwayBillPreferenceCertificate => JsString("06")
-    case DefermentAuthorisation => JsString("07")
-    case Other => JsString("08")
+    case OriginalC88 => Json.obj("Type" -> "01")
+    case OriginalC2 => Json.obj("Type" -> "02")
+    case AmendedSubstituteEntryWorksheet => Json.obj("Type" -> "03")
+    case AmendedC88 => Json.obj("Type" -> "04")
+    case AmendedC2 => Json.obj("Type" -> "05")
+    case InvoiceAirwayBillPreferenceCertificate => Json.obj("Type" -> "06")
+    case DefermentAuthorisation => Json.obj("Type" -> "07")
+    case Other => Json.obj("Type" -> "08")
   }
 }
