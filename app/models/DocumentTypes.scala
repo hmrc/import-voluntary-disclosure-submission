@@ -16,7 +16,7 @@
 
 package models
 
-import play.api.libs.json.{JsString, Json, Reads, Writes}
+import play.api.libs.json.{Json, Reads, Writes}
 
 object DocumentTypes extends Enumeration {
 
