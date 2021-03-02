@@ -145,7 +145,7 @@ trait SampleData {
         "email" -> "test@test.com"
       ),
       "address" -> Json.obj(
-        "streetAndNumber" -> "99 Avenue Road",
+        "addressLine1" -> "99 Avenue Road",
         "city" -> "Any Old Town",
         "countryCode" -> "GB",
         "postalCode" -> "ZZ11ZZ"
