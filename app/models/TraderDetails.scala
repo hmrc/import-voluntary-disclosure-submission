@@ -37,7 +37,7 @@ object TraderDetails {
       (__ \ "contactDetails" \ "fullName").read[String] and
       (__ \ "contactDetails" \ "email").read[String] and
       (__ \ "contactDetails" \ "phoneNumber").read[String] and
-      (__ \ "address" \ "addressLine1").read[String] and
+      (__ \ "address" \ "streetAndNumber").read[String] and
       (__ \ "address" \ "addressLine2").readNullable[String] and
       (__ \ "address" \ "city").read[String] and
       (__ \ "address" \ "county").readNullable[String] and
