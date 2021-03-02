@@ -31,6 +31,6 @@ object TraderAddress {
       TraderAddress(streetAndNumber, city, postalCode, countryCode)
   }
 
-  implicit val format: Format[TraderAddress] = Json.format[TraderAddress]
+  implicit val writes: Writes[TraderAddress] = Json.writes[TraderAddress]
 
 }
