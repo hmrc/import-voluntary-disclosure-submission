@@ -19,8 +19,15 @@ package models.requests
 import models.CaseDetails
 import play.api.libs.json.{Json, Writes}
 
-case class CreateCaseRequest(content: CaseDetails)
+import java.util.UUID
+
+case class CreateCaseRequest(acknowledgementReference: UUID, caseDetails: CaseDetails)
 
 object CreateCaseRequest {
-  implicit val writes: Writes[CreateCaseRequest] = Json.writes[CreateCaseRequest]
+  implicit val writes: Writes[CreateCaseRequest] = (data: CreateCaseRequest) => Json.obj(
+    "AcknowledgementReference" -> data.acknowledgementReference.toString.replace("-", ""),
+    "OriginatingSystem" -> "Digital",
+    "ApplicationType" -> "C18",
+    "Content" -> data.caseDetails
+  )
 }

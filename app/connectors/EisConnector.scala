@@ -19,9 +19,9 @@ package connectors
 import config.AppConfig
 import connectors.httpParsers.CreateCaseHttpParser.CreateCaseHttpReads
 import connectors.httpParsers.ResponseHttpParser.ExternalResponse
-import models.CaseDetails
 import models.requests.CreateCaseRequest
 import models.responses.CreateCaseResponse
+import models.{CaseDetails, DocumentTypes}
 import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
@@ -41,10 +41,10 @@ class EisConnector @Inject()(http: HttpClient,
 
   private[connectors] lazy val createCaseUrl = s"${appConfig.eisBaseUrl}/cpr/caserequest/c18/create/v1"
 
-  private[connectors] def eisHeaderCarrier()(implicit hc: HeaderCarrier): HeaderCarrier = hc
+  private[connectors] def eisHeaderCarrier()(implicit hc: HeaderCarrier, correlationId: UUID): HeaderCarrier = hc
     .copy(authorization = Some(Authorization(s"Bearer ${appConfig.createCaseToken}")))
     .withExtraHeaders(
-      "x-correlation-id" -> UUID.randomUUID().toString,
+      "x-correlation-id" -> correlationId.toString,
       "CustomProcessesHost" -> "Digital",
       "date" -> httpDateFormat.format(ZonedDateTime.now),
       "accept" -> "application/json"
@@ -52,7 +52,21 @@ class EisConnector @Inject()(http: HttpClient,
 
   def createCase(caseDetails: CaseDetails)
                 (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[ExternalResponse[CreateCaseResponse]] = {
-    val request = CreateCaseRequest(caseDetails)
+    implicit val acknowledgementReference: UUID = UUID.randomUUID()
+
+    val request = CreateCaseRequest(
+      acknowledgementReference,
+      caseDetails.copy(
+        documentsSupplied = Seq(
+          DocumentTypes.OriginalC2,
+          DocumentTypes.AmendedC2,
+          DocumentTypes.OriginalC88,
+          DocumentTypes.AmendedC88,
+          DocumentTypes.AmendedSubstituteEntryWorksheet
+        )
+      )
+    )
+
     http.POST(createCaseUrl, request)(implicitly, CreateCaseHttpReads, eisHeaderCarrier(), implicitly)
   }
 

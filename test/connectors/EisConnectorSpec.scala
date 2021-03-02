@@ -25,11 +25,13 @@ import models.responses.CreateCaseResponse
 import org.scalatest.matchers.should.Matchers._
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
+import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class EisConnectorSpec extends SpecBase {
 
   trait Test extends MockHttp with SampleData {
+    implicit val correlationId: UUID = UUID.randomUUID()
     lazy val target = new EisConnector(mockHttp, appConfig)
   }
 
