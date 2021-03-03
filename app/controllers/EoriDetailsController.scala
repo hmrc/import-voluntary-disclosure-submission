@@ -16,27 +16,31 @@
 
 package controllers
 
-import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import services.ImporterAddressService
+import services.EoriDetailsService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton()
-class ImporterAddressController @Inject()(cc: ControllerComponents, importAddressService: ImporterAddressService)
+class EoriDetailsController @Inject()(cc: ControllerComponents, eoriDetailsService: EoriDetailsService)
   extends BackendController(cc) {
 
   def onLoad(id: String): Action[AnyContent] = Action.async { implicit request =>
-    importAddressService.retrieveAddress(id).map {
-      case Right(traderAddress) => Ok(Json.obj(
-        "streetAndNumber" -> traderAddress.streetAndNumber,
-        "city" -> traderAddress.city,
-        "postalCode" -> traderAddress.postalCode,
-        "countryCode" -> traderAddress.countryCode
-      ))
-      case Left(_) => NotFound("Could not retrieve address")
+    eoriDetailsService.retrieveEoriDetails(id).map {
+      case Right(eoriDetails) => Ok(
+        Json.obj(
+          "eori" -> eoriDetails.eori,
+          "name" -> eoriDetails.name,
+          "streetAndNumber" -> eoriDetails.streetAndNumber,
+          "city" -> eoriDetails.city,
+          "postalCode" -> eoriDetails.postalCode,
+          "countryCode" -> eoriDetails.countryCode
+        )
+      )
+      case Left(_) => NotFound("Could not retrieve eori details")
     }
 
   }

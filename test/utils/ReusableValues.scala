@@ -16,7 +16,7 @@
 
 package utils
 
-import models.TraderAddress
+import models.EoriDetails
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HttpResponse
@@ -25,15 +25,28 @@ trait ReusableValues {
 
   val idOne: String = "1"
 
-  val traderAddress: TraderAddress = TraderAddress("first", "second", Some("third"), "fourth")
+  val eoriDetails: EoriDetails = EoriDetails(
+    "GB987654321000",
+    "Fast Food ltd",
+    "99 Avenue Road",
+    "Anyold Town",
+    Some("99JZ 1AA"),
+    "GB"
+  )
 
   val errorModel: HttpResponse = HttpResponse(Status.NOT_FOUND, "Error Message")
 
-  val traderAddressJson: JsObject = Json.obj(
-    "streetAndNumber" -> "first",
-    "city" -> "second",
-    "postalCode" -> Some("third"),
-    "countryCode" -> "fourth"
+  val detailsJson: JsObject = Json.obj(
+    "responseDetail" -> Json.obj(
+      "EORINo" -> "GB987654321000",
+      "CDSFullName" -> "Fast Food ltd",
+      "CDSEstablishmentAddress" -> Json.obj(
+        "streetAndNumber" -> "99 Avenue Road",
+        "city" -> "Anyold Town",
+        "postalCode" -> "99JZ 1AA",
+        "countryCode" -> "GB"
+      )
+    )
   )
 
 }

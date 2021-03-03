@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-package services
+package connectors
 
-import connectors.ImporterAddressConnector
-import models.{ErrorModel, TraderAddress}
-import uk.gov.hmrc.http.HeaderCarrier
+import config.AppConfig
+import connectors.httpParsers.EoriDetailsHttpParser.EoriDetailsReads
+import connectors.httpParsers.ResponseHttpParser.HttpGetResult
+import models.EoriDetails
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ImporterAddressService @Inject()(importerAddressConnector: ImporterAddressConnector) {
+class EoriDetailsConnector @Inject()(val http: HttpClient,
+                                     implicit val config: AppConfig) {
 
-  def retrieveAddress(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ErrorModel, TraderAddress]] = {
-    importerAddressConnector.getAddress(id)
+  private[connectors] def getEoriDetailsUrl(id: String) = s"${config.sub09}/api/eoriDetails/$id"
+
+  def getEoriDetails(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[EoriDetails]] = {
+    http.GET[HttpGetResult[EoriDetails]](getEoriDetailsUrl(id))
   }
 
 }

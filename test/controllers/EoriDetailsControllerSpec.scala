@@ -17,28 +17,28 @@
 package controllers
 
 import base.SpecBase
-import mocks.services.MockImporterAddressService
+import mocks.services.MockEoriDetailsService
 import models.ErrorModel
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status
 import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 import utils.ReusableValues
 
-class ImporterAddressControllerSpec extends SpecBase with MockImporterAddressService with ReusableValues {
+class EoriDetailsControllerSpec extends SpecBase with MockEoriDetailsService with ReusableValues {
 
-  object Controller extends ImporterAddressController(controllerComponents, mockImporterAddressService)
+  object Controller extends EoriDetailsController(controllerComponents, mockEoriDetailsService)
 
 
-  "Importer Address Controller" should {
+  "Eori Details Controller" should {
     "return OK and the correct Json" in {
-      setupMockRetrieveAddress(Right(traderAddress))
+      setupMockRetrieveEoriDetails(Right(eoriDetails))
       val result = Controller.onLoad(idOne)(fakeRequest)
       status(result) mustEqual Status.OK
-      contentAsJson(result) mustEqual traderAddressJson
+      contentAsJson(result) mustEqual detailsJson
     }
 
     "return error model" in {
-      setupMockRetrieveAddress(Left(ErrorModel(400, "Could not retrieve address")))
+      setupMockRetrieveEoriDetails(Left(ErrorModel(400, "Could not retrieve eori details")))
       val result = Controller.onLoad(idOne)(fakeRequest)
       status(result) mustEqual Status.NOT_FOUND
     }

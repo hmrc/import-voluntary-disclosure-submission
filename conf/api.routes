@@ -1,2 +1,2 @@
-GET        /address        controllers.ImporterAddressController.onLoad(id: String ?= "")
-POST       /case           controllers.CreateCaseController.onSubmit()
+GET         /eoriDetails        controllers.EoriDetailsController.onLoad(id: String ?= "")
+POST        /case               controllers.CreateCaseController.onSubmit()

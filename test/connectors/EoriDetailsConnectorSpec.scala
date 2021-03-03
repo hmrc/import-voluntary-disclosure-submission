@@ -14,30 +14,38 @@
  * limitations under the License.
  */
 
-package services
+package connectors
 
 import base.SpecBase
-import connectors.MockImporterAddressConnector
+import connectors.httpParsers.ResponseHttpParser.HttpGetResult
+import mocks.MockHttp
+import models.EoriDetails
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import utils.ReusableValues
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
+class EoriDetailsConnectorSpec extends SpecBase with MockHttp with ReusableValues {
 
-class ImporterAddressServiceSpec extends SpecBase with MockImporterAddressConnector with ReusableValues {
+  object Connector extends EoriDetailsConnector(mockHttp, appConfig)
 
-  def setup(traderAddressResponse: TraderAddressResponse): ImporterAddressService = {
-    setupMockGetAddress(traderAddressResponse)
-    new ImporterAddressService(mockAddressLookupConnector)
-  }
+  "Eori Details Connector" should {
 
-  "connector call is successful" should {
-    lazy val service = setup(Right(traderAddress))
-    lazy val result = service.retrieveAddress(idOne)
+    def getEoriDetailsResult(): Future[HttpGetResult[EoriDetails]] = Connector.getEoriDetails(idOne)
 
-    "return successful RetrieveAddressResponse" in {
-      await(result) mustBe Right(traderAddress)
+    "return the Right response" in {
+      setupMockHttpGet(Connector.getEoriDetailsUrl(idOne))(Right(eoriDetails))
+      await(getEoriDetailsResult()) mustBe Right(eoriDetails)
     }
+
+    "return the error response" in {
+      setupMockHttpGet(Connector.getEoriDetailsUrl(idOne))(Left(errorModel))
+      await(getEoriDetailsResult()) mustBe Left(errorModel)
+    }
+
   }
+
+
 }
