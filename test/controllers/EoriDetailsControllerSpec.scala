@@ -28,13 +28,12 @@ class EoriDetailsControllerSpec extends SpecBase with MockEoriDetailsService wit
 
   object Controller extends EoriDetailsController(controllerComponents, mockEoriDetailsService)
 
-
   "Eori Details Controller" should {
     "return OK and the correct Json" in {
       setupMockRetrieveEoriDetails(Right(eoriDetails))
       val result = Controller.onLoad(idOne)(fakeRequest)
       status(result) mustEqual Status.OK
-      contentAsJson(result) mustEqual detailsJson
+      contentAsJson(result) mustEqual cleanedDetailsJson
     }
 
     "return error model" in {
