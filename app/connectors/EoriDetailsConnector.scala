@@ -20,7 +20,6 @@ import config.AppConfig
 import connectors.httpParsers.EoriDetailsHttpParser.EoriDetailsReads
 import connectors.httpParsers.ResponseHttpParser.HttpGetResult
 import models.EoriDetails
-import org.scalatest.matchers.should.Matchers._
 import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
@@ -34,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class EoriDetailsConnector @Inject()(val http: HttpClient,
                                      implicit val config: AppConfig) {
 
-  private val httpDateFormat = DateTimeFormatter
+  private[connectors] val httpDateFormat = DateTimeFormatter
     .ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH)
     .withZone(ZoneId.of("GMT"))
 
@@ -42,14 +41,14 @@ class EoriDetailsConnector @Inject()(val http: HttpClient,
 
   private[connectors] def sub09HeaderCarrier()(implicit hc: HeaderCarrier, correlationId: UUID): HeaderCarrier =
     hc
-    .copy(authorization = Some(Authorization(s"Bearer ${config.eoriDetailsToken}")))
-    .withExtraHeaders(
-      headers = "Date" -> httpDateFormat.format(ZonedDateTime.now),
-      "X-Correlation-ID" -> correlationId.toString,
-      "Content-Type" -> "application/json",
-      "Accept" -> "application/json",
-      "X-Source-System" -> "DIG"
-    )
+      .copy(authorization = Some(Authorization(s"Bearer ${config.eoriDetailsToken}")))
+      .withExtraHeaders(
+        headers = "Date" -> httpDateFormat.format(ZonedDateTime.now),
+        "X-Correlation-ID" -> correlationId.toString,
+        "Content-Type" -> "application/json",
+        "Accept" -> "application/json",
+        "X-Source-System" -> "DIG"
+      )
 
   def getEoriDetails(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[EoriDetails]] = {
 
@@ -57,7 +56,7 @@ class EoriDetailsConnector @Inject()(val http: HttpClient,
 
     val parameters = Seq(
       "regime" -> "CDS", // TODO - speak to EIS
-      "acknowledgementReference" -> acknowledgementReference.toString.replace("-",""),
+      "acknowledgementReference" -> acknowledgementReference.toString.replace("-", ""),
       "EORI" -> id
     )
 
