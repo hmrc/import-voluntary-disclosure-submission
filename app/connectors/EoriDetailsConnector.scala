@@ -58,7 +58,7 @@ class EoriDetailsConnector @Inject()(val http: HttpClient,
 
     val parameters = Seq(
       "regime" -> "CDS", // TODO - what is this
-      "acknowledgementReference" -> "", // TODO - what is this
+      "acknowledgementReference" -> acknowledgementReference.toString.replace("-",""),
       "EORI" -> id
     )
 
