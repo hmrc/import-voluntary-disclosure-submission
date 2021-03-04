@@ -20,8 +20,13 @@ import config.AppConfig
 import connectors.httpParsers.EoriDetailsHttpParser.EoriDetailsReads
 import connectors.httpParsers.ResponseHttpParser.HttpGetResult
 import models.EoriDetails
+import play.api.libs.json.Json
+import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
+import java.time.format.DateTimeFormatter
+import java.time.{ZoneId, ZonedDateTime}
+import java.util.{Locale, UUID}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -29,10 +34,38 @@ import scala.concurrent.{ExecutionContext, Future}
 class EoriDetailsConnector @Inject()(val http: HttpClient,
                                      implicit val config: AppConfig) {
 
+  private val httpDateFormat = DateTimeFormatter
+    .ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH)
+    .withZone(ZoneId.of("GMT"))
+
   private[connectors] def getEoriDetailsUrl(id: String) = s"${config.sub09}/api/eoriDetails?id=$id"
 
+  private[connectors] def eisHeaderCarrier()(implicit hc: HeaderCarrier, correlationId: UUID): HeaderCarrier =
+    hc
+    .copy(authorization = Some(Authorization(s"Bearer ${config.createCaseToken}")))
+    .withExtraHeaders(
+      headers = "Date" -> httpDateFormat.format(ZonedDateTime.now),
+      "X-Correlation-ID" -> correlationId.toString,
+      "X-Forwarded-Host" -> "",
+      "Content-Type" -> "", // TODO
+      "Accept" -> "application/json",
+      "X-Source-System" -> "" // TODO
+    )
+
   def getEoriDetails(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[EoriDetails]] = {
-    http.GET[HttpGetResult[EoriDetails]](getEoriDetailsUrl(id))
+
+    implicit val acknowledgementReference: UUID = UUID.randomUUID()
+
+    val parameters = Seq(
+      "regime" -> "CDS", // TODO - what is this
+      "acknowledgementReference" -> "", // TODO - what is this
+      "EORI" -> id
+    )
+
+    http.GET[HttpGetResult[EoriDetails]](
+      url = getEoriDetailsUrl(id),
+      queryParams = parameters
+    )(hc = eisHeaderCarrier(), ec = ec, rds = implicitly)
   }
 
 }
