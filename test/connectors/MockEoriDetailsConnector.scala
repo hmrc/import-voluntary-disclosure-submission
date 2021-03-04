@@ -16,7 +16,7 @@
 
 package connectors
 
-import models.{ErrorModel, EoriDetails}
+import models.{EoriDetails, ErrorModel}
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -30,7 +30,7 @@ trait MockEoriDetailsConnector extends MockFactory {
 
   def setupMockGetAddress(response: Either[ErrorModel, EoriDetails]): Unit = {
     (mockEoriDetailsConnector.getEoriDetails(_: String)(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*,*,*)
+      .expects(*, *, *)
       .returns(Future.successful(response))
   }
 

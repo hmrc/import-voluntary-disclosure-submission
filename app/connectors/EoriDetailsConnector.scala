@@ -20,7 +20,7 @@ import config.AppConfig
 import connectors.httpParsers.EoriDetailsHttpParser.EoriDetailsReads
 import connectors.httpParsers.ResponseHttpParser.HttpGetResult
 import models.EoriDetails
-import play.api.libs.json.Json
+import org.scalatest.matchers.should.Matchers._
 import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
@@ -38,9 +38,9 @@ class EoriDetailsConnector @Inject()(val http: HttpClient,
     .ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH)
     .withZone(ZoneId.of("GMT"))
 
-  private[connectors] def getEoriDetailsUrl(id: String) = s"${config.sub09}/api/eoriDetails?id=$id"
+  private[connectors] def getEoriDetailsUrl(id: String) = s"${config.sub09}/subscriptions/subscriptiondisplay/v1"
 
-  private[connectors] def eisHeaderCarrier()(implicit hc: HeaderCarrier, correlationId: UUID): HeaderCarrier =
+  private[connectors] def sub09HeaderCarrier()(implicit hc: HeaderCarrier, correlationId: UUID): HeaderCarrier =
     hc
     .copy(authorization = Some(Authorization(s"Bearer ${config.createCaseToken}")))
     .withExtraHeaders(
@@ -65,7 +65,7 @@ class EoriDetailsConnector @Inject()(val http: HttpClient,
     http.GET[HttpGetResult[EoriDetails]](
       url = getEoriDetailsUrl(id),
       queryParams = parameters
-    )(hc = eisHeaderCarrier(), ec = ec, rds = implicitly)
+    )(hc = sub09HeaderCarrier(), ec = ec, rds = implicitly)
   }
 
 }

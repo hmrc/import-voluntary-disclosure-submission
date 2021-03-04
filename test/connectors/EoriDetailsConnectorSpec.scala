@@ -18,34 +18,80 @@ package connectors
 
 import base.SpecBase
 import connectors.httpParsers.ResponseHttpParser.HttpGetResult
+import data.SampleData
 import mocks.MockHttp
 import models.EoriDetails
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import org.scalatest.matchers.should.Matchers.{contain, convertToAnyShouldWrapper}
 import utils.ReusableValues
 
+import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class EoriDetailsConnectorSpec extends SpecBase with MockHttp with ReusableValues {
 
-  object Connector extends EoriDetailsConnector(mockHttp, appConfig)
+  trait Test extends MockHttp with SampleData {
+    implicit val correlationId: UUID = UUID.randomUUID()
+    lazy val target = new EoriDetailsConnector(mockHttp, appConfig)
+    def getEoriDetailsResult(): Future[HttpGetResult[EoriDetails]] = new EoriDetailsConnector(mockHttp, appConfig).getEoriDetails(idOne)
+  }
 
-  "Eori Details Connector" should {
 
-    def getEoriDetailsResult(): Future[HttpGetResult[EoriDetails]] = Connector.getEoriDetails(idOne)
+  val expectedEoriDetailsUrl = "http://localhost:7952/subscriptions/subscriptiondisplay/v1"
 
-    "return the Right response" in {
-      setupMockHttpGet(Connector.getEoriDetailsUrl(idOne))(Right(eoriDetails))
-      await(getEoriDetailsResult()) mustBe Right(eoriDetails)
+  "getEoriDetailsUrl" should {
+    "return the correct URL" in new Test {
+      target.getEoriDetailsUrl(idOne) mustBe expectedEoriDetailsUrl
+    }
+  }
+
+  "sub09HeaderCarrier" should {
+
+    "generate the correct Date header required for sub09" in new Test {
+      private val headerCarrier = target.sub09HeaderCarrier()
+      headerCarrier.extraHeaders should contain("Date" -> "date")
     }
 
-    "return the error response" in {
-      setupMockHttpGet(Connector.getEoriDetailsUrl(idOne))(Left(errorModel))
-      await(getEoriDetailsResult()) mustBe Left(errorModel)
+    "generate the correct Correlation ID header required for sub09" in new Test {
+      private val headerCarrier = target.sub09HeaderCarrier()
+      headerCarrier.extraHeaders.toMap.keys should contain("X-Correlation-ID")
+    }
+
+    "generate the correct X-Forwarded-Host header required for sub09" in new Test {
+      private val headerCarrier = target.sub09HeaderCarrier()
+      headerCarrier.extraHeaders.toMap.keys should contain("X-Forwarded-Host")
+    }
+
+    "generate the correct Content-Type header required for sub09" in new Test {
+      private val headerCarrier = target.sub09HeaderCarrier()
+      headerCarrier.extraHeaders.toMap.keys should contain("Content-Type")
+    }
+
+    "generate the correct Accept header required for sub09" in new Test {
+      private val headerCarrier = target.sub09HeaderCarrier()
+      headerCarrier.extraHeaders.toMap.keys should contain("Accept" -> "application/json")
+    }
+
+    "generate the correct X-Source-System header required for sub09" in new Test {
+      private val headerCarrier = target.sub09HeaderCarrier()
+      headerCarrier.extraHeaders should contain("X-Source-System")
     }
 
   }
 
+  //  "Eori Details Connector" should {
+  //
+  //    "return the Right response" in new Test{
+  //      setupMockHttpGet(target.getEoriDetailsUrl(idOne))(Right(eoriDetails))
+  //      await(getEoriDetailsResult()) mustBe Right(eoriDetails)
+  //    }
+  //
+  //    "return the error response" in new Test {
+  //      setupMockHttpGet(target.getEoriDetailsUrl(idOne))(Left(errorModel))
+  //      await(getEoriDetailsResult()) mustBe Left(errorModel)
+  //    }
+  //
+  //  }
 
 }
