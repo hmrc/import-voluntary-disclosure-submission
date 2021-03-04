@@ -29,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class EoriDetailsConnector @Inject()(val http: HttpClient,
                                      implicit val config: AppConfig) {
 
-  private[connectors] def getEoriDetailsUrl(id: String) = s"${config.sub09}/api/eoriDetails/$id"
+  private[connectors] def getEoriDetailsUrl(id: String) = s"${config.sub09}/api/eoriDetails?id=$id"
 
   def getEoriDetails(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[EoriDetails]] = {
     http.GET[HttpGetResult[EoriDetails]](getEoriDetailsUrl(id))
