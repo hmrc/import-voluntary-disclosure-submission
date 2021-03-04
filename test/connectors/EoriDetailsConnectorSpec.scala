@@ -77,4 +77,21 @@ class EoriDetailsConnectorSpec extends SpecBase with MockHttp with ReusableValue
 
   }
 
+  "getEoriDetails" when {
+
+    "a success response is returned from SUB09" should {
+
+      "return a EoriDetails" in new Test {
+        val response = Right(
+          EoriDetails("GB987654321000", "Fast Food ltd", "99 Avenue Road", "Anyold Town", Some("99JZ 1AA"), "GB")
+        )
+        MockedHttp.post[EoriDetails, ExternalResponse[EoriDetails]](expectedEoriDetailsUrl, response)
+
+        await(target.getEoriDetails("GB987654321000")) shouldBe response
+      }
+
+    }
+
+  }
+
 }
