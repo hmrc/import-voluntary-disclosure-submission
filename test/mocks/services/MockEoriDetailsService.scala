@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package connectors
+package mocks.services
 
-import models.{ErrorModel, TraderAddress}
+import base.SpecBase
+import models.{ErrorModel, EoriDetails}
 import org.scalamock.scalatest.MockFactory
+import services.EoriDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockImporterAddressConnector extends MockFactory {
+trait MockEoriDetailsService extends SpecBase with MockFactory{
 
-  val mockAddressLookupConnector: ImporterAddressConnector = mock[ImporterAddressConnector]
+  val mockEoriDetailsService: EoriDetailsService = mock[EoriDetailsService]
 
-  type TraderAddressResponse = Either[ErrorModel, TraderAddress]
+  type RetrieveEoriDetailsResponse = Either[ErrorModel, EoriDetails]
 
-  def setupMockGetAddress(response: Either[ErrorModel, TraderAddress]): Unit = {
-    (mockAddressLookupConnector.getAddress(_: String)(_: HeaderCarrier, _: ExecutionContext))
+  def setupMockRetrieveEoriDetails(response: RetrieveEoriDetailsResponse): Unit  = {
+    (mockEoriDetailsService.retrieveEoriDetails(_: String)(_: HeaderCarrier, _: ExecutionContext))
       .expects(*,*,*)
       .returns(Future.successful(response))
   }

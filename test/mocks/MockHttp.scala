@@ -28,15 +28,18 @@ trait MockHttp extends SpecBase with MockFactory {
   val mockHttp: HttpClient = mock[HttpClient]
 
   object MockedHttp {
-    def post[I,O](url: String, response: O): Any = {
-      (mockHttp.POST[I,O](_: String, _: I, _: Seq[(String, String)])(_: Writes[I], _: HttpReads[O], _: HeaderCarrier, _: ExecutionContext))
-        .expects(*, *, *, *, *, *, *)
+    def post[I, O](url: String, response: O): Any = {
+      (mockHttp.POST[I, O](_: String, _: I, _: Seq[(String, String)])(_: Writes[I], _: HttpReads[O], _: HeaderCarrier, _: ExecutionContext))
+        .expects(url, *, *, *, *, *, *)
         .returns(Future.successful(response))
     }
+
+    def get[O](url: String, response: O): Any = {
+      (mockHttp.GET[O](_: String, _: Seq[(String, String)])(_: HttpReads[O], _: HeaderCarrier, _: ExecutionContext))
+        .expects(url, *, *, *, *)
+        .returns(Future.successful(response))
+    }
+
   }
-  def setupMockHttpGet[T](url: String)(response: T): Unit =
-    (mockHttp.GET[T](_: String)(_: HttpReads[T], _: HeaderCarrier, _: ExecutionContext))
-      .expects(*, *, *, *)
-      .returns(Future.successful(response))
 
 }

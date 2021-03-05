@@ -17,31 +17,30 @@
 package connectors.httpParsers
 
 import connectors.httpParsers.ResponseHttpParser.HttpGetResult
-import models.{ErrorModel, TraderAddress}
+import models.{EoriDetails, ErrorModel}
 import play.api.Logger
 import play.api.http.Status
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
-object ImporterAddressHttpParser {
+object EoriDetailsHttpParser {
 
-  implicit object TraderAddressReads extends HttpReads[HttpGetResult[TraderAddress]] {
+  implicit object EoriDetailsReads extends HttpReads[HttpGetResult[EoriDetails]] {
 
     private val logger = Logger("application." + getClass.getCanonicalName)
 
-    override def read(method: String, url: String, response: HttpResponse): HttpGetResult[TraderAddress] = {
-
+    override def read(method: String, url: String, response: HttpResponse): HttpGetResult[EoriDetails] = {
       response.status match {
         case Status.OK =>
-          response.json.validate[TraderAddress](TraderAddress.reads).fold(
+          response.json.validate[EoriDetails](EoriDetails.reads).fold(
             invalid => {
               logger.error("Failed to validate JSON with errors: " + invalid)
-              Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Invalid Json returned from SUB09 API for TraderAddressHttpParser"))
+              Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Invalid Json returned from SUB09 API for EoriDetailsHttpParser"))
             },
             valid => Right(valid)
           )
         case status =>
           logger.error("Error: " + status + " body: " + response.body)
-          Left(ErrorModel(status, "Downstream error returned when retrieving TraderAddress model from back end"))
+          Left(ErrorModel(status, "Downstream error returned when retrieving EoriDetails model from Sub09 (stub atm)"))
       }
     }
   }

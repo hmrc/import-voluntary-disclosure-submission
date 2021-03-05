@@ -17,7 +17,7 @@
 package services
 
 import base.SpecBase
-import connectors.MockImporterAddressConnector
+import connectors.MockEoriDetailsConnector
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import utils.ReusableValues
@@ -25,19 +25,19 @@ import utils.ReusableValues
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
-class ImporterAddressServiceSpec extends SpecBase with MockImporterAddressConnector with ReusableValues {
+class EoriDetailsServiceSpec extends SpecBase with MockEoriDetailsConnector with ReusableValues {
 
-  def setup(traderAddressResponse: TraderAddressResponse): ImporterAddressService = {
-    setupMockGetAddress(traderAddressResponse)
-    new ImporterAddressService(mockAddressLookupConnector)
+  def setup(eoriDetailsResponse: EoriDetailsResponse): EoriDetailsService = {
+    setupMockGetAddress(eoriDetailsResponse)
+    new EoriDetailsService(mockEoriDetailsConnector)
   }
 
   "connector call is successful" should {
-    lazy val service = setup(Right(traderAddress))
-    lazy val result = service.retrieveAddress(idOne)
+    lazy val service = setup(Right(eoriDetails))
+    lazy val result = service.retrieveEoriDetails(idOne)
 
-    "return successful RetrieveAddressResponse" in {
-      await(result) mustBe Right(traderAddress)
+    "return successful EoriDetailsResponse" in {
+      await(result) mustBe Right(eoriDetails)
     }
   }
 }
