@@ -65,6 +65,11 @@ trait SampleData {
     )
   )
 
+  val amendedItems = Seq(
+    BoxItem(62, 0, "GBP1", "GBP2"),
+    BoxItem(33, 1, "1", "2")
+  )
+
   val importer: TraderDetails = TraderDetails(
     eori = "GB000000000000001",
     name = underpaymentDetails.declarantName,
@@ -83,6 +88,7 @@ trait SampleData {
     duties = duties,
     documentsSupplied = documentsSupplied,
     supportingDocuments = supportingDocuments,
+    amendedItems = amendedItems,
     importer = importer,
     representative = None
   )
@@ -127,7 +133,20 @@ trait SampleData {
       "AmendedC88",
       "AmendedC2"
     ),
-    "amendedItems" -> Json.arr(),
+    "amendedItems" -> Json.arr(
+      Json.obj(
+        "boxNumber" -> 62,
+        "itemNumber" -> 0,
+        "original" -> "GBP1",
+        "amended" -> "GBP2"
+      ),
+      Json.obj(
+        "boxNumber" -> 33,
+        "itemNumber" -> 1,
+        "original" -> "1",
+        "amended" -> "2"
+      ),
+    ),
     "supportingDocuments" -> Json.arr(
       Json.obj(
         "fileName" -> "TestDocument.pdf",
@@ -208,6 +227,21 @@ trait SampleData {
           "EmailAddress" -> "test@test.com"
         )
       )
+    ),
+    "ImportInfoList" -> Json.arr(
+      Json.obj(
+        "BoxNumber" -> "62",
+        "ItemNumber" -> "00",
+        "EnteredAs" -> "GBP1",
+        "AmendedTo" -> "GBP2"
+      ),
+      Json.obj(
+        "BoxNumber" -> "33",
+        "ItemNumber" -> "01",
+        "EnteredAs" -> "1",
+        "AmendedTo" -> "2"
+      ),
+
     )
   )
 

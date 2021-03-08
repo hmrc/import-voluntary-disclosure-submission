@@ -25,6 +25,7 @@ case class CaseDetails(underpaymentDetails: UnderpaymentDetails,
                        duties: Seq[DutyItem],
                        documentsSupplied: Seq[DocumentType],
                        supportingDocuments: Seq[SupportingDocument],
+                       amendedItems: Seq[BoxItem],
                        importer: TraderDetails,
                        representative: Option[TraderDetails] = None)
 
@@ -34,6 +35,7 @@ object CaseDetails {
       (__ \ "underpaymentDetails").read[Seq[DutyItem]] and
       (__ \ "supportingDocumentTypes").read[Seq[DocumentType]] and
       (__ \ "supportingDocuments").read[Seq[SupportingDocument]] and
+      (__ \ "amendedItems").read[Seq[BoxItem]] and
       (__ \ "importer").read[TraderDetails] and
       (__ \ "representative").readNullable[TraderDetails]
     ) (CaseDetails.apply _)
@@ -47,6 +49,7 @@ object CaseDetails {
       "UnderpaymentDetails" -> o.underpaymentDetails,
       "DutyTypeList" -> o.duties,
       "DocumentList" -> o.documentsSupplied,
+      "ImportInfoList" -> o.amendedItems,
       "TraderList" -> Json.arr(importer)
     )
   }
