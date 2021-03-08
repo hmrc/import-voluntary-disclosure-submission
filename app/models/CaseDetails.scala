@@ -43,14 +43,19 @@ object CaseDetails {
 
   implicit val writes: Writes[CaseDetails] = (o: CaseDetails) => {
 
-    val importer = Json.toJson(o.importer).as[JsObject] ++ Json.obj("Type" -> TraderTypes.Importer)
+    val importer = Some(Json.toJson(o.importer).as[JsObject] ++ Json.obj("Type" -> TraderTypes.Importer))
+    val representative = o.representative.map{ rep =>
+      Json.toJson(rep).as[JsObject] ++ Json.obj("Type" -> TraderTypes.Representative)
+    }
+
+    val traders: Seq[JsObject] = Seq(representative, importer).flatten
 
     Json.obj(
       "UnderpaymentDetails" -> o.underpaymentDetails,
       "DutyTypeList" -> o.duties,
       "DocumentList" -> o.documentsSupplied,
       "ImportInfoList" -> o.amendedItems,
-      "TraderList" -> Json.arr(importer)
+      "TraderList" -> traders
     )
   }
 }

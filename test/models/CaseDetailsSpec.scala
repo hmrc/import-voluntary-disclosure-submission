@@ -58,6 +58,10 @@ class CaseDetailsSpec extends ModelSpecBase with SampleData {
         result.importer shouldBe model.importer
       }
 
+      "deserialize the representative details" in {
+        result.representative shouldBe model.representative
+      }
+
     }
   }
 
