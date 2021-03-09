@@ -29,7 +29,7 @@ trait SampleData {
   private val timestamp = LocalDateTime.now()
 
   val underpaymentDetails: UnderpaymentDetails = UnderpaymentDetails(
-    userType = UserTypes.Importer,
+    userType = UserTypes.Representative,
     isBulkEntry = false,
     isEuropeanUnionDuty = false,
     reasonForAmendment = "Not Applicable",
@@ -65,11 +65,29 @@ trait SampleData {
     )
   )
 
+  val amendedItems = Seq(
+    BoxItem(62, 0, "GBP1", "GBP2"),
+    BoxItem(33, 1, "1", "2")
+  )
+
   val importer: TraderDetails = TraderDetails(
     eori = "GB000000000000001",
-    name = underpaymentDetails.declarantName,
+    name = "Importer Inc",
+    emailAddress = "notsupplied@example.com",
+    phoneNumber = "000000000",
+    addressLine1 = "99 Avenue Road",
+    addressLine2 = None,
+    city = "Any Old Town",
+    county = None,
+    countryCode = "GB",
+    postalCode = "ZZ11ZZ"
+  )
+
+  val representative: TraderDetails = TraderDetails(
+    eori = "GB000000000000002",
+    name = "Representative Inc",
     emailAddress = "test@test.com",
-    phoneNumber = underpaymentDetails.declarantPhoneNumber,
+    phoneNumber = "1234567890",
     addressLine1 = "99 Avenue Road",
     addressLine2 = None,
     city = "Any Old Town",
@@ -83,12 +101,13 @@ trait SampleData {
     duties = duties,
     documentsSupplied = documentsSupplied,
     supportingDocuments = supportingDocuments,
+    amendedItems = amendedItems,
     importer = importer,
-    representative = None
+    representative = Some(representative)
   )
 
   val incomingJson: JsObject = Json.obj(
-    "userType" -> "importer",
+    "userType" -> "representative",
     "isBulkEntry" -> false,
     "isEuropeanUnionDuty" -> false,
     "additionalInfo" -> "Not Applicable",
@@ -127,7 +146,20 @@ trait SampleData {
       "AmendedC88",
       "AmendedC2"
     ),
-    "amendedItems" -> Json.arr(),
+    "amendedItems" -> Json.arr(
+      Json.obj(
+        "boxNumber" -> 62,
+        "itemNumber" -> 0,
+        "original" -> "GBP1",
+        "amended" -> "GBP2"
+      ),
+      Json.obj(
+        "boxNumber" -> 33,
+        "itemNumber" -> 1,
+        "original" -> "1",
+        "amended" -> "2"
+      ),
+    ),
     "supportingDocuments" -> Json.arr(
       Json.obj(
         "fileName" -> "TestDocument.pdf",
@@ -140,9 +172,23 @@ trait SampleData {
     "importer" -> Json.obj(
       "eori" -> "GB000000000000001",
       "contactDetails" -> Json.obj(
-        "fullName" -> "John Smith",
-        "phoneNumber" -> "1234567890",
-        "email" -> "test@test.com"
+        "fullName" -> "Importer Inc",
+        "phoneNumber" -> "000000000",
+        "email" -> "notsupplied@example.com"
+      ),
+      "address" -> Json.obj(
+        "addressLine1" -> "99 Avenue Road",
+        "city" -> "Any Old Town",
+        "countryCode" -> "GB",
+        "postalCode" -> "ZZ11ZZ"
+      )
+    ),
+    "representative" -> Json.obj(
+      "eori" -> "GB000000000000002",
+      "contactDetails" -> Json.obj(
+        "fullName" -> "Representative Inc",
+        "email" -> "test@test.com",
+        "phoneNumber" -> "1234567890"
       ),
       "address" -> Json.obj(
         "addressLine1" -> "99 Avenue Road",
@@ -155,7 +201,7 @@ trait SampleData {
 
   val outgoingJson: JsObject = Json.obj(
     "UnderpaymentDetails" -> Json.obj(
-      "RequestedBy" -> "01",
+      "RequestedBy" -> "02",
       "IsBulkEntry" -> "02",
       "IsEUDuty" -> "02",
       "EPU" -> "123",
@@ -196,9 +242,9 @@ trait SampleData {
     ),
     "TraderList" -> Json.arr(
       Json.obj(
-        "Type" -> "01",
-        "EORI" -> "GB000000000000001",
-        "Name" -> "John Smith",
+        "Type" -> "02",
+        "EORI" -> "GB000000000000002",
+        "Name" -> "Representative Inc",
         "EstablishmentAddress" -> Json.obj(
           "AddressLine1" -> "99 Avenue Road",
           "City" -> "Any Old Town",
@@ -207,7 +253,35 @@ trait SampleData {
           "TelephoneNumber" -> "1234567890",
           "EmailAddress" -> "test@test.com"
         )
+      ),
+      Json.obj(
+        "Type" -> "01",
+        "EORI" -> "GB000000000000001",
+        "Name" -> "Importer Inc",
+        "EstablishmentAddress" -> Json.obj(
+          "AddressLine1" -> "99 Avenue Road",
+          "City" -> "Any Old Town",
+          "CountryCode" -> "GB",
+          "PostalCode" -> "ZZ11ZZ",
+          "TelephoneNumber" -> "000000000",
+          "EmailAddress" -> "notsupplied@example.com"
+        )
       )
+    ),
+    "ImportInfoList" -> Json.arr(
+      Json.obj(
+        "BoxNumber" -> "62",
+        "ItemNumber" -> "00",
+        "EnteredAs" -> "GBP1",
+        "AmendedTo" -> "GBP2"
+      ),
+      Json.obj(
+        "BoxNumber" -> "33",
+        "ItemNumber" -> "01",
+        "EnteredAs" -> "1",
+        "AmendedTo" -> "2"
+      ),
+
     )
   )
 

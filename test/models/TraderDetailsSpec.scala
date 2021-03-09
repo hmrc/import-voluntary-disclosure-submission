@@ -22,7 +22,7 @@ import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
 
 class TraderDetailsSpec extends ModelSpecBase with SampleData {
 
-  val model: TraderDetails = caseDetails.importer
+  val model: TraderDetails = importer
 
   "Reading underpayment details from JSON" when {
 
@@ -73,7 +73,7 @@ class TraderDetailsSpec extends ModelSpecBase with SampleData {
 
     val json: JsObject = (outgoingJson \ "TraderList")
       .as[JsArray]
-      .apply(0)
+      .apply(1) // importer is the last item in the array
       .as[JsObject] - "Type"
 
     val generatedJson: JsObject = Json.toJson(model).as[JsObject]

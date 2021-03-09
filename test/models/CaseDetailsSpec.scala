@@ -50,8 +50,16 @@ class CaseDetailsSpec extends ModelSpecBase with SampleData {
         result.supportingDocuments shouldBe model.supportingDocuments
       }
 
+      "deserialize the box items (underpayment reasons)" in {
+        result.amendedItems shouldBe model.amendedItems
+      }
+
       "deserialize the importer details" in {
         result.importer shouldBe model.importer
+      }
+
+      "deserialize the representative details" in {
+        result.representative shouldBe model.representative
       }
 
     }
