@@ -22,8 +22,7 @@ import connectors.httpParsers.ResponseHttpParser.ExternalResponse
 import models.requests.CreateCaseRequest
 import models.responses.CreateCaseResponse
 import models.{CaseDetails, DocumentTypes}
-import uk.gov.hmrc.http.logging.Authorization
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpClient}
 
 import java.time.format.DateTimeFormatter
 import java.time.{ZoneId, ZonedDateTime}

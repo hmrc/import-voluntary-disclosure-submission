@@ -35,8 +35,8 @@ trait MockHttp extends SpecBase with MockFactory {
     }
 
     def get[O](url: String, response: O): Any = {
-      (mockHttp.GET[O](_: String, _: Seq[(String, String)])(_: HttpReads[O], _: HeaderCarrier, _: ExecutionContext))
-        .expects(url, *, *, *, *)
+      (mockHttp.GET[O](_: String, _: Seq[(String, String)], _: Seq[(String, String)])(_: HttpReads[O], _: HeaderCarrier, _: ExecutionContext))
+        .expects(url, *, *, *, *, *)
         .returns(Future.successful(response))
     }
 

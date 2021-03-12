@@ -20,8 +20,7 @@ import config.AppConfig
 import connectors.httpParsers.EoriDetailsHttpParser.EoriDetailsReads
 import connectors.httpParsers.ResponseHttpParser.HttpGetResult
 import models.EoriDetails
-import uk.gov.hmrc.http.logging.Authorization
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpClient}
 
 import java.time.format.DateTimeFormatter
 import java.time.{ZoneId, ZonedDateTime}
