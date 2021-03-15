@@ -65,6 +65,18 @@ class UnderpaymentDetailsSpec extends ModelSpecBase with SampleData {
       "deserialize the declarant phone number" in {
         result.declarantPhoneNumber shouldBe model.declarantPhoneNumber
       }
+
+      "deserialize the deferment type" in {
+        result.defermentType shouldBe model.defermentType
+      }
+
+      "deserialize the deferment account number" in {
+        result.defermentAccountNumber shouldBe model.defermentAccountNumber
+      }
+
+      "deserialize the additional deferment number" in {
+        result.additionalDefermentNumber shouldBe model.additionalDefermentNumber
+      }
     }
   }
 

@@ -33,7 +33,10 @@ case class UnderpaymentDetails(userType: UserType,
                                entryDate: LocalDate,
                                originalCustomsProcedureCode: String,
                                declarantName: String,
-                               declarantPhoneNumber: String
+                               declarantPhoneNumber: String,
+                               defermentType: Option[String] = None,
+                               defermentAccountNumber: Option[String] = None,
+                               additionalDefermentNumber: Option[String] = None
                               )
 
 object UnderpaymentDetails {
@@ -50,13 +53,30 @@ object UnderpaymentDetails {
       (__ \ "entryDetails" \ "entryDate").read[LocalDate] and
       (__ \ "customsProcessingCode").read[String] and
       (__ \ "declarantContactDetails" \ "fullName").read[String] and // TODO: needs to come from declarant specific location
-      (__ \ "declarantContactDetails" \ "phoneNumber").read[String]
+      (__ \ "declarantContactDetails" \ "phoneNumber").read[String] and
+      (__ \ "defermentType").readNullable[String] and
+      (__ \ "defermentAccountNumber").readNullable[String] and
+      (__ \ "additionalDefermentNumber").readNullable[String]
     ) (UnderpaymentDetails.apply _)
 
   implicit val writes: Writes[UnderpaymentDetails] = (data: UnderpaymentDetails) => {
 
     val isBulkEntry = if (data.isBulkEntry) "01" else "02"
     val isEuropeanUnionDuty = if (data.isEuropeanUnionDuty) "01" else "02"
+    val defermentDetails = data.defermentAccountNumber match {
+      case Some(dan) if data.additionalDefermentNumber.isDefined =>
+        Json.obj(
+          "DefermentType" -> data.defermentType.get,
+          "DefermentAccountNumber" -> data.defermentAccountNumber.get,
+          "AdditionalDefermentNumber" -> data.additionalDefermentNumber.get
+        )
+      case Some(dan) =>
+        Json.obj(
+          "DefermentType" -> data.defermentType.get,
+          "DefermentAccountNumber" -> data.defermentAccountNumber.get
+        )
+      case _ => Json.obj()
+    }
 
     Json.obj(
       "RequestedBy" -> data.userType,
@@ -70,6 +90,6 @@ object UnderpaymentDetails {
       "DeclarantDate" -> LocalDate.now().format(formattedDate),
       "DeclarantPhoneNumber" -> data.declarantPhoneNumber,
       "DeclarantName" -> data.declarantName
-    )
+    ) ++ defermentDetails
   }
 }
