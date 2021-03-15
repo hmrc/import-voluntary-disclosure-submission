@@ -38,7 +38,10 @@ trait SampleData {
     entryDate = date,
     originalCustomsProcedureCode = "4000C09",
     declarantName = "John Smith",
-    declarantPhoneNumber = "1234567890"
+    declarantPhoneNumber = "1234567890",
+    defermentType = Some("D"),
+    defermentAccountNumber = Some("1234567"),
+    additionalDefermentNumber = Some("C1234567")
   )
 
   val duties = Seq(
@@ -146,6 +149,9 @@ trait SampleData {
       "AmendedC88",
       "AmendedC2"
     ),
+    "defermentType" -> "D",
+    "defermentAccountNumber" -> "1234567",
+    "additionalDefermentNumber" -> "C1234567",
     "amendedItems" -> Json.arr(
       Json.obj(
         "boxNumber" -> 62,
@@ -158,7 +164,7 @@ trait SampleData {
         "itemNumber" -> 1,
         "original" -> "1",
         "amended" -> "2"
-      ),
+      )
     ),
     "supportingDocuments" -> Json.arr(
       Json.obj(
@@ -211,7 +217,10 @@ trait SampleData {
       "OriginalCustomsProcCode" -> "4000C09",
       "DeclarantDate" -> formattedDate,
       "DeclarantPhoneNumber" -> "1234567890",
-      "DeclarantName" -> "John Smith"
+      "DeclarantName" -> "John Smith",
+      "DefermentType" -> "D",
+      "DefermentAccountNumber" -> "1234567",
+      "AdditionalDefermentNumber" -> "C1234567"
     ),
     "DutyTypeList" -> Json.arr(
       Json.obj(
