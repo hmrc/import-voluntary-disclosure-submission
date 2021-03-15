@@ -78,6 +78,16 @@ class UnderpaymentDetailsSpec extends ModelSpecBase with SampleData {
         result.additionalDefermentNumber shouldBe model.additionalDefermentNumber
       }
     }
+
+    "the JSON is invalid" should {
+
+      val json: JsObject = incomingJson ++ Json.obj("defermentType" -> "X")
+
+      "throw an exception" in {
+        intercept[JsResultException](json.as[UnderpaymentDetails])
+      }
+    }
+
   }
 
   "Writing underpayment details as JSON" should {

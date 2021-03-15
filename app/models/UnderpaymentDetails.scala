@@ -42,6 +42,8 @@ case class UnderpaymentDetails(userType: UserType,
 object UnderpaymentDetails {
 
   private val formattedDate = DateTimeFormatter.ofPattern("yyyyMMdd")
+  private val knownDefermentTypes = Seq("A", "B", "C", "D")
+  val validDefermentType: String => Boolean = defermentType => knownDefermentTypes.contains(defermentType)
 
   implicit val reads: Reads[UnderpaymentDetails] = (
     (__ \ "userType").read[UserType] and
@@ -54,7 +56,7 @@ object UnderpaymentDetails {
       (__ \ "customsProcessingCode").read[String] and
       (__ \ "declarantContactDetails" \ "fullName").read[String] and // TODO: needs to come from declarant specific location
       (__ \ "declarantContactDetails" \ "phoneNumber").read[String] and
-      (__ \ "defermentType").readNullable[String] and
+      (__ \ "defermentType").readNullable[String](filter(JsonValidationError("Invalid Deferement Type"))(validDefermentType)) and
       (__ \ "defermentAccountNumber").readNullable[String] and
       (__ \ "additionalDefermentNumber").readNullable[String]
     ) (UnderpaymentDetails.apply _)
@@ -63,17 +65,19 @@ object UnderpaymentDetails {
 
     val isBulkEntry = if (data.isBulkEntry) "01" else "02"
     val isEuropeanUnionDuty = if (data.isEuropeanUnionDuty) "01" else "02"
-    val defermentDetails = data.defermentAccountNumber match {
-      case Some(dan) if data.additionalDefermentNumber.isDefined =>
+
+
+    val defermentDetails = (data.defermentType, data.defermentAccountNumber, data.additionalDefermentNumber) match {
+      case (Some(dt), Some(dan), Some(add)) =>
         Json.obj(
-          "DefermentType" -> data.defermentType.get,
-          "DefermentAccountNumber" -> data.defermentAccountNumber.get,
-          "AdditionalDefermentNumber" -> data.additionalDefermentNumber.get
+          "DefermentType" -> dt,
+          "DefermentAccountNumber" -> dan,
+          "AdditionalDefermentNumber" -> add
         )
-      case Some(dan) =>
+      case (Some(dt), Some(dan), _) =>
         Json.obj(
-          "DefermentType" -> data.defermentType.get,
-          "DefermentAccountNumber" -> data.defermentAccountNumber.get
+          "DefermentType" -> dt,
+          "DefermentAccountNumber" -> dan
         )
       case _ => Json.obj()
     }
