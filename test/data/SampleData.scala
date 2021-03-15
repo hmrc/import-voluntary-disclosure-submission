@@ -280,7 +280,7 @@ trait SampleData {
         "ItemNumber" -> "01",
         "EnteredAs" -> "1",
         "AmendedTo" -> "2"
-      ),
+      )
 
     )
   )
