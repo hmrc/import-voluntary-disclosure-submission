@@ -164,7 +164,7 @@ trait SampleData {
         "itemNumber" -> 1,
         "original" -> "1",
         "amended" -> "2"
-      ),
+      )
     ),
     "supportingDocuments" -> Json.arr(
       Json.obj(
@@ -289,7 +289,7 @@ trait SampleData {
         "ItemNumber" -> "01",
         "EnteredAs" -> "1",
         "AmendedTo" -> "2"
-      ),
+      )
 
     )
   )

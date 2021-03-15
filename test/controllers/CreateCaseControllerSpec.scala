@@ -41,6 +41,13 @@ class CreateCaseControllerSpec extends SpecBase with Matchers {
       )
       .withBody(incomingJson)
 
+    val invalidRequest: FakeRequest[JsObject] = FakeRequest(controllers.routes.CreateCaseController.onSubmit())
+      .withHeaders(
+        HeaderNames.CONTENT_TYPE -> ContentTypes.JSON,
+        HeaderNames.ACCEPT -> ContentTypes.JSON
+      )
+      .withBody(Json.obj())
+
   }
 
   "onSubmit" when {
@@ -92,6 +99,13 @@ class CreateCaseControllerSpec extends SpecBase with Matchers {
         contentAsJson(result) shouldBe Json.obj()
       }
 
+    }
+
+    "called with invalid payload" should {
+      "return (400) Bad Request" in new Test {
+        private val result = target.onSubmit()(invalidRequest)
+        status(result) shouldBe Status.BAD_REQUEST
+      }
     }
   }
 
