@@ -24,6 +24,7 @@ import models.requests.CreateCaseRequest
 import models.responses.CreateCaseResponse
 import org.scalatest.matchers.should.Matchers._
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import play.mvc.Http.HeaderNames
 
 import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -31,7 +32,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class EisConnectorSpec extends SpecBase {
 
   trait Test extends MockHttp with SampleData {
-    implicit val correlationId: UUID = UUID.randomUUID()
+    val correlationId: UUID = UUID.randomUUID()
     lazy val target = new EisConnector(mockHttp, appConfig)
   }
 
@@ -45,26 +46,31 @@ class EisConnectorSpec extends SpecBase {
 
   }
 
-  "eisHeaderCarrier" should {
+  "headers" should {
 
     "generate the correct CustomProcessesHost header required for EIS" in new Test {
-      private val headerCarrier = target.eisHeaderCarrier()
-      headerCarrier.extraHeaders should contain("CustomProcessesHost" -> "Digital")
+      private val headers = target.headers(correlationId)
+      headers should contain("CustomProcessesHost" -> "Digital")
     }
 
     "generate the correct Accept header required for EIS" in new Test {
-      private val headerCarrier = target.eisHeaderCarrier()
-      headerCarrier.extraHeaders should contain("accept" -> "application/json")
+      private val headers = target.headers(correlationId)
+      headers should contain("accept" -> "application/json")
     }
 
     "generate the correct Correlation ID header required for EIS" in new Test {
-      private val headerCarrier = target.eisHeaderCarrier()
-      headerCarrier.extraHeaders.toMap.keys should contain("x-correlation-id")
+      private val headers = target.headers(correlationId)
+      headers should contain("x-correlation-id" -> correlationId.toString)
     }
 
     "generate the correct Date header required for EIS" in new Test {
-      private val headerCarrier = target.eisHeaderCarrier()
-      headerCarrier.extraHeaders.toMap.keys should contain("date")
+      private val headers = target.headers(correlationId)
+      headers.toMap.keys should contain("date")
+    }
+
+    "generate the correct Authorization header required for EIS" in new Test {
+      private val headers = target.headers(correlationId)
+      headers should contain(HeaderNames.AUTHORIZATION -> s"Bearer ${appConfig.createCaseToken}")
     }
 
   }
@@ -83,8 +89,5 @@ class EisConnectorSpec extends SpecBase {
     }
 
   }
-
-
-
 
 }

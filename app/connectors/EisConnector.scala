@@ -22,7 +22,7 @@ import connectors.httpParsers.ResponseHttpParser.ExternalResponse
 import models.requests.CreateCaseRequest
 import models.responses.CreateCaseResponse
 import models.{CaseDetails, DocumentTypes}
-import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import java.time.format.DateTimeFormatter
 import java.time.{ZoneId, ZonedDateTime}
@@ -40,18 +40,19 @@ class EisConnector @Inject()(http: HttpClient,
 
   private[connectors] lazy val createCaseUrl = s"${appConfig.eisBaseUrl}/cpr/caserequest/c18/create/v1"
 
-  private[connectors] def eisHeaderCarrier()(implicit hc: HeaderCarrier, correlationId: UUID): HeaderCarrier = hc
-    .copy(authorization = Some(Authorization(s"Bearer ${appConfig.createCaseToken}")))
-    .withExtraHeaders(
-      "x-correlation-id" -> correlationId.toString,
-      "CustomProcessesHost" -> "Digital",
-      "date" -> httpDateFormat.format(ZonedDateTime.now),
-      "accept" -> "application/json"
-    )
+  private[connectors] def headers(correlationId: UUID): Seq[(String, String)] = Seq(
+    "Authorization" -> s"Bearer ${appConfig.createCaseToken}",
+    "x-correlation-id" -> correlationId.toString,
+    "CustomProcessesHost" -> "Digital",
+    "date" -> httpDateFormat.format(ZonedDateTime.now),
+    "accept" -> "application/json"
+  )
 
   def createCase(caseDetails: CaseDetails)
                 (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[ExternalResponse[CreateCaseResponse]] = {
-    implicit val acknowledgementReference: UUID = UUID.randomUUID()
+
+    val acknowledgementReference: UUID = UUID.randomUUID()
+    val eisHeaders = headers(acknowledgementReference)
 
     val request = CreateCaseRequest(
       acknowledgementReference,
@@ -66,7 +67,7 @@ class EisConnector @Inject()(http: HttpClient,
       )
     )
 
-    http.POST(createCaseUrl, request)(implicitly, CreateCaseHttpReads, eisHeaderCarrier(), implicitly)
+    http.POST(createCaseUrl, request, eisHeaders)(CreateCaseRequest.writes, CreateCaseHttpReads, hc, ec)
   }
 
 }
