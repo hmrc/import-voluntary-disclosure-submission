@@ -27,44 +27,56 @@ class DutyTypesSpec extends ModelSpecBase {
     "valid data exists" should {
 
       "deserialize a ADD (Definitive)" in {
-        JsString("ADD (Definitive)").as[DutyType] shouldBe DutyTypes.A30
+        JsString("A30").as[DutyType] shouldBe DutyTypes.A30
       }
 
       "deserialize a ADD (Provisional)" in {
-        JsString("ADD (Provisional)").as[DutyType] shouldBe DutyTypes.A35
+        JsString("A35").as[DutyType] shouldBe DutyTypes.A35
       }
 
       "deserialize a Additional Duty" in {
-        JsString("Additional Duty").as[DutyType] shouldBe DutyTypes.A20
+        JsString("A20").as[DutyType] shouldBe DutyTypes.A20
       }
 
       "deserialize a Compensatory Interest" in {
-        JsString("Compensatory Interest").as[DutyType] shouldBe DutyTypes.D10
+        JsString("D10").as[DutyType] shouldBe DutyTypes.D10
       }
 
       "deserialize a importVat" in {
         JsString("importVat").as[DutyType] shouldBe DutyTypes.ImportVat
+      }
+      "deserialize a new version of importVat" in {
+        JsString("B00").as[DutyType] shouldBe DutyTypes.B00
       }
 
       "deserialize a exciseDuty" in {
         JsString("exciseDuty").as[DutyType] shouldBe DutyTypes.ExciseDuty
       }
 
+      "deserialize a new version of exciseDuty" in {
+        JsString("E00").as[DutyType] shouldBe DutyTypes.E00
+      }
+
       "deserialize a Countervieling Duty (Definitive)" in {
-        JsString("Countervieling Duty (Definitive)").as[DutyType] shouldBe DutyTypes.A40
+        JsString("A40").as[DutyType] shouldBe DutyTypes.A40
       }
 
       "deserialize a Countervieling Duty (Provisional)" in {
-        JsString("Countervieling Duty (Provisional)").as[DutyType] shouldBe DutyTypes.A45
+        JsString("A45").as[DutyType] shouldBe DutyTypes.A45
       }
 
       "deserialize a Agricultural" in {
-        JsString("Agricultural").as[DutyType] shouldBe DutyTypes.A10
+        JsString("A10").as[DutyType] shouldBe DutyTypes.A10
       }
 
       "deserialize a CustomsDuty" in {
         JsString("customsDuty").as[DutyType] shouldBe DutyTypes.CustomsDuty
       }
+
+      "deserialize a new version of CustomsDuty" in {
+        JsString("A00").as[DutyType] shouldBe DutyTypes.A00
+      }
+
     }
 
     "invalid data exists" should {
@@ -99,8 +111,16 @@ class DutyTypesSpec extends ModelSpecBase {
       Json.toJson(ImportVat) shouldBe JsString("B00")
     }
 
+    "serialise B00 as B00" in {
+      Json.toJson(B00) shouldBe JsString("B00")
+    }
+
     "serialise ExciseDuty as E00" in {
       Json.toJson(ExciseDuty) shouldBe JsString("E00")
+    }
+
+    "serialise E00 as E00" in {
+      Json.toJson(E00) shouldBe JsString("E00")
     }
 
     "serialise as A40" in {
@@ -118,5 +138,10 @@ class DutyTypesSpec extends ModelSpecBase {
     "serialise CustomsDuty as A00" in {
       Json.toJson(CustomsDuty) shouldBe JsString("A00")
     }
+
+    "serialise A00 as A00" in {
+      Json.toJson(A00) shouldBe JsString("A00")
+    }
+
   }
 }
