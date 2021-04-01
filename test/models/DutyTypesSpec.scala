@@ -43,17 +43,10 @@ class DutyTypesSpec extends ModelSpecBase {
       }
 
       "deserialize a importVat" in {
-        JsString("importVat").as[DutyType] shouldBe DutyTypes.ImportVat
-      }
-      "deserialize a new version of importVat" in {
         JsString("B00").as[DutyType] shouldBe DutyTypes.B00
       }
 
       "deserialize a exciseDuty" in {
-        JsString("exciseDuty").as[DutyType] shouldBe DutyTypes.ExciseDuty
-      }
-
-      "deserialize a new version of exciseDuty" in {
         JsString("E00").as[DutyType] shouldBe DutyTypes.E00
       }
 
@@ -70,10 +63,6 @@ class DutyTypesSpec extends ModelSpecBase {
       }
 
       "deserialize a CustomsDuty" in {
-        JsString("customsDuty").as[DutyType] shouldBe DutyTypes.CustomsDuty
-      }
-
-      "deserialize a new version of CustomsDuty" in {
         JsString("A00").as[DutyType] shouldBe DutyTypes.A00
       }
 
@@ -107,16 +96,8 @@ class DutyTypesSpec extends ModelSpecBase {
       Json.toJson(D10) shouldBe JsString("D10")
     }
 
-    "serialise ImportVat as B00" in {
-      Json.toJson(ImportVat) shouldBe JsString("B00")
-    }
-
     "serialise B00 as B00" in {
       Json.toJson(B00) shouldBe JsString("B00")
-    }
-
-    "serialise ExciseDuty as E00" in {
-      Json.toJson(ExciseDuty) shouldBe JsString("E00")
     }
 
     "serialise E00 as E00" in {
@@ -133,10 +114,6 @@ class DutyTypesSpec extends ModelSpecBase {
 
     "serialise as A10" in {
       Json.toJson(A10) shouldBe JsString("A10")
-    }
-
-    "serialise CustomsDuty as A00" in {
-      Json.toJson(CustomsDuty) shouldBe JsString("A00")
     }
 
     "serialise A00 as A00" in {

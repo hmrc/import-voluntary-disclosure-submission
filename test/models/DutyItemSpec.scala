@@ -22,7 +22,7 @@ import play.api.libs.json.{JsObject, JsValue, Json}
 class DutyItemSpec extends ModelSpecBase {
 
   val model: DutyItem = DutyItem(
-    DutyTypes.CustomsDuty,
+    DutyTypes.A00,
     BigDecimal("1"),
     BigDecimal("2")
   )
@@ -30,7 +30,7 @@ class DutyItemSpec extends ModelSpecBase {
   "Reading a duty item from JSON" when {
 
     val json: JsObject = Json.obj(
-      "duty" -> "customsDuty",
+      "duty" -> "A00",
       "original" -> BigDecimal(1),
       "amended" -> BigDecimal(2)
     )

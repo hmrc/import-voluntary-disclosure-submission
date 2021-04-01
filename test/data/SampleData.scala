@@ -45,9 +45,9 @@ trait SampleData {
   )
 
   val duties = Seq(
-    DutyItem(DutyTypes.CustomsDuty, BigDecimal("123"), BigDecimal("233.33")),
-    DutyItem(DutyTypes.ImportVat, BigDecimal("111.11"), BigDecimal("1234")),
-    DutyItem(DutyTypes.ExciseDuty, BigDecimal("123.22"), BigDecimal("4409.55"))
+    DutyItem(DutyTypes.A00, BigDecimal("123"), BigDecimal("233.33")),
+    DutyItem(DutyTypes.B00, BigDecimal("111.11"), BigDecimal("1234")),
+    DutyItem(DutyTypes.E00, BigDecimal("123.22"), BigDecimal("4409.55"))
   )
 
   val documentsSupplied = Seq(
