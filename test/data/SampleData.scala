@@ -127,17 +127,17 @@ trait SampleData {
     ),
     "underpaymentDetails" -> Json.arr(
       Json.obj(
-        "duty" -> "customsDuty",
+        "duty" -> "A00",
         "original" -> BigDecimal("123"),
         "amended" -> BigDecimal("233.33")
       ),
       Json.obj(
-        "duty" -> "importVat",
+        "duty" -> "B00",
         "original" -> BigDecimal("111.11"),
         "amended" -> BigDecimal("1234")
       ),
       Json.obj(
-        "duty" -> "exciseDuty",
+        "duty" -> "E00",
         "original" -> BigDecimal("123.22"),
         "amended" -> BigDecimal("4409.55")
       )
