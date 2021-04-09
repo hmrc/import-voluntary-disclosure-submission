@@ -45,9 +45,9 @@ trait SampleData {
   )
 
   val duties = Seq(
-    DutyItem(DutyTypes.CustomsDuty, BigDecimal("123"), BigDecimal("233.33")),
-    DutyItem(DutyTypes.ImportVat, BigDecimal("111.11"), BigDecimal("1234")),
-    DutyItem(DutyTypes.ExciseDuty, BigDecimal("123.22"), BigDecimal("4409.55"))
+    DutyItem(DutyTypes.A00, BigDecimal("123"), BigDecimal("233.33")),
+    DutyItem(DutyTypes.B00, BigDecimal("111.11"), BigDecimal("1234")),
+    DutyItem(DutyTypes.E00, BigDecimal("123.22"), BigDecimal("4409.55"))
   )
 
   val documentsSupplied = Seq(
@@ -127,17 +127,17 @@ trait SampleData {
     ),
     "underpaymentDetails" -> Json.arr(
       Json.obj(
-        "duty" -> "customsDuty",
+        "duty" -> "A00",
         "original" -> BigDecimal("123"),
         "amended" -> BigDecimal("233.33")
       ),
       Json.obj(
-        "duty" -> "importVat",
+        "duty" -> "B00",
         "original" -> BigDecimal("111.11"),
         "amended" -> BigDecimal("1234")
       ),
       Json.obj(
-        "duty" -> "exciseDuty",
+        "duty" -> "E00",
         "original" -> BigDecimal("123.22"),
         "amended" -> BigDecimal("4409.55")
       )
