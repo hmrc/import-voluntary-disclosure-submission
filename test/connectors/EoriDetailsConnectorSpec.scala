@@ -17,7 +17,7 @@
 package connectors
 
 import base.SpecBase
-import connectors.httpParsers.ResponseHttpParser.{ExternalResponse, HttpGetResult}
+import connectors.httpParsers.ResponseHttpParser.ExternalResponse
 import data.SampleData
 import mocks.MockHttp
 import models.EoriDetails
@@ -28,51 +28,40 @@ import utils.ReusableValues
 import java.time.ZonedDateTime
 import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 class EoriDetailsConnectorSpec extends SpecBase with MockHttp with ReusableValues {
 
   trait Test extends MockHttp with SampleData {
-    implicit val correlationId: UUID = UUID.randomUUID()
+    val expectedCorrelationId = "effd019b-0d2e-42a2-bb98-1e8e14738b59"
+    val correlationId: UUID = UUID.fromString(expectedCorrelationId)
     lazy val target = new EoriDetailsConnector(mockHttp, appConfig)
-
-    def getEoriDetailsResult(): Future[HttpGetResult[EoriDetails]] = new EoriDetailsConnector(mockHttp, appConfig).getEoriDetails(idOne)
+    lazy val headers: Seq[(String, String)] = target.headers(correlationId)
   }
-
 
   val expectedEoriDetailsUrl = "http://localhost:7952/subscriptions/subscriptiondisplay/v1"
 
   "getEoriDetailsUrl" should {
     "return the correct URL" in new Test {
-      target.getEoriDetailsUrl(idOne) shouldBe expectedEoriDetailsUrl
+      target.getEoriDetailsUrl shouldBe expectedEoriDetailsUrl
     }
   }
 
-  "sub09HeaderCarrier" should {
+  "headers" should {
 
     "generate the correct Date header required for sub09" in new Test {
-      private val headerCarrier = target.sub09HeaderCarrier()
-      headerCarrier.extraHeaders should contain("Date" -> target.httpDateFormat.format(ZonedDateTime.now))
+      headers should contain("Date" -> target.httpDateFormat.format(ZonedDateTime.now))
     }
 
     "generate the correct Correlation ID header required for sub09" in new Test {
-      private val headerCarrier = target.sub09HeaderCarrier()
-      headerCarrier.extraHeaders.toMap.keys should contain("X-Correlation-ID")
-    }
-
-    "generate the correct Content-Type header required for sub09" in new Test {
-      private val headerCarrier = target.sub09HeaderCarrier()
-      headerCarrier.extraHeaders should contain("Content-Type" -> "application/json")
+      headers should contain("X-Correlation-ID" -> expectedCorrelationId)
     }
 
     "generate the correct Accept header required for sub09" in new Test {
-      private val headerCarrier = target.sub09HeaderCarrier()
-      headerCarrier.extraHeaders should contain("Accept" -> "application/json")
+      headers should contain("Accept" -> "application/json")
     }
 
-    "generate the correct X-Source-System header required for sub09" in new Test {
-      private val headerCarrier = target.sub09HeaderCarrier()
-      headerCarrier.extraHeaders should contain("X-Source-System" -> "DIG")
+    "generate the correct X-Forwarded-Host header required for sub09" in new Test {
+      headers should contain("X-Forwarded-Host" -> "MDTP")
     }
 
   }
