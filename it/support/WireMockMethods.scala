@@ -52,6 +52,11 @@ trait WireMockMethods {
       thenReturnInternal(status, Map.empty, Some(stringBody))
     }
 
+    def thenReturn[T](status: Int, headers: Map[String, String], body: T)(implicit writes: Writes[T]): StubMapping = {
+      val stringBody = writes.writes(body).toString()
+      thenReturnInternal(status, headers, Some(stringBody))
+    }
+
     def thenReturn(status: Int, body: String): StubMapping = {
       thenReturnInternal(status, Map.empty, Some(body))
     }

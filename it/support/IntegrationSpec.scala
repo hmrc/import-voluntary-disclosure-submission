@@ -45,6 +45,7 @@ trait IntegrationSpec
   def overriddenConfig: Map[String, Any] = Map(
     s"$servicesPath.auth.host" -> mockHost,
     s"$servicesPath.auth.port" -> mockPort,
+    s"$servicesPath.eis.port" -> mockPort,
     "auditing.consumer.baseUri.port" -> mockPort
   )
 
@@ -63,7 +64,7 @@ trait IntegrationSpec
     super.afterAll()
   }
 
-  def buildRequest(path: String): WSRequest = client.url(s"http://localhost:$port/import-voluntary-disclosure-submission$path").withFollowRedirects(false)
+  def buildRequest(path: String): WSRequest = client.url(s"http://localhost:$port/api$path").withFollowRedirects(false)
 
   def document(response: WSResponse): JsValue = Json.parse(response.body)
 }

@@ -18,10 +18,7 @@ package base
 
 import config.AppConfig
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.TryValues
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.{AnyContentAsEmpty, ControllerComponents}
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.{FakeRequest, Helpers}
@@ -29,13 +26,7 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-trait SpecBase extends AnyWordSpec
-  with GuiceOneAppPerSuite
-  with TryValues
-  with ScalaFutures
-  with IntegrationPatience
-  with MaterializerSupport
-  with MockFactory {
+trait SpecBase extends AnyWordSpec with MockFactory {
 
   val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/foo")
     .withSession(SessionKeys.sessionId -> "foo")
@@ -51,5 +42,4 @@ trait SpecBase extends AnyWordSpec
   val controllerComponents: ControllerComponents = Helpers.stubControllerComponents()
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
-
 }

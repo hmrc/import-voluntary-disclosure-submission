@@ -17,7 +17,9 @@
 package controllers
 
 import base.SpecBase
+import controllers.actions.AuthAction
 import data.SampleData
+import mocks.connectors.MockAuthConnector
 import mocks.services.MockCreateCaseService
 import models._
 import models.responses.CreateCaseResponse
@@ -28,11 +30,17 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsJson, contentType, defaultAwaitTimeout, status}
 import play.mvc.Http.HeaderNames
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+
 class CreateCaseControllerSpec extends SpecBase with Matchers {
 
-  trait Test extends MockCreateCaseService with SampleData {
+  trait Test extends MockAuthConnector with MockCreateCaseService with SampleData {
 
-    lazy val target = new CreateCaseController(controllerComponents, mockCreateCaseService)
+    MockedAuthConnector.authorise(Future.successful(Some("externalId")))
+    val authAction = new AuthAction(mockAuthConnector)
+
+    lazy val target = new CreateCaseController(controllerComponents, mockCreateCaseService, authAction)
 
     val validRequest: FakeRequest[JsObject] = FakeRequest(controllers.routes.CreateCaseController.onSubmit())
       .withHeaders(
