@@ -24,6 +24,7 @@ import play.api.libs.json._
 case class CaseDetails(underpaymentDetails: UnderpaymentDetails,
                        duties: Seq[DutyItem],
                        documentsSupplied: Seq[DocumentType],
+                       optionalDocumentsSupplied: Seq[DocumentType],
                        supportingDocuments: Seq[SupportingDocument],
                        amendedItems: Seq[BoxItem],
                        importer: TraderDetails,
@@ -34,6 +35,7 @@ object CaseDetails {
     __.read[UnderpaymentDetails] and
       (__ \ "underpaymentDetails").read[Seq[DutyItem]] and
       (__ \ "supportingDocumentTypes").read[Seq[DocumentType]] and
+      (__ \ "optionalDocumentTypes").read[Seq[DocumentType]] and
       (__ \ "supportingDocuments").read[Seq[SupportingDocument]] and
       (__ \ "amendedItems").read[Seq[BoxItem]] and
       (__ \ "importer").read[TraderDetails] and
@@ -44,16 +46,18 @@ object CaseDetails {
   implicit val writes: Writes[CaseDetails] = (o: CaseDetails) => {
 
     val importer = Some(Json.toJson(o.importer).as[JsObject] ++ Json.obj("Type" -> TraderTypes.Importer))
-    val representative = o.representative.map{ rep =>
+    val representative = o.representative.map { rep =>
       Json.toJson(rep).as[JsObject] ++ Json.obj("Type" -> TraderTypes.Representative)
     }
 
     val traders: Seq[JsObject] = Seq(representative, importer).flatten
 
+    val documentList = o.documentsSupplied ++ o.optionalDocumentsSupplied
+
     Json.obj(
       "UnderpaymentDetails" -> o.underpaymentDetails,
       "DutyTypeList" -> o.duties,
-      "DocumentList" -> o.documentsSupplied,
+      "DocumentList" -> documentList,
       "ImportInfoList" -> o.amendedItems,
       "TraderList" -> traders
     )
