@@ -43,7 +43,7 @@ class CaseDetailsSpec extends ModelSpecBase with SampleData {
       }
 
       "deserialize the documentsSupplied" in {
-        result.documentsSupplied shouldBe model.documentsSupplied
+        result.documentsSupplied ++ result.optionalDocumentsSupplied shouldBe model.documentsSupplied ++ model.optionalDocumentsSupplied
       }
 
       "deserialize the supportingDocuments" in {

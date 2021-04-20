@@ -16,6 +16,7 @@
 
 package data
 
+import models.DocumentTypes.DocumentType
 import models._
 import play.api.libs.json.{JsObject, Json}
 
@@ -52,7 +53,10 @@ trait SampleData {
 
   val documentsSupplied = Seq(
     DocumentTypes.OriginalC88,
-    DocumentTypes.OriginalC2,
+    DocumentTypes.OriginalC2
+  )
+
+  val optionalDocumentsSupplied = Seq(
     DocumentTypes.AmendedSubstituteEntryWorksheet,
     DocumentTypes.AmendedC88,
     DocumentTypes.AmendedC2
@@ -106,7 +110,8 @@ trait SampleData {
     supportingDocuments = supportingDocuments,
     amendedItems = amendedItems,
     importer = importer,
-    representative = Some(representative)
+    representative = Some(representative),
+    optionalDocumentsSupplied = optionalDocumentsSupplied
   )
 
   val incomingJson: JsObject = Json.obj(
@@ -143,6 +148,13 @@ trait SampleData {
       )
     ),
     "supportingDocumentTypes" -> Json.arr(
+      "OriginalC88",
+      "OriginalC2",
+      "AmendedSubstituteEntryWorksheet",
+      "AmendedC88",
+      "AmendedC2"
+    ),
+    "optionalDocumentTypes" -> Json.arr(
       "OriginalC88",
       "OriginalC2",
       "AmendedSubstituteEntryWorksheet",
