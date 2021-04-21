@@ -16,7 +16,6 @@
 
 package data
 
-import models.DocumentTypes.DocumentType
 import models._
 import play.api.libs.json.{JsObject, Json}
 
