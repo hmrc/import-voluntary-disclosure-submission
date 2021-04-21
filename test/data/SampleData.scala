@@ -52,10 +52,7 @@ trait SampleData {
 
   val documentsSupplied = Seq(
     DocumentTypes.OriginalC88,
-    DocumentTypes.OriginalC2
-  )
-
-  val optionalDocumentsSupplied = Seq(
+    DocumentTypes.OriginalC2,
     DocumentTypes.AmendedSubstituteEntryWorksheet,
     DocumentTypes.AmendedC88,
     DocumentTypes.AmendedC2
@@ -109,8 +106,7 @@ trait SampleData {
     supportingDocuments = supportingDocuments,
     amendedItems = amendedItems,
     importer = importer,
-    representative = Some(representative),
-    optionalDocumentsSupplied = optionalDocumentsSupplied
+    representative = Some(representative)
   )
 
   val incomingJson: JsObject = Json.obj(
@@ -148,9 +144,7 @@ trait SampleData {
     ),
     "supportingDocumentTypes" -> Json.arr(
       "OriginalC88",
-      "OriginalC2"
-    ),
-    "optionalDocumentTypes" -> Json.arr(
+      "OriginalC2",
       "AmendedSubstituteEntryWorksheet",
       "AmendedC88",
       "AmendedC2"

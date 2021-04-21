@@ -24,7 +24,6 @@ import play.api.libs.json._
 case class CaseDetails(underpaymentDetails: UnderpaymentDetails,
                        duties: Seq[DutyItem],
                        documentsSupplied: Seq[DocumentType],
-                       optionalDocumentsSupplied: Seq[DocumentType],
                        supportingDocuments: Seq[SupportingDocument],
                        amendedItems: Seq[BoxItem],
                        importer: TraderDetails,
@@ -35,7 +34,6 @@ object CaseDetails {
     __.read[UnderpaymentDetails] and
       (__ \ "underpaymentDetails").read[Seq[DutyItem]] and
       (__ \ "supportingDocumentTypes").read[Seq[DocumentType]] and
-      (__ \ "optionalDocumentTypes").read[Seq[DocumentType]] and
       (__ \ "supportingDocuments").read[Seq[SupportingDocument]] and
       (__ \ "amendedItems").read[Seq[BoxItem]] and
       (__ \ "importer").read[TraderDetails] and
@@ -52,12 +50,10 @@ object CaseDetails {
 
     val traders: Seq[JsObject] = Seq(representative, importer).flatten
 
-    val documentList = o.documentsSupplied ++ o.optionalDocumentsSupplied
-
     Json.obj(
       "UnderpaymentDetails" -> o.underpaymentDetails,
       "DutyTypeList" -> o.duties,
-      "DocumentList" -> documentList,
+      "DocumentList" -> o.documentsSupplied,
       "ImportInfoList" -> o.amendedItems,
       "TraderList" -> traders
     )
