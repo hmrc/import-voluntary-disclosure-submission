@@ -24,7 +24,7 @@ class TraderDetailsSpec extends ModelSpecBase with SampleData {
 
   val model: TraderDetails = importer
 
-  "Reading underpayment details from JSON" when {
+  "Reading trader details from JSON" when {
 
     val json: JsObject = (incomingJson \ "importer").as[JsObject]
 
@@ -66,15 +66,41 @@ class TraderDetailsSpec extends ModelSpecBase with SampleData {
       "deserialize the postcode" in {
         result.postalCode shouldBe model.postalCode
       }
+
+      "deserialize the VAT number" in {
+        result.vatNumber shouldBe model.vatNumber
+      }
     }
   }
 
-  "Writing trader details JSON" should {
+  "Writing trader details with a VAT number JSON" should {
 
     val json: JsObject = (outgoingJson \ "TraderList")
       .as[JsArray]
       .apply(1) // importer is the last item in the array
       .as[JsObject] - "Type"
+
+    val generatedJson: JsObject = Json.toJson(model).as[JsObject]
+
+    json.keys.foreach { propertyName =>
+
+      s"generate a property named $propertyName" in {
+        generatedJson.keys should contain(propertyName)
+      }
+
+      s"have the correct value for $propertyName" in {
+        (generatedJson \ propertyName).as[JsValue] shouldBe (json \ propertyName).as[JsValue]
+      }
+    }
+  }
+
+  "Writing trader details without a VAT number JSON" should {
+
+    val model: TraderDetails = importer.copy(vatNumber = None)
+    val json: JsObject = (outgoingJson \ "TraderList")
+      .as[JsArray]
+      .apply(1) // importer is the last item in the array
+      .as[JsObject] - "Type" - "VATNumber"
 
     val generatedJson: JsObject = Json.toJson(model).as[JsObject]
 

@@ -83,7 +83,8 @@ trait SampleData {
     city = "Any Old Town",
     county = None,
     countryCode = "GB",
-    postalCode = "ZZ11ZZ"
+    postalCode = "ZZ11ZZ",
+    vatNumber = Some("123456789")
   )
 
   val representative: TraderDetails = TraderDetails(
@@ -96,7 +97,8 @@ trait SampleData {
     city = "Any Old Town",
     county = None,
     countryCode = "GB",
-    postalCode = "ZZ11ZZ"
+    postalCode = "ZZ11ZZ",
+    vatNumber = None
   )
 
   val caseDetails: CaseDetails = CaseDetails(
@@ -187,7 +189,8 @@ trait SampleData {
         "city" -> "Any Old Town",
         "countryCode" -> "GB",
         "postalCode" -> "ZZ11ZZ"
-      )
+      ),
+      "vatNumber" -> "123456789"
     ),
     "representative" -> Json.obj(
       "eori" -> "GB000000000000002",

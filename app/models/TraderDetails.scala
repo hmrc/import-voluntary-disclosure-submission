@@ -29,7 +29,8 @@ case class TraderDetails(eori: String,
                          city: String,
                          county: Option[String],
                          countryCode: String,
-                         postalCode: String)
+                         postalCode: String,
+                         vatNumber: Option[String])
 
 object TraderDetails {
   implicit val reads: Reads[TraderDetails] = (
@@ -42,20 +43,29 @@ object TraderDetails {
       (__ \ "address" \ "city").read[String] and
       (__ \ "address" \ "county").readNullable[String] and
       (__ \ "address" \ "countryCode").read[String] and
-      (__ \ "address" \ "postalCode").read[String]
+      (__ \ "address" \ "postalCode").read[String] and
+      (__ \ "vatNumber").readNullable[String]
 
     ) (TraderDetails.apply _)
 
-  implicit val writes: Writes[TraderDetails] = (data: TraderDetails) => Json.obj(
-    "EORI" -> data.eori,
-    "Name" -> data.name,
-    "EstablishmentAddress" -> Json.obj(
-      "AddressLine1" -> data.addressLine1,
-      "City" -> data.city,
-      "CountryCode" -> data.countryCode,
-      "PostalCode" -> data.postalCode,
-      "TelephoneNumber" -> data.phoneNumber,
-      "EmailAddress" -> data.emailAddress
+  implicit val writes: Writes[TraderDetails] = (data: TraderDetails) => {
+    val mandatoryData: JsObject = Json.obj(
+      "EORI" -> data.eori,
+      "Name" -> data.name,
+      "EstablishmentAddress" -> Json.obj(
+        "AddressLine1" -> data.addressLine1,
+        "City" -> data.city,
+        "CountryCode" -> data.countryCode,
+        "PostalCode" -> data.postalCode,
+        "TelephoneNumber" -> data.phoneNumber,
+        "EmailAddress" -> data.emailAddress
+      )
     )
-  )
+
+    val optionalData: JsObject = data.vatNumber
+      .map(vatNumber => Json.obj("VATNumber" -> vatNumber))
+      .getOrElse(Json.obj())
+
+    mandatoryData ++ optionalData
+  }
 }
