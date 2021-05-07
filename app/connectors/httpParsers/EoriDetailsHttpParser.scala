@@ -17,6 +17,7 @@
 package connectors.httpParsers
 
 import connectors.httpParsers.ResponseHttpParser.HttpGetResult
+import models.responses.Sub09Response
 import models.{EoriDetails, ErrorModel}
 import play.api.Logger
 import play.api.http.Status
@@ -31,16 +32,28 @@ object EoriDetailsHttpParser {
     override def read(method: String, url: String, response: HttpResponse): HttpGetResult[EoriDetails] = {
       response.status match {
         case Status.OK =>
-          response.json.validate[EoriDetails](EoriDetails.reads).fold(
+          response.json.validate[Sub09Response](Sub09Response.reads).fold(
             invalid => {
-              logger.error("Failed to validate JSON with errors: " + invalid)
+              logger.error("Failed to parse Sub09 response: " + invalid)
               Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Invalid Json returned from SUB09 API for EoriDetailsHttpParser"))
             },
-            valid => Right(valid)
+            okResponse => handleOkResponse(okResponse)
           )
+        case Status.NOT_FOUND =>
+          logger.error("Eori Details not found.")
+          Left(ErrorModel(Status.NOT_FOUND, "Eori Details not found"))
         case status =>
           logger.error("Error: " + status + " body: " + response.body)
-          Left(ErrorModel(status, "Downstream error returned when retrieving EoriDetails model from Sub09 (stub atm)"))
+          Left(ErrorModel(status, "Downstream error returned when retrieving EoriDetails model from Sub09"))
+      }
+    }
+
+    private def handleOkResponse(response: Sub09Response): HttpGetResult[EoriDetails] = {
+      response.eoriDetails match {
+        case Some(details) => Right(details)
+        case _ =>
+          logger.error("Eori Details not returned on Ok response. Body: " + response.eoriStatus)
+          Left(ErrorModel(Status.NOT_FOUND, "Eori Details not returned on Ok response"))
       }
     }
   }

@@ -27,13 +27,13 @@ case class EoriDetails(eori: String,
 
 object EoriDetails {
 
-  val reads: Reads[EoriDetails] = for {
-    eori <- (__ \\ "responseDetail" \\ "EORINo").read[String]
-    name <- (__ \\ "responseDetail" \\ "CDSFullName").read[String]
-    streetAndNumber <- (__ \\ "responseDetail" \\ "CDSEstablishmentAddress" \\ "streetAndNumber").read[String]
-    city <- (__ \\ "responseDetail" \\ "CDSEstablishmentAddress" \\ "city").read[String]
-    postalCode <- (__ \\ "responseDetail" \\ "CDSEstablishmentAddress" \\ "postalCode").readNullable[String]
-    countryCode <- (__ \\ "responseDetail" \\ "CDSEstablishmentAddress" \\ "countryCode").read[String]
+  implicit val reads: Reads[EoriDetails] = for {
+    eori <- (__ \\ "EORINo").read[String]
+    name <- (__ \\ "CDSFullName").read[String]
+    streetAndNumber <- (__ \\ "CDSEstablishmentAddress" \\ "streetAndNumber").read[String]
+    city <- (__ \\ "CDSEstablishmentAddress" \\ "city").read[String]
+    postalCode <- (__ \\ "CDSEstablishmentAddress" \\ "postalCode").readNullable[String]
+    countryCode <- (__ \\ "CDSEstablishmentAddress" \\ "countryCode").read[String]
   } yield {
     EoriDetails(eori, name, streetAndNumber, city, postalCode, countryCode)
   }

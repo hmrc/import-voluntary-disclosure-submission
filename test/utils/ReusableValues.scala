@@ -37,14 +37,25 @@ trait ReusableValues {
   val errorModel: HttpResponse = HttpResponse(Status.NOT_FOUND, "Error Message")
 
   val detailsJson: JsObject = Json.obj(
-    "responseDetail" -> Json.obj(
-      "EORINo" -> "GB987654321000",
-      "CDSFullName" -> "Fast Food ltd",
-      "CDSEstablishmentAddress" -> Json.obj(
-        "streetAndNumber" -> "99 Avenue Road",
-        "city" -> "Anyold Town",
-        "postalCode" -> "99JZ 1AA",
-        "countryCode" -> "GB"
+    "subscriptionDisplayResponse" -> Json.obj(
+      "responseCommon" -> Json.obj(
+        "status" -> "OK",
+        "statusText" -> "Optional status text from ETMP",
+        "processingDate" -> "2016-09-17T19:33:47Z",
+        "returnParameters" -> Json.arr(
+          Json.obj("paramName" -> "POSITION",
+            "paramValue" -> "LINK")
+        )
+      ),
+      "responseDetail" -> Json.obj(
+        "EORINo" -> "GB987654321000",
+        "CDSFullName" -> "Fast Food ltd",
+        "CDSEstablishmentAddress" -> Json.obj(
+          "streetAndNumber" -> "99 Avenue Road",
+          "city" -> "Anyold Town",
+          "postalCode" -> "99JZ 1AA",
+          "countryCode" -> "GB"
+        )
       )
     )
   )
