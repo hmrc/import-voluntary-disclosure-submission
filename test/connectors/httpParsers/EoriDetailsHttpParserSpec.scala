@@ -28,14 +28,39 @@ import utils.ReusableValues
 class EoriDetailsHttpParserSpec extends SpecBase with ReusableValues {
 
   val eoriDetailsJsonWithoutPostcode: JsObject = Json.obj(
-    "responseDetail" -> Json.obj(
-      "EORINo" -> "GB987654321000",
-      "CDSFullName" -> "Fast Food ltd",
-      "CDSEstablishmentAddress" -> Json.obj(
-        "streetAndNumber" -> "99 Avenue Road",
-        "city" -> "Anyold Town",
-        "postalCode" -> "99JZ 1AA",
-        "countryCode" -> "GB"
+    "subscriptionDisplayResponse" -> Json.obj(
+      "responseCommon" -> Json.obj(
+        "status" -> "OK",
+        "statusText" -> "Optional status text from ETMP",
+        "processingDate" -> "2016-09-17T19:33:47Z",
+        "returnParameters" -> Json.arr(
+          Json.obj("paramName" -> "POSITION",
+            "paramValue" -> "LINK")
+        )
+      ),
+      "responseDetail" -> Json.obj(
+        "EORINo" -> "GB987654321000",
+        "CDSFullName" -> "Fast Food ltd",
+        "CDSEstablishmentAddress" -> Json.obj(
+          "streetAndNumber" -> "99 Avenue Road",
+          "city" -> "Anyold Town",
+          "postalCode" -> "99JZ 1AA",
+          "countryCode" -> "GB"
+        )
+      )
+    )
+  )
+
+  val detailsNotFoundJson: JsObject = Json.obj(
+    "subscriptionDisplayResponse" -> Json.obj(
+      "responseCommon" -> Json.obj(
+        "status" -> "OK",
+        "statusText" -> "037 - Mandatory parameters missing or invalid",
+        "processingDate" -> "2016-09-17T19:33:47Z",
+        "returnParameters" -> Json.arr(
+          Json.obj("paramName" -> "POSITION",
+            "paramValue" -> "LINK")
+        )
       )
     )
   )
@@ -61,6 +86,12 @@ class EoriDetailsHttpParserSpec extends SpecBase with ReusableValues {
         HttpResponse(Status.OK, eoriDetailsJsonWithoutPostcode, Map.empty[String, Seq[String]])) mustBe Right(eoriDetailsWithoutPostcode)
     }
 
+    "the http response status is OK but no Eori details returned" in {
+      EoriDetailsReads.read("", "",
+        HttpResponse(Status.OK, detailsNotFoundJson, Map.empty[String, Seq[String]])) mustBe
+        Left(ErrorModel(Status.NOT_FOUND, "Eori Details not returned on Ok response"))
+    }
+
     "return an ErrorModel when invalid Json is returned" in {
       EoriDetailsReads.read("", "",
         HttpResponse(Status.OK, Json.obj(), Map.empty[String, Seq[String]])) mustBe
@@ -70,7 +101,13 @@ class EoriDetailsHttpParserSpec extends SpecBase with ReusableValues {
     "return an ErrorModel when NOT_FOUND is returned" in {
       EoriDetailsReads.read("", "",
         HttpResponse(Status.NOT_FOUND, "")) mustBe
-        Left(ErrorModel(Status.NOT_FOUND, "Downstream error returned when retrieving EoriDetails model from Sub09 (stub atm)"))
+        Left(ErrorModel(Status.NOT_FOUND, "Eori Details not found"))
+    }
+
+    "return an ErrorModel when any other status is returned" in {
+      EoriDetailsReads.read("", "",
+        HttpResponse(Status.BAD_REQUEST, "")) mustBe
+        Left(ErrorModel(Status.BAD_REQUEST, "Downstream error returned when retrieving EoriDetails model from Sub09"))
     }
   }
 

@@ -39,6 +39,12 @@ class EoriDetailsControllerSpec extends SpecBase with MockEoriDetailsService wit
     "return error model" in {
       setupMockRetrieveEoriDetails(Left(ErrorModel(400, "Could not retrieve eori details")))
       val result = Controller.onLoad(idOne)(fakeRequest)
+      status(result) mustEqual Status.INTERNAL_SERVER_ERROR
+    }
+
+    "return error model with Not Found" in {
+      setupMockRetrieveEoriDetails(Left(ErrorModel(404, "Could not retrieve eori details")))
+      val result = Controller.onLoad(idOne)(fakeRequest)
       status(result) mustEqual Status.NOT_FOUND
     }
 

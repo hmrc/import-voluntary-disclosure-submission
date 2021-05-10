@@ -16,6 +16,7 @@
 
 package controllers
 
+import models.ErrorModel
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.EoriDetailsService
@@ -40,7 +41,8 @@ class EoriDetailsController @Inject()(cc: ControllerComponents, eoriDetailsServi
           "countryCode" -> eoriDetails.countryCode
         )
       )
-      case Left(_) => NotFound("Could not retrieve eori details")
+      case Left(ErrorModel(NOT_FOUND,_)) => NotFound("Could not retrieve eori details")
+      case Left(_) => InternalServerError("Something went wrong retrieving eori details")
     }
 
   }

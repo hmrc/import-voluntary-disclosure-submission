@@ -20,7 +20,7 @@ import config.AppConfig
 import connectors.httpParsers.EoriDetailsHttpParser.EoriDetailsReads
 import connectors.httpParsers.ResponseHttpParser.HttpGetResult
 import models.EoriDetails
-import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import java.time.format.DateTimeFormatter
 import java.time.{ZoneId, ZonedDateTime}
@@ -36,33 +36,31 @@ class EoriDetailsConnector @Inject()(val http: HttpClient,
     .ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH)
     .withZone(ZoneId.of("GMT"))
 
-  private[connectors] def getEoriDetailsUrl(id: String) = s"${config.sub09}/subscriptions/subscriptiondisplay/v1"
+  private[connectors] def getEoriDetailsUrl = s"${config.sub09}/subscriptions/subscriptiondisplay/v1"
 
-  private[connectors] def sub09HeaderCarrier()(implicit hc: HeaderCarrier, correlationId: UUID): HeaderCarrier =
-    hc
-      .copy(authorization = Some(Authorization(s"Bearer ${config.eoriDetailsToken}")))
-      .withExtraHeaders(
-        headers = "Date" -> httpDateFormat.format(ZonedDateTime.now),
-        "X-Correlation-ID" -> correlationId.toString,
-        "Content-Type" -> "application/json",
-        "Accept" -> "application/json",
-        "X-Source-System" -> "DIG"
-      )
+  private[connectors] def headers(correlationId: UUID): Seq[(String, String)] = Seq(
+    "Authorization" -> s"Bearer ${config.eoriDetailsToken}",
+    "Date" -> httpDateFormat.format(ZonedDateTime.now),
+    "X-Correlation-ID" -> correlationId.toString,
+    "Accept" -> "application/json",
+    "X-Forwarded-Host" -> "MDTP"
+  )
 
   def getEoriDetails(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[EoriDetails]] = {
 
-    implicit val acknowledgementReference: UUID = UUID.randomUUID()
+    val acknowledgementReference: UUID = UUID.randomUUID()
 
     val parameters = Seq(
-      "regime" -> "CDS", // TODO - speak to EIS
+      "regime" -> "CDS",
       "acknowledgementReference" -> acknowledgementReference.toString.replace("-", ""),
       "EORI" -> id
     )
 
     http.GET[HttpGetResult[EoriDetails]](
-      url = getEoriDetailsUrl(id),
-      queryParams = parameters
-    )(hc = sub09HeaderCarrier(), ec = ec, rds = implicitly)
+      url = getEoriDetailsUrl,
+      queryParams = parameters,
+      headers = headers(acknowledgementReference)
+    )
   }
 
 }

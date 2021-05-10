@@ -29,9 +29,9 @@ class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig)
   val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
   val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
 
-  lazy val sub09: String = servicesConfig.baseUrl("import-voluntary-disclosure-stub") // change from stub to sub09
+  lazy val sub09: String = servicesConfig.baseUrl("mdg")
   lazy val eisBaseUrl: String = servicesConfig.baseUrl("eis")
   lazy val createCaseToken: String = config.get[String]("microservice.services.eis.tokens.create")
-  lazy val eoriDetailsToken: String = config.get[String]("microservice.services.eis.tokens.eoriDetails")
+  lazy val eoriDetailsToken: String = config.get[String]("microservice.services.mdg.tokens.eoriDetails")
 
 }
