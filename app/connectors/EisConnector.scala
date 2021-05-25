@@ -19,9 +19,9 @@ package connectors
 import config.AppConfig
 import connectors.httpParsers.CreateCaseHttpParser.CreateCaseHttpReads
 import connectors.httpParsers.ResponseHttpParser.ExternalResponse
+import models.CaseDetails
 import models.requests.CreateCaseRequest
 import models.responses.CreateCaseResponse
-import models.{CaseDetails, DocumentTypes}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import java.time.format.DateTimeFormatter
@@ -54,18 +54,7 @@ class EisConnector @Inject()(http: HttpClient,
     val acknowledgementReference: UUID = UUID.randomUUID()
     val eisHeaders = headers(acknowledgementReference)
 
-    val request = CreateCaseRequest(
-      acknowledgementReference,
-      caseDetails.copy(
-        documentsSupplied = Seq(
-          DocumentTypes.OriginalC2,
-          DocumentTypes.AmendedC2,
-          DocumentTypes.OriginalC88,
-          DocumentTypes.AmendedC88,
-          DocumentTypes.AmendedSubstituteEntryWorksheet
-        )
-      )
-    )
+    val request = CreateCaseRequest(acknowledgementReference, caseDetails)
 
     http.POST(createCaseUrl, request, eisHeaders)(CreateCaseRequest.writes, CreateCaseHttpReads, hc, ec)
   }

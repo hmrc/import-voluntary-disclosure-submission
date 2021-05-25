@@ -44,7 +44,7 @@ object CaseDetails {
   implicit val writes: Writes[CaseDetails] = (o: CaseDetails) => {
 
     val importer = Some(Json.toJson(o.importer).as[JsObject] ++ Json.obj("Type" -> TraderTypes.Importer))
-    val representative = o.representative.map{ rep =>
+    val representative = o.representative.map { rep =>
       Json.toJson(rep).as[JsObject] ++ Json.obj("Type" -> TraderTypes.Representative)
     }
 
