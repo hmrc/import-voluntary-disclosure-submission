@@ -38,13 +38,13 @@ class EoriDetailsController @Inject()(cc: ControllerComponents, eoriDetailsServi
           "streetAndNumber" -> eoriDetails.streetAndNumber,
           "city" -> eoriDetails.city,
           "postalCode" -> eoriDetails.postalCode,
-          "countryCode" -> eoriDetails.countryCode
+          "countryCode" -> eoriDetails.countryCode,
+          "VATIDs"-> eoriDetails.vatIds.filter(item => item.countryCode == "GB").head
         )
       )
       case Left(ErrorModel(NOT_FOUND,_)) => NotFound("Could not retrieve eori details")
       case Left(_) => InternalServerError("Something went wrong retrieving eori details")
     }
-
   }
 
 }
