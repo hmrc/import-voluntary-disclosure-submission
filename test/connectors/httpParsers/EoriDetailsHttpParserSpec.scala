@@ -72,7 +72,7 @@ class EoriDetailsHttpParserSpec extends SpecBase with ReusableValues {
     "Anyold Town",
     Some("99JZ 1AA"),
     "GB",
-    Seq(VatId("GB", "GB987654321000"))
+    Seq.empty
   )
 
   "Eori Details HttpParser" should {
