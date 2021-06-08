@@ -36,9 +36,9 @@ object EoriDetails {
     city <- (__ \\ "CDSEstablishmentAddress" \\ "city").read[String]
     postalCode <- (__ \\ "CDSEstablishmentAddress" \\ "postalCode").readNullable[String]
     countryCode <- (__ \\ "CDSEstablishmentAddress" \\ "countryCode").read[String]
-    vatIds <- (__ \\ "VATIDs").read[Seq[VatId]]
+    vatIds <- (__ \\ "VATIDs").readNullable[Seq[VatId]]
   } yield {
-    EoriDetails(eori, name, streetAndNumber, city, postalCode, countryCode, vatIds)
+    EoriDetails(eori, name, streetAndNumber, city, postalCode, countryCode, vatIds.getOrElse(Seq.empty))
   }
 
   implicit val writes: Writes[EoriDetails] = Json.writes[EoriDetails]

@@ -18,7 +18,7 @@ package connectors.httpParsers
 
 import base.SpecBase
 import connectors.httpParsers.EoriDetailsHttpParser.EoriDetailsReads
-import models.{EoriDetails, ErrorModel}
+import models.{EoriDetails, ErrorModel, VatId}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
@@ -71,7 +71,8 @@ class EoriDetailsHttpParserSpec extends SpecBase with ReusableValues {
     "99 Avenue Road",
     "Anyold Town",
     Some("99JZ 1AA"),
-    "GB"
+    "GB",
+    Seq(VatId("GB", "GB987654321000"))
   )
 
   "Eori Details HttpParser" should {

@@ -23,10 +23,10 @@ case class VatId(countryCode: String, vatId: String)
 object VatId{
 
   implicit val reads: Reads[VatId] = for {
-    countryCode <- (__ \\ "countryCode").read[String]
-    vatId <- (__ \\ "VATID").read[String]
+    countryCode <- (__ \\ "countryCode").readNullable[String]
+    vatId <- (__ \\ "VATID").readNullable[String]
   } yield {
-    VatId(countryCode, vatId)
+    VatId(countryCode.getOrElse(""), vatId.getOrElse(""))
   }
 
   implicit val writes: Writes[VatId] = Json.writes[VatId]

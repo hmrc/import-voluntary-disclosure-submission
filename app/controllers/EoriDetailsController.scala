@@ -31,18 +31,24 @@ class EoriDetailsController @Inject()(cc: ControllerComponents, eoriDetailsServi
 
   def onLoad(id: String): Action[AnyContent] = Action.async { implicit request =>
     eoriDetailsService.retrieveEoriDetails(id).map {
-      case Right(eoriDetails) => Ok(
-        Json.obj(
-          "eori" -> eoriDetails.eori,
-          "name" -> eoriDetails.name,
-          "streetAndNumber" -> eoriDetails.streetAndNumber,
-          "city" -> eoriDetails.city,
-          "postalCode" -> eoriDetails.postalCode,
-          "countryCode" -> eoriDetails.countryCode,
-          "VATIDs"-> eoriDetails.vatIds.filter(item => item.countryCode == "GB").head
+      case Right(eoriDetails) =>
+        val filteredVatId = eoriDetails.vatIds.filter(item => item.countryCode == "GB" && item.vatId.nonEmpty)
+        val vatIdJson = if (filteredVatId.nonEmpty) {
+          Json.obj("vatId" -> filteredVatId.head.vatId)
+        } else {
+          Json.obj()
+        }
+        Ok(
+          Json.obj(
+            "eori" -> eoriDetails.eori,
+            "name" -> eoriDetails.name,
+            "streetAndNumber" -> eoriDetails.streetAndNumber,
+            "city" -> eoriDetails.city,
+            "postalCode" -> eoriDetails.postalCode,
+            "countryCode" -> eoriDetails.countryCode
+          ) ++ vatIdJson
         )
-      )
-      case Left(ErrorModel(NOT_FOUND,_)) => NotFound("Could not retrieve eori details")
+      case Left(ErrorModel(NOT_FOUND, _)) => NotFound("Could not retrieve eori details")
       case Left(_) => InternalServerError("Something went wrong retrieving eori details")
     }
   }

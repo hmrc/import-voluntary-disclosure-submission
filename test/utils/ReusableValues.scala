@@ -16,7 +16,7 @@
 
 package utils
 
-import models.EoriDetails
+import models.{EoriDetails, VatId}
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HttpResponse
@@ -31,7 +31,8 @@ trait ReusableValues {
     "99 Avenue Road",
     "Anyold Town",
     Some("99JZ 1AA"),
-    "GB"
+    "GB",
+    Seq(VatId("GB", "GB987654321000"))
   )
 
   val errorModel: HttpResponse = HttpResponse(Status.NOT_FOUND, "Error Message")
