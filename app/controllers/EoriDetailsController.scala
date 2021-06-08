@@ -34,7 +34,7 @@ class EoriDetailsController @Inject()(cc: ControllerComponents, eoriDetailsServi
       case Right(eoriDetails) =>
         val filteredVatId = eoriDetails.vatIds.filter(item => item.countryCode == "GB" && item.vatId.nonEmpty)
         val vatIdJson = if (filteredVatId.nonEmpty) {
-          Json.obj("vatId" -> filteredVatId.head.vatId)
+          Json.obj("vatNumber" -> filteredVatId.head.vatId)
         } else {
           Json.obj()
         }
