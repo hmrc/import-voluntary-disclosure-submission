@@ -24,7 +24,7 @@ case class EoriDetails(eori: String,
                        city: String,
                        postalCode: Option[String],
                        countryCode: String,
-                       vatIds: Seq[VatId]
+                       vatNumber: Seq[VatId]
                       )
 
 object EoriDetails {

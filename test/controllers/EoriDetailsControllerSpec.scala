@@ -36,6 +36,13 @@ class EoriDetailsControllerSpec extends SpecBase with MockEoriDetailsService wit
       contentAsJson(result) mustEqual cleanedDetailsJson
     }
 
+    "return OK and the correct Json with VatId" in {
+      setupMockRetrieveEoriDetails(Right(eoriDetailsWithVatId))
+      val result = Controller.onLoad(idOne)(fakeRequest)
+      status(result) mustEqual Status.OK
+      contentAsJson(result) mustEqual cleanedDetailsWithVatIdJson
+    }
+
     "return error model" in {
       setupMockRetrieveEoriDetails(Left(ErrorModel(400, "Could not retrieve eori details")))
       val result = Controller.onLoad(idOne)(fakeRequest)

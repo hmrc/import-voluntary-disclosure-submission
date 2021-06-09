@@ -32,7 +32,7 @@ class EoriDetailsController @Inject()(cc: ControllerComponents, eoriDetailsServi
   def onLoad(id: String): Action[AnyContent] = Action.async { implicit request =>
     eoriDetailsService.retrieveEoriDetails(id).map {
       case Right(eoriDetails) =>
-        val filteredVatId = eoriDetails.vatIds.filter(item => item.countryCode == "GB" && item.vatId.nonEmpty)
+        val filteredVatId = eoriDetails.vatNumber.filter(item => item.countryCode == "GB" && item.vatId.nonEmpty)
         val vatIdJson = if (filteredVatId.nonEmpty) {
           Json.obj("vatNumber" -> filteredVatId.head.vatId)
         } else {
