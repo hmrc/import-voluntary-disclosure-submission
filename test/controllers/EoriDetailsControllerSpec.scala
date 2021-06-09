@@ -17,6 +17,7 @@
 package controllers
 
 import base.SpecBase
+import controllers.Assets.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import mocks.services.MockEoriDetailsService
 import models.ErrorModel
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
@@ -44,15 +45,15 @@ class EoriDetailsControllerSpec extends SpecBase with MockEoriDetailsService wit
     }
 
     "return error model" in {
-      setupMockRetrieveEoriDetails(Left(ErrorModel(400, "Could not retrieve eori details")))
+      setupMockRetrieveEoriDetails(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Could not retrieve eori details")))
       val result = Controller.onLoad(idOne)(fakeRequest)
-      status(result) mustEqual Status.INTERNAL_SERVER_ERROR
+      status(result) mustEqual INTERNAL_SERVER_ERROR
     }
 
     "return error model with Not Found" in {
-      setupMockRetrieveEoriDetails(Left(ErrorModel(404, "Could not retrieve eori details")))
+      setupMockRetrieveEoriDetails(Left(ErrorModel(NOT_FOUND, "Could not retrieve eori details")))
       val result = Controller.onLoad(idOne)(fakeRequest)
-      status(result) mustEqual Status.NOT_FOUND
+      status(result) mustEqual NOT_FOUND
     }
 
   }
