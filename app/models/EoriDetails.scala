@@ -24,7 +24,7 @@ case class EoriDetails(eori: String,
                        city: String,
                        postalCode: Option[String],
                        countryCode: String,
-                       vatIds: Seq[VatId]
+                       vatIds: Option[String]
                       )
 
 object EoriDetails {
@@ -36,9 +36,13 @@ object EoriDetails {
     city <- (__ \\ "CDSEstablishmentAddress" \\ "city").read[String]
     postalCode <- (__ \\ "CDSEstablishmentAddress" \\ "postalCode").readNullable[String]
     countryCode <- (__ \\ "CDSEstablishmentAddress" \\ "countryCode").read[String]
-    vatIds <- (__ \\ "VATIDs").readNullable[Seq[VatId]]
+    vatIds <- (__ \\ "VATIDs").readNullable[Seq[JsObject]]
   } yield {
-    EoriDetails(eori, name, streetAndNumber, city, postalCode, countryCode, vatIds.getOrElse(Seq.empty))
+    val vatId = vatIds.getOrElse(Seq(Json.obj()))
+    EoriDetails(eori, name, streetAndNumber, city, postalCode, countryCode,
+      vatId.find(_("countryCode").as[String] == "GB")
+        .map(_("VATID").as[String])
+    )
   }
 
   implicit val writes: Writes[EoriDetails] = Json.writes[EoriDetails]
