@@ -31,20 +31,10 @@ class EoriDetailsController @Inject()(cc: ControllerComponents, eoriDetailsServi
 
   def onLoad(id: String): Action[AnyContent] = Action.async { implicit request =>
     eoriDetailsService.retrieveEoriDetails(id).map {
-      case Right(eoriDetails) => Ok(
-        Json.obj(
-          "eori" -> eoriDetails.eori,
-          "name" -> eoriDetails.name,
-          "streetAndNumber" -> eoriDetails.streetAndNumber,
-          "city" -> eoriDetails.city,
-          "postalCode" -> eoriDetails.postalCode,
-          "countryCode" -> eoriDetails.countryCode
-        )
-      )
-      case Left(ErrorModel(NOT_FOUND,_)) => NotFound("Could not retrieve eori details")
+      case Right(eoriDetails) => Ok(Json.toJson(eoriDetails))
+      case Left(ErrorModel(NOT_FOUND, _)) => NotFound("Could not retrieve eori details")
       case Left(_) => InternalServerError("Something went wrong retrieving eori details")
     }
-
   }
 
 }

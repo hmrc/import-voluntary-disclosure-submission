@@ -72,7 +72,7 @@ class EoriDetailsConnectorSpec extends SpecBase with MockHttp with ReusableValue
 
       "return a EoriDetails" in new Test {
         val response = Right(
-          EoriDetails("GB987654321000", "Fast Food ltd", "99 Avenue Road", "Anyold Town", Some("99JZ 1AA"), "GB")
+          EoriDetails("GB987654321000", "Fast Food ltd", "99 Avenue Road", "Anyold Town", Some("99JZ 1AA"), "GB", Some("987654321000"))
         )
         MockedHttp.get[ExternalResponse[EoriDetails]](expectedEoriDetailsUrl, response)
 

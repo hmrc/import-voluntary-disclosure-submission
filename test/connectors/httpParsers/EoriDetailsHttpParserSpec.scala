@@ -46,6 +46,12 @@ class EoriDetailsHttpParserSpec extends SpecBase with ReusableValues {
           "city" -> "Anyold Town",
           "postalCode" -> "99JZ 1AA",
           "countryCode" -> "GB"
+        ),
+        "VATIDs" -> Json.arr(
+          Json.obj(
+            "countryCode" -> "GB",
+            "VATID" -> "987654321000"
+          )
         )
       )
     )
@@ -71,7 +77,8 @@ class EoriDetailsHttpParserSpec extends SpecBase with ReusableValues {
     "99 Avenue Road",
     "Anyold Town",
     Some("99JZ 1AA"),
-    "GB"
+    "GB",
+    Some("987654321000")
   )
 
   "Eori Details HttpParser" should {
