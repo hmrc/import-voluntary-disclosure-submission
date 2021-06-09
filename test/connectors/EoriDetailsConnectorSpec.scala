@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.httpParsers.ResponseHttpParser.ExternalResponse
 import data.SampleData
 import mocks.MockHttp
-import models.{EoriDetails, VatId}
+import models.EoriDetails
 import org.scalatest.matchers.should.Matchers._
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import utils.ReusableValues
@@ -72,7 +72,7 @@ class EoriDetailsConnectorSpec extends SpecBase with MockHttp with ReusableValue
 
       "return a EoriDetails" in new Test {
         val response = Right(
-          EoriDetails("GB987654321000", "Fast Food ltd", "99 Avenue Road", "Anyold Town", Some("99JZ 1AA"), "GB", Seq(VatId("GB", "GB987654321000")))
+          EoriDetails("GB987654321000", "Fast Food ltd", "99 Avenue Road", "Anyold Town", Some("99JZ 1AA"), "GB", Some("987654321000"))
         )
         MockedHttp.get[ExternalResponse[EoriDetails]](expectedEoriDetailsUrl, response)
 
