@@ -24,10 +24,15 @@ case class EoriDetails(eori: String,
                        city: String,
                        postalCode: Option[String],
                        countryCode: String,
-                       vatIds: Option[String]
+                       vatNumber: Option[String]
                       )
 
 object EoriDetails {
+
+  def getExpectedString(json: JsObject, key: String): Option[String] = (json \ key) match {
+      case JsDefined(data: JsString) => Some(data.value)
+      case _ => None
+    }
 
   implicit val reads: Reads[EoriDetails] = for {
     eori <- (__ \\ "EORINo").read[String]
@@ -38,11 +43,10 @@ object EoriDetails {
     countryCode <- (__ \\ "CDSEstablishmentAddress" \\ "countryCode").read[String]
     vatIds <- (__ \\ "VATIDs").readNullable[Seq[JsObject]]
   } yield {
-    val vatId = vatIds.getOrElse(Seq(Json.obj()))
-    EoriDetails(eori, name, streetAndNumber, city, postalCode, countryCode,
-      vatId.find(_("countryCode").as[String] == "GB")
-        .map(_("VATID").as[String])
-    )
+    val vatNumber = vatIds.getOrElse(Seq(Json.obj()))
+      .find(getExpectedString(_, "countryCode").contains("GB"))
+      .flatMap(getExpectedString(_, "VATID"))
+    EoriDetails(eori, name, streetAndNumber, city, postalCode, countryCode, vatNumber)
   }
 
   implicit val writes: Writes[EoriDetails] = Json.writes[EoriDetails]
