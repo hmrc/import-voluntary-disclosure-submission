@@ -29,7 +29,7 @@ case class EoriDetails(eori: String,
 
 object EoriDetails {
 
-  def getExpectedString(json: JsObject, key: String): Option[String] = (json \ key) match {
+  private def getExpectedString(json: JsObject, key: String): Option[String] = (json \ key) match {
       case JsDefined(data: JsString) => Some(data.value)
       case _ => None
     }
@@ -37,10 +37,10 @@ object EoriDetails {
   implicit val reads: Reads[EoriDetails] = for {
     eori <- (__ \\ "EORINo").read[String]
     name <- (__ \\ "CDSFullName").read[String]
-    streetAndNumber <- (__ \\ "CDSEstablishmentAddress" \\ "streetAndNumber").read[String]
-    city <- (__ \\ "CDSEstablishmentAddress" \\ "city").read[String]
-    postalCode <- (__ \\ "CDSEstablishmentAddress" \\ "postalCode").readNullable[String]
-    countryCode <- (__ \\ "CDSEstablishmentAddress" \\ "countryCode").read[String]
+    streetAndNumber <- (__ \\ "CDSEstablishmentAddress" \ "streetAndNumber").read[String]
+    city <- (__ \\ "CDSEstablishmentAddress" \ "city").read[String]
+    postalCode <- (__ \\ "CDSEstablishmentAddress" \ "postalCode").readNullable[String]
+    countryCode <- (__ \\ "CDSEstablishmentAddress" \ "countryCode").read[String]
     vatIds <- (__ \\ "VATIDs").readNullable[Seq[JsObject]]
   } yield {
     val vatNumber = vatIds.getOrElse(Seq(Json.obj()))
