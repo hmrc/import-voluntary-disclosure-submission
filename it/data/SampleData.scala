@@ -33,9 +33,9 @@ trait SampleData {
     isBulkEntry = false,
     isEuropeanUnionDuty = false,
     reasonForAmendment = "Not Applicable",
-    entryProcessingUnit = "123",
-    entryNumber = "123456A",
-    entryDate = date,
+    entryProcessingUnit = Some("123"),
+    entryNumber = Some("123456A"),
+    entryDate = Some(date),
     originalCustomsProcedureCode = "4000C09",
     declarantName = "John Smith",
     declarantPhoneNumber = "1234567890",
@@ -106,7 +106,7 @@ trait SampleData {
     duties = duties,
     documentsSupplied = documentsSupplied,
     supportingDocuments = supportingDocuments,
-    amendedItems = amendedItems,
+    amendedItems = Some(amendedItems),
     importer = importer,
     representative = Some(representative)
   )

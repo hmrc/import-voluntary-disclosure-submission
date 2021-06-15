@@ -16,6 +16,7 @@
 
 package data
 
+import models.DocumentTypes.Other
 import models._
 import play.api.libs.json.{JsObject, Json}
 
@@ -33,15 +34,24 @@ trait SampleData {
     isBulkEntry = false,
     isEuropeanUnionDuty = false,
     reasonForAmendment = "Not Applicable",
-    entryProcessingUnit = "123",
-    entryNumber = "123456A",
-    entryDate = date,
+    entryProcessingUnit = Some("123"),
+    entryNumber = Some("123456A"),
+    entryDate = Some(date),
     originalCustomsProcedureCode = "4000C09",
     declarantName = "John Smith",
     declarantPhoneNumber = "1234567890",
     defermentType = Some("D"),
     defermentAccountNumber = Some("1234567"),
     additionalDefermentNumber = Some("C1234567")
+  )
+
+  val bulkUnderpaymentDetails: UnderpaymentDetails = underpaymentDetails.copy(
+    entryProcessingUnit = None,
+    entryNumber = None,
+    entryDate = None,
+    originalCustomsProcedureCode = "VARIOUS",
+    isBulkEntry = true,
+    isEuropeanUnionDuty = true
   )
 
   val duties = Seq(
@@ -106,10 +116,12 @@ trait SampleData {
     duties = duties,
     documentsSupplied = documentsSupplied,
     supportingDocuments = supportingDocuments,
-    amendedItems = amendedItems,
+    amendedItems = Some(amendedItems),
     importer = importer,
     representative = Some(representative)
   )
+
+  val bulkCaseDetails: CaseDetails = caseDetails.copy(underpaymentDetails = bulkUnderpaymentDetails, documentsSupplied = Seq(Other))
 
   val incomingJson: JsObject = Json.obj(
     "userType" -> "representative",
@@ -150,6 +162,94 @@ trait SampleData {
       "AmendedSubstituteEntryWorksheet",
       "AmendedC88",
       "AmendedC2"
+    ),
+    "defermentType" -> "D",
+    "defermentAccountNumber" -> "1234567",
+    "additionalDefermentNumber" -> "C1234567",
+    "amendedItems" -> Json.arr(
+      Json.obj(
+        "boxNumber" -> 62,
+        "itemNumber" -> 0,
+        "original" -> "GBP1",
+        "amended" -> "GBP2"
+      ),
+      Json.obj(
+        "boxNumber" -> 33,
+        "itemNumber" -> 1,
+        "original" -> "1",
+        "amended" -> "2"
+      )
+    ),
+    "supportingDocuments" -> Json.arr(
+      Json.obj(
+        "fileName" -> "TestDocument.pdf",
+        "downloadUrl" -> "http://some/location",
+        "uploadTimestamp" -> timestamp,
+        "checksum" -> "the file checksum",
+        "fileMimeType" -> "application/pdf"
+      )
+    ),
+    "importer" -> Json.obj(
+      "eori" -> "GB000000000000001",
+      "contactDetails" -> Json.obj(
+        "fullName" -> "Importer Inc",
+        "phoneNumber" -> "000000000",
+        "email" -> "notsupplied@example.com"
+      ),
+      "address" -> Json.obj(
+        "addressLine1" -> "99 Avenue Road",
+        "city" -> "Any Old Town",
+        "countryCode" -> "GB",
+        "postalCode" -> "ZZ11ZZ"
+      ),
+      "vatNumber" -> "123456789"
+    ),
+    "representative" -> Json.obj(
+      "eori" -> "GB000000000000002",
+      "contactDetails" -> Json.obj(
+        "fullName" -> "Representative Inc",
+        "email" -> "test@test.com",
+        "phoneNumber" -> "1234567890"
+      ),
+      "address" -> Json.obj(
+        "addressLine1" -> "99 Avenue Road",
+        "city" -> "Any Old Town",
+        "countryCode" -> "GB",
+        "postalCode" -> "ZZ11ZZ"
+      )
+    )
+  )
+
+  val bulkIncomingJson: JsObject = Json.obj(
+    "userType" -> "representative",
+    "isBulkEntry" -> true,
+    "isEuropeanUnionDuty" -> true,
+    "additionalInfo" -> "Not Applicable",
+    "customsProcessingCode" -> "VARIOUS",
+    "declarantContactDetails" -> Json.obj(
+      "fullName" -> "John Smith",
+      "email" -> "test@test.com",
+      "phoneNumber" -> "1234567890"
+    ),
+    "underpaymentDetails" -> Json.arr(
+      Json.obj(
+        "duty" -> "A00",
+        "original" -> BigDecimal("123"),
+        "amended" -> BigDecimal("233.33")
+      ),
+      Json.obj(
+        "duty" -> "B00",
+        "original" -> BigDecimal("111.11"),
+        "amended" -> BigDecimal("1234")
+      ),
+      Json.obj(
+        "duty" -> "E00",
+        "original" -> BigDecimal("123.22"),
+        "amended" -> BigDecimal("4409.55")
+      )
+    ),
+    "supportingDocumentTypes" -> Json.arr(
+      "Other"
     ),
     "defermentType" -> "D",
     "defermentAccountNumber" -> "1234567",
@@ -295,6 +395,77 @@ trait SampleData {
         "AmendedTo" -> "2"
       )
 
+    )
+  )
+
+  val bulkOutgoingJson: JsObject = Json.obj(
+    "UnderpaymentDetails" -> Json.obj(
+      "RequestedBy" -> "02",
+      "IsBulkEntry" -> "01",
+      "IsEUDuty" -> "01",
+      "EPU" -> "VARIOUS",
+      "EntryNumber" -> "VARIOUS",
+      "EntryDate" -> "VARIOUS",
+      "ReasonForAmendment" -> "Not Applicable",
+      "OriginalCustomsProcCode" -> "VARIOUS",
+      "DeclarantDate" -> formattedDate,
+      "DeclarantPhoneNumber" -> "1234567890",
+      "DeclarantName" -> "John Smith",
+      "DefermentType" -> "D",
+      "DefermentAccountNumber" -> "1234567",
+      "AdditionalDefermentNumber" -> "C1234567"
+    ),
+    "DutyTypeList" -> Json.arr(
+      Json.obj(
+        "Type" -> "A00",
+        "PaidAmount" -> "123",
+        "DueAmount" -> "233.33",
+        "OutstandingAmount" -> "110.33"
+      ),
+      Json.obj(
+        "Type" -> "B00",
+        "PaidAmount" -> "111.11",
+        "DueAmount" -> "1234",
+        "OutstandingAmount" -> "1122.89"
+      ),
+      Json.obj(
+        "Type" -> "E00",
+        "PaidAmount" -> "123.22",
+        "DueAmount" -> "4409.55",
+        "OutstandingAmount" -> "4286.33"
+      )
+    ),
+    "DocumentList" -> Json.arr(
+      Json.obj("Type" -> "08")
+    ),
+    "TraderList" -> Json.arr(
+      Json.obj(
+        "Type" -> "02",
+        "EORI" -> "GB000000000000002",
+        "Name" -> "Representative Inc",
+        "EstablishmentAddress" -> Json.obj(
+          "AddressLine1" -> "99 Avenue Road",
+          "City" -> "Any Old Town",
+          "CountryCode" -> "GB",
+          "PostalCode" -> "ZZ11ZZ",
+          "TelephoneNumber" -> "1234567890",
+          "EmailAddress" -> "test@test.com"
+        )
+      ),
+      Json.obj(
+        "Type" -> "01",
+        "EORI" -> "GB000000000000001",
+        "Name" -> "Importer Inc",
+        "EstablishmentAddress" -> Json.obj(
+          "AddressLine1" -> "99 Avenue Road",
+          "City" -> "Any Old Town",
+          "CountryCode" -> "GB",
+          "PostalCode" -> "ZZ11ZZ",
+          "TelephoneNumber" -> "000000000",
+          "EmailAddress" -> "notsupplied@example.com"
+        ),
+        "VATNumber" -> "123456789"
+      )
     )
   )
 
