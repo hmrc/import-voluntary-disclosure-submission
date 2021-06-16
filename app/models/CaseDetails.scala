@@ -25,7 +25,7 @@ case class CaseDetails(underpaymentDetails: UnderpaymentDetails,
                        duties: Seq[DutyItem],
                        documentsSupplied: Seq[DocumentType],
                        supportingDocuments: Seq[SupportingDocument],
-                       amendedItems: Seq[BoxItem],
+                       amendedItems: Option[Seq[BoxItem]],
                        importer: TraderDetails,
                        representative: Option[TraderDetails] = None)
 
@@ -35,7 +35,7 @@ object CaseDetails {
       (__ \ "underpaymentDetails").read[Seq[DutyItem]] and
       (__ \ "supportingDocumentTypes").read[Seq[DocumentType]] and
       (__ \ "supportingDocuments").read[Seq[SupportingDocument]] and
-      (__ \ "amendedItems").read[Seq[BoxItem]] and
+      (__ \\ "amendedItems").readNullable[Seq[BoxItem]] and
       (__ \ "importer").read[TraderDetails] and
       (__ \ "representative").readNullable[TraderDetails]
     ) (CaseDetails.apply _)
@@ -49,13 +49,13 @@ object CaseDetails {
     }
 
     val traders: Seq[JsObject] = Seq(representative, importer).flatten
+    val importInfoList = if (o.underpaymentDetails.isBulkEntry) Json.obj() else Json.obj("ImportInfoList" -> o.amendedItems)
 
     Json.obj(
       "UnderpaymentDetails" -> o.underpaymentDetails,
       "DutyTypeList" -> o.duties,
       "DocumentList" -> o.documentsSupplied,
-      "ImportInfoList" -> o.amendedItems,
       "TraderList" -> traders
-    )
+    ) ++ importInfoList
   }
 }

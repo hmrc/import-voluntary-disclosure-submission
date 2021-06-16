@@ -23,6 +23,7 @@ import play.api.libs.json._
 class CaseDetailsSpec extends ModelSpecBase with SampleData {
 
   val model: CaseDetails = caseDetails
+  val bulkModel: CaseDetails = bulkCaseDetails
 
   "Reading case details from JSON" when {
 
@@ -65,11 +66,71 @@ class CaseDetailsSpec extends ModelSpecBase with SampleData {
     }
   }
 
+  "Reading case details from JSON for bulk entry" when {
+
+    val json: JsObject = bulkIncomingJson
+
+    lazy val result: CaseDetails = json.validate[CaseDetails] match {
+      case JsSuccess(value, _) => value
+      case JsError(errors) => fail(s"Failed to read underpayment details from JSON: $errors")
+    }
+
+    "the JSON is a valid" should {
+      "deserialize the underpayment details" in {
+        result.underpaymentDetails shouldBe bulkModel.underpaymentDetails
+      }
+
+      "deserialize the duties" in {
+        result.duties shouldBe bulkModel.duties
+      }
+
+      "deserialize the documentsSupplied" in {
+        result.documentsSupplied shouldBe bulkModel.documentsSupplied
+      }
+
+      "deserialize the supportingDocuments" in {
+        result.supportingDocuments shouldBe bulkModel.supportingDocuments
+      }
+
+      "deserialize the box items (underpayment reasons)" in {
+        result.amendedItems shouldBe bulkModel.amendedItems
+      }
+
+      "deserialize the importer details" in {
+        result.importer shouldBe bulkModel.importer
+      }
+
+      "deserialize the representative details" in {
+        result.representative shouldBe bulkModel.representative
+      }
+
+    }
+  }
+
   "Writing underpayment details as JSON" should {
 
     val json: JsObject = outgoingJson
 
     implicit val generatedJson: JsObject = Json.toJson(model).as[JsObject]
+
+    json.keys.foreach { propertyName =>
+
+      s"generate a property named $propertyName" in {
+        generatedJson.keys should contain(propertyName)
+      }
+
+      s"have the correct value for $propertyName" in {
+        (generatedJson \ propertyName).as[JsValue] shouldBe (json \ propertyName).as[JsValue]
+      }
+    }
+
+  }
+
+  "Writing underpayment details as JSON for bulk entry" should {
+
+    val json: JsObject = bulkOutgoingJson
+
+    implicit val generatedJson: JsObject = Json.toJson(bulkModel).as[JsObject]
 
     json.keys.foreach { propertyName =>
 
