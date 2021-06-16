@@ -25,9 +25,11 @@ import org.scalatest.matchers.should.Matchers._
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import utils.ReusableValues
 
-import java.time.ZonedDateTime
-import java.util.UUID
+import java.time.format.DateTimeFormatter
+import java.time.ZoneId
+import java.util.{Locale, UUID}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.Try
 
 class EoriDetailsConnectorSpec extends SpecBase with MockHttp with ReusableValues {
 
@@ -48,10 +50,15 @@ class EoriDetailsConnectorSpec extends SpecBase with MockHttp with ReusableValue
 
   "headers" should {
 
-    "generate the correct Date header required for sub09" in new Test {
-      headers should contain("Date" -> target.httpDateFormat.format(ZonedDateTime.now))
-    }
+    "generate the correct Date header format required for sub09" in new Test {
+      val dateFormat = DateTimeFormatter
+        .ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH)
+        .withZone(ZoneId.of("GMT"))
 
+      headers.filter(item => item._1 == "Date").map {
+        item => Try(dateFormat.parse(item._2)).isSuccess shouldBe true
+      }
+    }
     "generate the correct Correlation ID header required for sub09" in new Test {
       headers should contain("X-Correlation-ID" -> expectedCorrelationId)
     }
