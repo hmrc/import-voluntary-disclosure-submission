@@ -14,27 +14,28 @@
  * limitations under the License.
  */
 
-package services
+package mocks.services
 
-import connectors.EisConnector
-import models.responses.CreateCaseResponse
-import models.{CaseDetails, ErrorModel}
+import models.SupportingDocument
+import org.scalamock.handlers.CallHandler
+import org.scalamock.scalatest.MockFactory
+import services.FileTransferService
 import uk.gov.hmrc.http.HeaderCarrier
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
-class CreateCaseService @Inject()(connector: EisConnector,
-                                  fileTransferService: FileTransferService) {
+trait MockFileTransferService extends MockFactory {
 
-  def createCase(caseDetails: CaseDetails)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ErrorModel, CreateCaseResponse]] = {
-    connector.createCase(caseDetails) map {
-      case success@Right(details) =>
-        fileTransferService.transferFiles(details.id, details.correlationId, caseDetails.supportingDocuments)
-        success
-      case failure => failure
+  val mockFileTransferService: FileTransferService = mock[FileTransferService]
+
+  object MockedFileTransferService {
+
+    def transferFiles(): CallHandler[Future[Unit]] = {
+      (mockFileTransferService.transferFiles(_: String, _: String, _: Seq[SupportingDocument])(_: HeaderCarrier, _: ExecutionContext))
+        .expects(*, *, *, *, *)
+        .returns(Future.successful({}))
     }
+
   }
 
 }

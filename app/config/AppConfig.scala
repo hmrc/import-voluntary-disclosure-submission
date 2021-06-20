@@ -31,6 +31,7 @@ class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig)
 
   lazy val sub09: String = servicesConfig.baseUrl("mdg")
   lazy val eisBaseUrl: String = servicesConfig.baseUrl("eis")
+  lazy val fileTransferUrl: String = servicesConfig.baseUrl("file-transmission-synchronous")
   lazy val createCaseToken: String = config.get[String]("microservice.services.eis.tokens.create")
   lazy val eoriDetailsToken: String = config.get[String]("microservice.services.mdg.tokens.eoriDetails")
 

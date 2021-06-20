@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package models
+package models.responses
 
 import play.api.libs.json.{Format, Json}
 
 import java.time.LocalDateTime
 
-case class SupportingDocument(reference: String,
-                              fileName: String,
-                              downloadUrl: String,
-                              uploadTimestamp: LocalDateTime,
-                              checksum: String,
-                              fileMimeType: String)
+final case class FileTransferResponse(upscanReference: String,
+                                      success: Boolean,
+                                      transferredAt: LocalDateTime,
+                                      error: Option[String] = None)
 
-object SupportingDocument {
-  implicit val formats: Format[SupportingDocument] = Json.format[SupportingDocument]
+object FileTransferResponse {
+  implicit val formats: Format[FileTransferResponse] = Json.format[FileTransferResponse]
 }

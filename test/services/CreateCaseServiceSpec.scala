@@ -19,6 +19,7 @@ package services
 import base.ServiceSpecBase
 import data.SampleData
 import mocks.connectors.MockEisConnector
+import mocks.services.MockFileTransferService
 import models.responses.CreateCaseResponse
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -27,14 +28,19 @@ import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
-class CreateCaseServiceSpec extends ServiceSpecBase with MockEisConnector with SampleData {
+class CreateCaseServiceSpec
+  extends ServiceSpecBase
+    with MockFileTransferService
+    with MockEisConnector
+    with SampleData {
 
   "createCase" should {
 
     "return whatever the connector returns" in {
       val expectedResponse = Right(CreateCaseResponse("some id", UUID.randomUUID().toString))
       MockedEisConnector.createCase(caseDetails, expectedResponse)
-      val service = new CreateCaseService(mockEisConnector)
+      MockedFileTransferService.transferFiles()
+      val service = new CreateCaseService(mockEisConnector, mockFileTransferService)
       await(service.createCase(caseDetails)) mustBe expectedResponse
     }
   }

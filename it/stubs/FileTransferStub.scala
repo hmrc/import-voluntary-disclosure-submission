@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-package models
+package stubs
 
-import play.api.libs.json.{Format, Json}
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import data.SampleData
+import play.api.http.Status.ACCEPTED
+import play.api.libs.json.{JsObject, Json}
+import support.WireMockMethods
 
-import java.time.LocalDateTime
+object FileTransferStub extends WireMockMethods with SampleData {
 
-case class SupportingDocument(reference: String,
-                              fileName: String,
-                              downloadUrl: String,
-                              uploadTimestamp: LocalDateTime,
-                              checksum: String,
-                              fileMimeType: String)
+  private val authoriseUri = "/transfer-file"
 
-object SupportingDocument {
-  implicit val formats: Format[SupportingDocument] = Json.format[SupportingDocument]
+  val headers: Map[String, String] = Map.empty
+  val body: JsObject = Json.obj()
+
+  def success(): StubMapping =
+    when(method = POST, uri = authoriseUri)
+      .thenReturn(ACCEPTED, headers, body)
 }
