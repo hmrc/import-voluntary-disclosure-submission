@@ -23,6 +23,7 @@ import models.responses.CreateCaseResponse
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
+import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
@@ -31,7 +32,7 @@ class CreateCaseServiceSpec extends ServiceSpecBase with MockEisConnector with S
   "createCase" should {
 
     "return whatever the connector returns" in {
-      val expectedResponse = Right(CreateCaseResponse("some id"))
+      val expectedResponse = Right(CreateCaseResponse("some id", UUID.randomUUID().toString))
       MockedEisConnector.createCase(caseDetails, expectedResponse)
       val service = new CreateCaseService(mockEisConnector)
       await(service.createCase(caseDetails)) mustBe expectedResponse

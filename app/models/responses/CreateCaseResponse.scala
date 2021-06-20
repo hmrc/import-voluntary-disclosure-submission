@@ -18,17 +18,8 @@ package models.responses
 
 import play.api.libs.json._
 
-case class CreateCaseResponse(id: String)
+case class CreateCaseResponse(id: String, correlationId: String)
 
 object CreateCaseResponse {
-  val reads: Reads[CreateCaseResponse] = (json: JsValue) => {
-    (json \ "CaseID").validate[String].fold(
-      error => JsError(error),
-      caseId => JsSuccess(CreateCaseResponse(caseId))
-    )
-  }
-
-  val writes: Writes[CreateCaseResponse] = Json.writes[CreateCaseResponse]
-
-  implicit val formats: Format[CreateCaseResponse] = Format(reads, writes)
+  implicit val writes: Writes[CreateCaseResponse] = data => Json.obj("id" -> data.id)
 }

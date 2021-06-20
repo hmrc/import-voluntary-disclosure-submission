@@ -80,7 +80,7 @@ class EisConnectorSpec extends SpecBase {
     "a success response is returned from EIS" should {
 
       "return a CreateCaseResponse" in new Test {
-        val response = Right(CreateCaseResponse("some case ID"))
+        val response = Right(CreateCaseResponse("some case ID", UUID.randomUUID().toString))
         MockedHttp.post[CreateCaseRequest, ExternalResponse[CreateCaseResponse]](expectedCreateCaseUrl, response)
 
         await(target.createCase(caseDetails)) shouldBe response

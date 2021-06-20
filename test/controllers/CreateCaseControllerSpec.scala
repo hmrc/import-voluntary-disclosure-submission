@@ -30,6 +30,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsJson, contentType, defaultAwaitTimeout, status}
 import play.mvc.Http.HeaderNames
 
+import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -61,7 +62,7 @@ class CreateCaseControllerSpec extends SpecBase with Matchers {
   "onSubmit" when {
     "case create in downstream services" should {
 
-      val successResponse = Right(CreateCaseResponse("some id"))
+      val successResponse = Right(CreateCaseResponse("some id", UUID.randomUUID().toString))
 
       "return 200 (OK) response" in new Test {
         MockedCreateCaseService.createCase(caseDetails, successResponse)
