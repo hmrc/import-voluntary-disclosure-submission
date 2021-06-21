@@ -19,6 +19,7 @@ package connectors
 import config.AppConfig
 import models.requests.FileTransferRequest
 import models.responses.FileTransferResponse
+import play.api.Logger
 import play.api.http.Status
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
@@ -32,10 +33,13 @@ class FileTransferConnector @Inject()(val appConfig: AppConfig,
                                       val http: HttpClient) {
 
   private[connectors] lazy val url = s"${appConfig.fileTransferUrl}/transfer-file"
+  private val logger = Logger("application." + getClass.getCanonicalName)
 
   def transferFile(fileTransferRequest: FileTransferRequest)
                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[FileTransferResponse] = {
     http.POST[FileTransferRequest, HttpResponse](url, fileTransferRequest).map { response =>
+      logger.info(s"[FILE TRANSFER SUCCESS][REFERENCE: ${fileTransferRequest.upscanReference}][CORRELATION ID: ${fileTransferRequest.correlationId}]")
+
       FileTransferResponse(
         fileTransferRequest.upscanReference,
         isSuccess(response.status),
@@ -44,6 +48,9 @@ class FileTransferConnector @Inject()(val appConfig: AppConfig,
       )
     }.recover {
       case error =>
+        logger.error(s"""[FILE TRANSFER FAILURE][REFERENCE: ${fileTransferRequest.upscanReference}][CORRELATION ID: ${fileTransferRequest.correlationId}]
+        | [MESSAGE: ${error.getMessage}]""".stripMargin)
+
         FileTransferResponse(
           fileTransferRequest.upscanReference,
           success = false,

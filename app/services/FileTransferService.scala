@@ -21,6 +21,7 @@ import connectors.FileTransferConnector
 import models.SupportingDocument
 import models.requests.FileTransferRequest
 import models.responses.FileTransferResponse
+import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.util.UUID
@@ -33,10 +34,16 @@ import scala.language.postfixOps
 class FileTransferService @Inject()(actorSystem: ActorSystem,
                                     connector: FileTransferConnector) {
 
+  private val logger = Logger("application." + getClass.getCanonicalName)
+
   def transferFiles(caseId: String, conversationId: String, files: Seq[SupportingDocument])
                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
     simpleTransfer(caseId, conversationId, files)
   }
+
+  // TODO: the following method is for the alternative implementation of file transfers. It is maintained
+  //        so that quick turnaround of alternative solution can be implemented if transfers takes too long
+  //        in production. The simple implementation will be used initially.
 
   //  private def actorTransfer(caseId: String, conversationId: String, files: Seq[SupportingDocument])
   //                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = Future {
@@ -85,13 +92,13 @@ class FileTransferService @Inject()(actorSystem: ActorSystem,
   }
 
   private val auditFileTransfers: Seq[FileTransferResponse] => Future[Unit] = results => {
-    val message = results.map {
-      case response if response.success => s"[${response.transferredAt}][SUCCESS] - Reference ${response.upscanReference}"
-      case response => s"[${response.transferredAt}][FAILURE] - Reference ${response.upscanReference}\n\t${response.error}"
+    val summaryMessage = s"\nTotal Size: ${results.size} | Success: ${results.count(_.success)} | Failed: ${results.count(!_.success)}\n\n"
+    if (results.filter(!_.success).isEmpty) {
+      logger.info(summaryMessage)
+    } else {
+      logger.error(summaryMessage)
     }
 
-    val summaryMessage = s"\nTotal Size: ${results.size} | Success: ${results.count(_.success)} | Failed: ${results.count(!_.success)}\n\n"
-    println(message.mkString("\n") + summaryMessage)
     Future.successful({})
   }
 
