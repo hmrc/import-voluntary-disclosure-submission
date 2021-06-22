@@ -38,7 +38,12 @@ class FileTransferConnector @Inject()(val appConfig: AppConfig,
   def transferFile(fileTransferRequest: FileTransferRequest)
                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[FileTransferResponse] = {
     http.POST[FileTransferRequest, HttpResponse](url, fileTransferRequest).map { response =>
-      logger.info(s"[FILE TRANSFER SUCCESS][REFERENCE: ${fileTransferRequest.upscanReference}][CORRELATION ID: ${fileTransferRequest.correlationId}]")
+
+      if (isSuccess(response.status)) {
+        logger.info(s"[FILE TRANSFER SUCCESS][REFERENCE: ${fileTransferRequest.upscanReference}][CORRELATION ID: ${fileTransferRequest.correlationId}]")
+      } else {
+        logger.error(s"[FILE TRANSFER FAILURE][REFERENCE: ${fileTransferRequest.upscanReference}][CORRELATION ID: ${fileTransferRequest.correlationId}]")
+      }
 
       FileTransferResponse(
         fileTransferRequest.upscanReference,
