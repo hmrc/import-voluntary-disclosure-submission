@@ -30,11 +30,13 @@ import java.util.UUID
 
 class CreateCaseHttpParserSpec extends SpecBase {
 
+  val correlationId: String = UUID.randomUUID().toString
+
   "Parsing a 200 (OK) response" when {
 
     "the response is valid" should {
 
-      val headers: Map[String, Seq[String]] = Map("x-correlation-id" -> Seq(UUID.randomUUID().toString))
+      val headers: Map[String, Seq[String]] = Map("x-correlation-id" -> Seq(correlationId))
       val body: JsObject = Json.obj(
         "CaseID" -> "C18-101",
         "ProcessingDate" -> Instant.now().toString,
@@ -45,14 +47,14 @@ class CreateCaseHttpParserSpec extends SpecBase {
       val response = HttpResponse(Status.OK, body, headers)
 
       "return the Case ID" in {
-        CreateCaseHttpReads.read("", "", response) mustBe Right(CreateCaseResponse("C18-101"))
+        CreateCaseHttpReads.read("", "", response) mustBe Right(CreateCaseResponse("C18-101", correlationId))
       }
 
     }
 
     "the response does not contain a case ID" should {
 
-      val headers: Map[String, Seq[String]] = Map("x-correlation-id" -> Seq(UUID.randomUUID().toString))
+      val headers: Map[String, Seq[String]] = Map("x-correlation-id" -> Seq(correlationId))
       val body: JsObject = Json.obj(
         "ProcessingDate" -> Instant.now().toString,
         "Status" -> "Success",
@@ -70,7 +72,7 @@ class CreateCaseHttpParserSpec extends SpecBase {
 
   "Parsing a non-200 response" should {
 
-    val headers: Map[String, Seq[String]] = Map("x-correlation-id" -> Seq(UUID.randomUUID().toString))
+    val headers: Map[String, Seq[String]] = Map("x-correlation-id" -> Seq(correlationId))
     val body: JsObject = Json.obj()
     val response = HttpResponse(Status.BAD_REQUEST, body, headers)
 

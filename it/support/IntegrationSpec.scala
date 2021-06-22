@@ -18,6 +18,7 @@ package support
 
 import org.scalatest._
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import play.api.http.HeaderNames
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
@@ -46,6 +47,7 @@ trait IntegrationSpec
     s"$servicesPath.auth.host" -> mockHost,
     s"$servicesPath.auth.port" -> mockPort,
     s"$servicesPath.eis.port" -> mockPort,
+    s"$servicesPath.file-transmission-synchronous.port" -> mockPort,
     "auditing.consumer.baseUri.port" -> mockPort
   )
 
@@ -64,7 +66,9 @@ trait IntegrationSpec
     super.afterAll()
   }
 
-  def buildRequest(path: String): WSRequest = client.url(s"http://localhost:$port/api$path").withFollowRedirects(false)
+  def buildRequest(path: String): WSRequest = client.url(s"http://localhost:$port/api$path")
+    .withFollowRedirects(false)
+    .withHttpHeaders(HeaderNames.AUTHORIZATION -> "Bearer 1234567890")
 
   def document(response: WSResponse): JsValue = Json.parse(response.body)
 }

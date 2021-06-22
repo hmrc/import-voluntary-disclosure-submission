@@ -16,10 +16,15 @@
 
 package models.responses
 
-import play.api.libs.json._
+import play.api.libs.json.{Format, Json}
 
-case class CreateCaseResponse(id: String, correlationId: String)
+import java.time.LocalDateTime
 
-object CreateCaseResponse {
-  implicit val writes: Writes[CreateCaseResponse] = data => Json.obj("id" -> data.id)
+final case class FileTransferResponse(upscanReference: String,
+                                      success: Boolean,
+                                      transferredAt: LocalDateTime,
+                                      error: Option[String] = None)
+
+object FileTransferResponse {
+  implicit val formats: Format[FileTransferResponse] = Json.format[FileTransferResponse]
 }

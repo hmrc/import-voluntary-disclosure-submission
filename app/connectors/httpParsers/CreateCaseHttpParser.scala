@@ -21,6 +21,7 @@ import models.ErrorModel
 import models.responses.CreateCaseResponse
 import play.api.Logging
 import play.api.http.Status
+import play.api.libs.json.{JsError, JsSuccess, JsValue, Reads}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 object CreateCaseHttpParser {
@@ -32,9 +33,16 @@ object CreateCaseHttpParser {
       val correlationId = response.header("x-correlation-id").getOrElse("UNKNOWN")
       val apiFriendlyName = "IVD - Create Case"
 
+      val jsonReads: Reads[String] = (json: JsValue) => {
+        (json \ "CaseID").validate[String].fold(
+          error => JsError(error),
+          caseId => JsSuccess(caseId)
+        )
+      }
+
       response.status match {
         case Status.OK =>
-          response.json.validate[CreateCaseResponse].fold(
+          response.json.validate[String](jsonReads).fold(
             invalid => {
               val errorMessage =
                 s"""API: $apiFriendlyName
@@ -45,7 +53,7 @@ object CreateCaseHttpParser {
               logger.error(errorMessage)
               Left(ErrorModel(Status.OK, "INVALID JSON"))
             },
-            data => Right(data)
+            caseId => Right(CreateCaseResponse(caseId, correlationId))
           )
         case status =>
           val errorMessage =

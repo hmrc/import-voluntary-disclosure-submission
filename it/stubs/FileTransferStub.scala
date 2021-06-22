@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
-package models.responses
+package stubs
 
-import play.api.libs.json._
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import data.SampleData
+import play.api.http.Status.ACCEPTED
+import play.api.libs.json.{JsObject, Json}
+import support.WireMockMethods
 
-case class CreateCaseResponse(id: String, correlationId: String)
+object FileTransferStub extends WireMockMethods with SampleData {
 
-object CreateCaseResponse {
-  implicit val writes: Writes[CreateCaseResponse] = data => Json.obj("id" -> data.id)
+  private val authoriseUri = "/transfer-file"
+
+  val headers: Map[String, String] = Map.empty
+  val body: JsObject = Json.obj()
+
+  def success(): StubMapping =
+    when(method = POST, uri = authoriseUri)
+      .thenReturn(ACCEPTED, headers, body)
 }

@@ -60,6 +60,7 @@ trait SampleData {
 
   val supportingDocuments = Seq(
     SupportingDocument(
+      "file-ref",
       "TestDocument.pdf",
       "http://some/location",
       timestamp,
@@ -170,6 +171,7 @@ trait SampleData {
     ),
     "supportingDocuments" -> Json.arr(
       Json.obj(
+        "reference" -> "file-ref",
         "fileName" -> "TestDocument.pdf",
         "downloadUrl" -> "http://some/location",
         "uploadTimestamp" -> timestamp,
