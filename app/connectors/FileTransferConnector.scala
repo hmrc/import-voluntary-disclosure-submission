@@ -40,9 +40,9 @@ class FileTransferConnector @Inject()(val appConfig: AppConfig,
     http.POST[FileTransferRequest, HttpResponse](url, fileTransferRequest).map { response =>
 
       if (isSuccess(response.status)) {
-        logger.info(s"[FILE TRANSFER SUCCESS][REFERENCE: ${fileTransferRequest.upscanReference}][CORRELATION ID: ${fileTransferRequest.correlationId}]")
+        logger.info(s"[FILE TRANSFER SUCCESS][REFERENCE: ${fileTransferRequest.upscanReference}][CORRELATION ID: ${fileTransferRequest.correlationId}][CONVERSATION ID: ${fileTransferRequest.conversationId}]")
       } else {
-        logger.error(s"[FILE TRANSFER FAILURE][REFERENCE: ${fileTransferRequest.upscanReference}][CORRELATION ID: ${fileTransferRequest.correlationId}]")
+        logger.error(s"[FILE TRANSFER FAILURE][REFERENCE: ${fileTransferRequest.upscanReference}][CORRELATION ID: ${fileTransferRequest.correlationId}][CONVERSATION ID: ${fileTransferRequest.conversationId}]")
       }
 
       FileTransferResponse(
@@ -53,7 +53,7 @@ class FileTransferConnector @Inject()(val appConfig: AppConfig,
       )
     }.recover {
       case error =>
-        logger.error(s"""[FILE TRANSFER FAILURE][REFERENCE: ${fileTransferRequest.upscanReference}][CORRELATION ID: ${fileTransferRequest.correlationId}]
+        logger.error(s"""[FILE TRANSFER FAILURE][REFERENCE: ${fileTransferRequest.upscanReference}][CORRELATION ID: ${fileTransferRequest.correlationId}][CONVERSATION ID: ${fileTransferRequest.conversationId}]
         | [MESSAGE: ${error.getMessage}]""".stripMargin)
 
         FileTransferResponse(
