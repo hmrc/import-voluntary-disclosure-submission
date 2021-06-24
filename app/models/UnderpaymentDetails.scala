@@ -58,7 +58,7 @@ object UnderpaymentDetails {
       (__ \ "declarantContactDetails" \ "phoneNumber").read[String] and
       (__ \ "defermentType").readNullable[String](filter(JsonValidationError("Invalid Deferement Type"))(validDefermentType)) and
       (__ \ "defermentAccountNumber").readNullable[String] and
-      (__ \ "additionalDefermentNumber").readNullable[String]
+      (__ \ "additionalDefermentAccountNumber").readNullable[String]
     ) (UnderpaymentDetails.apply _)
 
   implicit val writes: Writes[UnderpaymentDetails] = (data: UnderpaymentDetails) => {

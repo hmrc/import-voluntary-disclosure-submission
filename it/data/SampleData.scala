@@ -154,7 +154,7 @@ trait SampleData {
     ),
     "defermentType" -> "D",
     "defermentAccountNumber" -> "1234567",
-    "additionalDefermentNumber" -> "C1234567",
+    "additionalDefermentAccountNumber" -> "C1234567",
     "amendedItems" -> Json.arr(
       Json.obj(
         "boxNumber" -> 62,
