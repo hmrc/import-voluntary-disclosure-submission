@@ -16,28 +16,41 @@
 
 package services
 
-import base.SpecBase
+import base.ServiceSpecBase
 import connectors.MockEoriDetailsConnector
+import models.ErrorModel
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import utils.ReusableValues
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
-class EoriDetailsServiceSpec extends SpecBase with MockEoriDetailsConnector with ReusableValues {
+class EoriDetailsServiceSpec extends ServiceSpecBase {
 
-  def setup(eoriDetailsResponse: EoriDetailsResponse): EoriDetailsService = {
-    setupMockGetAddress(eoriDetailsResponse)
-    new EoriDetailsService(mockEoriDetailsConnector)
+  trait Test extends MockEoriDetailsConnector with ReusableValues {
+    lazy val service = new EoriDetailsService(mockEoriDetailsConnector)
   }
 
-  "connector call is successful" should {
-    lazy val service = setup(Right(eoriDetails))
-    lazy val result = service.retrieveEoriDetails(idOne)
+  "A success response from the connector" should {
+    "return successful EoriDetailsResponse" in new Test {
+      setupMockGetAddress(Right(eoriDetails))
 
-    "return successful EoriDetailsResponse" in {
+      private val result = service.retrieveEoriDetails(idOne)
+
       await(result) mustBe Right(eoriDetails)
+    }
+  }
+
+  "retrieveEoriDetails" should {
+    "attempt upto 3 calls before returning a failed response" in new Test {
+      private val error = Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "some error"))
+      setupMockGetAddress(error).repeat(3)
+      private val result = service.retrieveEoriDetails(idOne)
+
+      await(result) mustBe error
+      verifyMockGetAddressCalls()
     }
   }
 }
