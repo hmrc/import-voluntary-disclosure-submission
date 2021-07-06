@@ -3,13 +3,13 @@ import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 val appName = "import-voluntary-disclosure-submission"
 
-val silencerVersion = "1.7.0"
+val silencerVersion = "1.7.5"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .settings(
     majorVersion := 0,
-    scalaVersion := "2.12.12",
+    scalaVersion := "2.12.14",
     PlayKeys.playDefaultPort := 7951,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     // ***************
