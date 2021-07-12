@@ -17,9 +17,9 @@
 package connectors.httpParsers
 
 import base.SpecBase
-import connectors.httpParsers.CreateCaseHttpParser.CreateCaseHttpReads
+import connectors.httpParsers.EisHttpParsers._
 import models.ErrorModel
-import models.responses.CreateCaseResponse
+import models.responses.{CreateCaseResponse, UpdateCaseResponse}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
@@ -28,13 +28,13 @@ import uk.gov.hmrc.http.HttpResponse
 import java.time.Instant
 import java.util.UUID
 
-class CreateCaseHttpParserSpec extends SpecBase {
+class EisHttpParsersSpec extends SpecBase {
 
   val correlationId: String = UUID.randomUUID().toString
 
   "Parsing a 200 (OK) response" when {
 
-    "the response is valid" should {
+    "the create case response is valid" should {
 
       val headers: Map[String, Seq[String]] = Map("x-correlation-id" -> Seq(correlationId))
       val body: JsObject = Json.obj(
@@ -47,7 +47,25 @@ class CreateCaseHttpParserSpec extends SpecBase {
       val response = HttpResponse(Status.OK, body, headers)
 
       "return the Case ID" in {
-        CreateCaseHttpReads.read("", "", response) mustBe Right(CreateCaseResponse("C18-101", correlationId))
+        createCaseHttpParser.read("", "", response) mustBe Right(CreateCaseResponse("C18-101", correlationId))
+      }
+
+    }
+
+    "the update case response is valid" should {
+
+      val headers: Map[String, Seq[String]] = Map("x-correlation-id" -> Seq(correlationId))
+      val body: JsObject = Json.obj(
+        "CaseID" -> "C18-101",
+        "ProcessingDate" -> Instant.now().toString,
+        "Status" -> "Success",
+        "StatusText" -> "Case created successfully"
+      )
+
+      val response = HttpResponse(Status.OK, body, headers)
+
+      "return the Case ID" in {
+        updateCaseHttpParser.read("", "", response) mustBe Right(UpdateCaseResponse("C18-101", correlationId))
       }
 
     }
@@ -64,7 +82,7 @@ class CreateCaseHttpParserSpec extends SpecBase {
       val response = HttpResponse(Status.OK, body, headers)
 
       "return an error" in {
-        CreateCaseHttpReads.read("", "", response) mustBe Left(ErrorModel(Status.OK, "INVALID JSON"))
+        createCaseHttpParser.read("", "", response) mustBe Left(ErrorModel(Status.OK, "INVALID JSON"))
       }
 
     }
@@ -77,7 +95,7 @@ class CreateCaseHttpParserSpec extends SpecBase {
     val response = HttpResponse(Status.BAD_REQUEST, body, headers)
 
     "return an error" in {
-      CreateCaseHttpReads.read("", "", response) mustBe Left(ErrorModel(Status.BAD_REQUEST, "Non-success response"))
+      createCaseHttpParser.read("", "", response) mustBe Left(ErrorModel(Status.BAD_REQUEST, "Non-success response"))
     }
 
   }

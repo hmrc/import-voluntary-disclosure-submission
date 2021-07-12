@@ -20,8 +20,9 @@ import base.SpecBase
 import connectors.httpParsers.ResponseHttpParser.ExternalResponse
 import data.SampleData
 import mocks.MockHttp
-import models.requests.CreateCaseRequest
-import models.responses.CreateCaseResponse
+import models.CreateCase
+import models.requests.EisRequest
+import models.responses.{CreateCaseResponse, UpdateCaseResponse}
 import org.scalatest.matchers.should.Matchers._
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.mvc.Http.HeaderNames
@@ -80,7 +81,14 @@ class EisConnectorSpec extends SpecBase {
 
       "return a CreateCaseResponse" in new Test {
         val response = Right(CreateCaseResponse("some case ID", UUID.randomUUID().toString))
-        MockedHttp.post[CreateCaseRequest, ExternalResponse[CreateCaseResponse]](expectedCreateCaseUrl, response)
+        MockedHttp.post[EisRequest[CreateCase], ExternalResponse[CreateCaseResponse]](expectedCreateCaseUrl, response)
+
+        await(target.createCase(caseDetails)) shouldBe response
+      }
+
+      "return a CreateUpdateResponse" in new Test {
+        val response = Right(UpdateCaseResponse("some case ID", UUID.randomUUID().toString))
+        MockedHttp.post[EisRequest[CreateCase], ExternalResponse[UpdateCaseResponse]](expectedCreateCaseUrl, response)
 
         await(target.createCase(caseDetails)) shouldBe response
       }

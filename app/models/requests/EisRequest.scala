@@ -16,18 +16,17 @@
 
 package models.requests
 
-import models.CaseDetails
 import play.api.libs.json.{Json, Writes}
 
 import java.util.UUID
 
-case class CreateCaseRequest(acknowledgementReference: UUID, caseDetails: CaseDetails)
+case class EisRequest[A](acknowledgementReference: UUID, content: A)
 
-object CreateCaseRequest {
-  implicit val writes: Writes[CreateCaseRequest] = (data: CreateCaseRequest) => Json.obj(
+object EisRequest {
+  implicit def writes[A: Writes]: Writes[EisRequest[A]] = (data: EisRequest[A]) => Json.obj(
     "AcknowledgementReference" -> data.acknowledgementReference.toString.replace("-", ""),
     "OriginatingSystem" -> "Digital",
     "ApplicationType" -> "C18",
-    "Content" -> data.caseDetails
+    "Content" -> data.content
   )
 }

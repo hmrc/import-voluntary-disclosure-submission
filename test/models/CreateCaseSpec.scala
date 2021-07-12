@@ -20,16 +20,16 @@ import base.ModelSpecBase
 import data.SampleData
 import play.api.libs.json._
 
-class CaseDetailsSpec extends ModelSpecBase with SampleData {
+class CreateCaseSpec extends ModelSpecBase with SampleData {
 
-  val model: CaseDetails = caseDetails
-  val bulkModel: CaseDetails = bulkCaseDetails
+  val model: CreateCase = caseDetails
+  val bulkModel: CreateCase = bulkCaseDetails
 
   "Reading case details from JSON" when {
 
     val json: JsObject = incomingJson
 
-    lazy val result: CaseDetails = json.validate[CaseDetails] match {
+    lazy val result: CreateCase = json.validate[CreateCase] match {
       case JsSuccess(value, _) => value
       case JsError(errors) => fail(s"Failed to read underpayment details from JSON: $errors")
     }
@@ -70,7 +70,7 @@ class CaseDetailsSpec extends ModelSpecBase with SampleData {
 
     val json: JsObject = bulkIncomingJson
 
-    lazy val result: CaseDetails = json.validate[CaseDetails] match {
+    lazy val result: CreateCase = json.validate[CreateCase] match {
       case JsSuccess(value, _) => value
       case JsError(errors) => fail(s"Failed to read underpayment details from JSON: $errors")
     }

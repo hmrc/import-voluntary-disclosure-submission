@@ -102,7 +102,7 @@ trait SampleData {
     vatNumber = None
   )
 
-  val caseDetails: CaseDetails = CaseDetails(
+  val caseDetails: CreateCase = CreateCase(
     underpaymentDetails = underpaymentDetails,
     duties = duties,
     documentsSupplied = documentsSupplied,
