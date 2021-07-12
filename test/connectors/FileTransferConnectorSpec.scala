@@ -26,7 +26,6 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.HttpResponse
 
 import java.util.UUID
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.TimeoutException
 
 class FileTransferConnectorSpec extends SpecBase {

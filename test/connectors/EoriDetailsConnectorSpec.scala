@@ -25,10 +25,9 @@ import org.scalatest.matchers.should.Matchers._
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import utils.ReusableValues
 
-import java.time.format.DateTimeFormatter
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.{Locale, UUID}
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Try
 
 class EoriDetailsConnectorSpec extends SpecBase with MockHttp with ReusableValues {

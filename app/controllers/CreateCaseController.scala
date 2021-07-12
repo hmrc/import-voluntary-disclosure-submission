@@ -25,13 +25,13 @@ import services.CreateCaseService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
 class CreateCaseController @Inject()(cc: ControllerComponents,
                                      service: CreateCaseService,
-                                     authAction: AuthorisedAction)
+                                     authAction: AuthorisedAction,
+                                     implicit val ec: ExecutionContext)
   extends BackendController(cc) {
 
   def onSubmit(): Action[JsValue] = (Action(parse.json) andThen authAction).async { implicit request =>

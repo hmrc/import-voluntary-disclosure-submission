@@ -27,7 +27,6 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.mvc.Http.HeaderNames
 
 import java.util.UUID
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class EisConnectorSpec extends SpecBase {
 
