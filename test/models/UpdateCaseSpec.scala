@@ -42,6 +42,12 @@ class UpdateCaseSpec extends ModelSpecBase with SampleData {
         result.supportingDocuments shouldBe model.supportingDocuments
       }
 
+      "deserialize null supporting documents as an empty sequence" in {
+        (updateCaseJson + ("supportingDocuments" -> Json.parse("null")))
+          .validate[UpdateCase]
+          .map(_.supportingDocuments) shouldBe JsSuccess(Seq.empty[SupportingDocument])
+      }
+
       "deserialize the additional info" in {
         result.additionalInfo shouldBe model.additionalInfo
       }

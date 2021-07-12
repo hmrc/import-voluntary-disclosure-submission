@@ -18,8 +18,8 @@ package mocks.connectors
 
 import connectors.EisConnector
 import connectors.httpParsers.ResponseHttpParser.ExternalResponse
-import models.CreateCase
-import models.responses.CreateCaseResponse
+import models.{CreateCase, UpdateCase}
+import models.responses.{CreateCaseResponse, UpdateCaseResponse}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
@@ -39,6 +39,12 @@ trait MockEisConnector extends MockFactory {
         .returns(Future.successful(response))
     }
 
+    def updateCase(caseDetails: UpdateCase,
+                   response: ExternalResponse[UpdateCaseResponse]): CallHandler[Future[ExternalResponse[UpdateCaseResponse]]] = {
+      (mockEisConnector.updateCase(_: UpdateCase)(_: HeaderCarrier, _: ExecutionContext))
+        .expects(caseDetails, *, *)
+        .returns(Future.successful(response))
+    }
   }
 
 }
