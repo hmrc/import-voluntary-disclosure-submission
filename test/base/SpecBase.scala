@@ -21,10 +21,13 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.mvc.{AnyContentAsEmpty, ControllerComponents}
 import play.api.test.CSRFTokenHelper.CSRFRequest
+import play.api.test.Helpers.baseApplicationBuilder.injector
 import play.api.test.{FakeRequest, Helpers}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+import scala.concurrent.ExecutionContext
 
 trait SpecBase extends AnyWordSpec with MockFactory {
 
@@ -42,4 +45,7 @@ trait SpecBase extends AnyWordSpec with MockFactory {
   val controllerComponents: ControllerComponents = Helpers.stubControllerComponents()
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
+
+  implicit lazy val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
+
 }

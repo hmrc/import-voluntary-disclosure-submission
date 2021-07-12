@@ -31,7 +31,6 @@ import play.api.test.Helpers.{contentAsJson, contentType, defaultAwaitTimeout, s
 import play.mvc.Http.HeaderNames
 
 import java.util.UUID
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class CreateCaseControllerSpec extends SpecBase with Matchers {
@@ -41,7 +40,7 @@ class CreateCaseControllerSpec extends SpecBase with Matchers {
     MockedAuthConnector.authorise(Future.successful(Some("externalId")))
     val authAction = new AuthAction(mockAuthConnector)
 
-    lazy val target = new CreateCaseController(controllerComponents, mockCreateCaseService, authAction)
+    lazy val target = new CreateCaseController(controllerComponents, mockCreateCaseService, authAction, ec)
 
     val validRequest: FakeRequest[JsObject] = FakeRequest(controllers.routes.CreateCaseController.onSubmit())
       .withHeaders(

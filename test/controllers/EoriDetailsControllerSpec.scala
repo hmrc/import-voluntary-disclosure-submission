@@ -26,7 +26,7 @@ import utils.ReusableValues
 
 class EoriDetailsControllerSpec extends SpecBase with MockEoriDetailsService with ReusableValues {
 
-  object Controller extends EoriDetailsController(controllerComponents, mockEoriDetailsService)
+  object Controller extends EoriDetailsController(controllerComponents, mockEoriDetailsService, ec)
 
   "Eori Details Controller" should {
     "return OK and the correct Json" in {

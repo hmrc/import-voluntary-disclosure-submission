@@ -23,10 +23,12 @@ import services.EoriDetailsService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext
 
 @Singleton()
-class EoriDetailsController @Inject()(cc: ControllerComponents, eoriDetailsService: EoriDetailsService)
+class EoriDetailsController @Inject()(cc: ControllerComponents,
+                                      eoriDetailsService: EoriDetailsService,
+                                      implicit val ec: ExecutionContext)
   extends BackendController(cc) {
 
   def onLoad(id: String): Action[AnyContent] = Action.async { implicit request =>
