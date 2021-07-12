@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions.AuthorisedAction
-import models.CaseDetails
+import models.CreateCase
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.mvc.{Action, ControllerComponents}
@@ -35,7 +35,7 @@ class CreateCaseController @Inject()(cc: ControllerComponents,
   extends BackendController(cc) {
 
   def onSubmit(): Action[JsValue] = (Action(parse.json) andThen authAction).async { implicit request =>
-    request.body.validate[CaseDetails] match {
+    request.body.validate[CreateCase] match {
       case JsSuccess(value, _) =>
         service.createCase(value).map {
           case Right(response) => Ok(Json.toJson(response))

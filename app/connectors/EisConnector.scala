@@ -17,11 +17,11 @@
 package connectors
 
 import config.AppConfig
-import connectors.httpParsers.CreateCaseHttpParser.CreateCaseHttpReads
+import connectors.httpParsers.EisHttpParsers._
 import connectors.httpParsers.ResponseHttpParser.ExternalResponse
-import models.CaseDetails
-import models.requests.CreateCaseRequest
-import models.responses.CreateCaseResponse
+import models.{CreateCase, UpdateCase}
+import models.requests.EisRequest
+import models.responses.{CreateCaseResponse, UpdateCaseResponse}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import java.time.format.DateTimeFormatter
@@ -39,6 +39,7 @@ class EisConnector @Inject()(http: HttpClient,
     .withZone(ZoneId.of("GMT"))
 
   private[connectors] lazy val createCaseUrl = s"${appConfig.eisBaseUrl}/cpr/caserequest/c18/create/v1"
+  private[connectors] lazy val updateCaseUrl = s"${appConfig.eisBaseUrl}/cpr/caserequest/c18/update/v1"
 
   private[connectors] def headers(correlationId: UUID): Seq[(String, String)] = Seq(
     "Authorization" -> s"Bearer ${appConfig.createCaseToken}",
@@ -48,15 +49,24 @@ class EisConnector @Inject()(http: HttpClient,
     "accept" -> "application/json"
   )
 
-  def createCase(caseDetails: CaseDetails)
+  def createCase(caseDetails: CreateCase)
                 (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[ExternalResponse[CreateCaseResponse]] = {
 
     val acknowledgementReference: UUID = UUID.randomUUID()
     val eisHeaders = headers(acknowledgementReference)
 
-    val request = CreateCaseRequest(acknowledgementReference, caseDetails)
+    val request = EisRequest(acknowledgementReference, caseDetails)
+    http.POST[EisRequest[CreateCase], ExternalResponse[CreateCaseResponse]](createCaseUrl, request, eisHeaders)
+  }
 
-    http.POST(createCaseUrl, request, eisHeaders)(CreateCaseRequest.writes, CreateCaseHttpReads, hc, ec)
+  def updateCase(update: UpdateCase)
+                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[ExternalResponse[UpdateCaseResponse]] = {
+
+    val acknowledgementReference: UUID = UUID.randomUUID()
+    val eisHeaders = headers(acknowledgementReference)
+
+    val request = EisRequest(acknowledgementReference, update)
+    http.POST[EisRequest[UpdateCase], ExternalResponse[UpdateCaseResponse]](updateCaseUrl, request, eisHeaders)
   }
 
 }

@@ -21,16 +21,16 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 
-case class CaseDetails(underpaymentDetails: UnderpaymentDetails,
-                       duties: Seq[DutyItem],
-                       documentsSupplied: Seq[DocumentType],
-                       supportingDocuments: Seq[SupportingDocument],
-                       amendedItems: Option[Seq[BoxItem]],
-                       importer: TraderDetails,
-                       representative: Option[TraderDetails] = None)
+case class CreateCase(underpaymentDetails: UnderpaymentDetails,
+                      duties: Seq[DutyItem],
+                      documentsSupplied: Seq[DocumentType],
+                      supportingDocuments: Seq[SupportingDocument],
+                      amendedItems: Option[Seq[BoxItem]],
+                      importer: TraderDetails,
+                      representative: Option[TraderDetails] = None)
 
-object CaseDetails {
-  implicit val reads: Reads[CaseDetails] = (
+object CreateCase {
+  implicit val reads: Reads[CreateCase] = (
     __.read[UnderpaymentDetails] and
       (__ \ "underpaymentDetails").read[Seq[DutyItem]] and
       (__ \ "supportingDocumentTypes").read[Seq[DocumentType]] and
@@ -38,10 +38,10 @@ object CaseDetails {
       (__ \\ "amendedItems").readNullable[Seq[BoxItem]] and
       (__ \ "importer").read[TraderDetails] and
       (__ \ "representative").readNullable[TraderDetails]
-    ) (CaseDetails.apply _)
+    ) (CreateCase.apply _)
 
 
-  implicit val writes: Writes[CaseDetails] = (o: CaseDetails) => {
+  implicit val writes: Writes[CreateCase] = (o: CreateCase) => {
 
     val importer = Some(Json.toJson(o.importer).as[JsObject] ++ Json.obj("Type" -> TraderTypes.Importer))
     val representative = o.representative.map { rep =>

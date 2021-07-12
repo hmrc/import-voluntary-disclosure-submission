@@ -112,7 +112,7 @@ trait SampleData {
     vatNumber = None
   )
 
-  val caseDetails: CaseDetails = CaseDetails(
+  val caseDetails: CreateCase = CreateCase(
     underpaymentDetails = underpaymentDetails,
     duties = duties,
     documentsSupplied = documentsSupplied,
@@ -122,7 +122,13 @@ trait SampleData {
     representative = Some(representative)
   )
 
-  val bulkCaseDetails: CaseDetails = caseDetails.copy(underpaymentDetails = bulkUnderpaymentDetails, documentsSupplied = Seq(Other))
+  val bulkCaseDetails: CreateCase = caseDetails.copy(underpaymentDetails = bulkUnderpaymentDetails, documentsSupplied = Seq(Other))
+
+  val updateCase: UpdateCase = UpdateCase(
+    caseId = "C18",
+    supportingDocuments = supportingDocuments,
+    additionalInfo = "Additional Info"
+  )
 
   val incomingJson: JsObject = Json.obj(
     "userType" -> "representative",
@@ -220,6 +226,28 @@ trait SampleData {
         "postalCode" -> "ZZ11ZZ"
       )
     )
+  )
+
+  val updateCaseJson: JsObject = Json.obj(
+    "caseId" -> "C18",
+    "additionalInfo" -> "Additional Info",
+    "supportingDocumentTypes" -> Json.arr(
+      "OriginalC88",
+      "OriginalC2",
+      "AmendedSubstituteEntryWorksheet",
+      "AmendedC88",
+      "AmendedC2"
+    ),
+    "supportingDocuments" -> Json.arr(
+      Json.obj(
+        "reference" -> "file-reference",
+        "fileName" -> "TestDocument.pdf",
+        "downloadUrl" -> "http://some/location",
+        "uploadTimestamp" -> timestamp,
+        "checksum" -> "the file checksum",
+        "fileMimeType" -> "application/pdf"
+      )
+    ),
   )
 
   val bulkIncomingJson: JsObject = Json.obj(

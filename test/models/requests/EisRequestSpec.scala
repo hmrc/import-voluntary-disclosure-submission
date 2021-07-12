@@ -18,14 +18,15 @@ package models.requests
 
 import base.ModelSpecBase
 import data.SampleData
+import models.CreateCase
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 import java.util.UUID
 
-class CreateCaseRequestSpec extends ModelSpecBase with SampleData {
+class EisRequestSpec extends ModelSpecBase with SampleData {
 
   val acknowledgementReference: UUID = UUID.randomUUID()
-  val model: CreateCaseRequest = CreateCaseRequest(acknowledgementReference, caseDetails)
+  val model: EisRequest[CreateCase] = EisRequest(acknowledgementReference, caseDetails)
 
   "Serialising a create case request" should {
 
