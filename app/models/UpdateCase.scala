@@ -26,7 +26,7 @@ case class UpdateCase(caseId: String,
 object UpdateCase {
   implicit val reads: Reads[UpdateCase] = (
     (__ \ "caseId").read[String] and
-      (__ \ "supportingDocuments").read[Seq[SupportingDocument]] and
+      (__ \ "supportingDocuments").readNullable[Seq[SupportingDocument]].map(_.getOrElse(Seq.empty)) and
       (__ \ "additionalInfo").read[String]
     ) (UpdateCase.apply _)
 
