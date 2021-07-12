@@ -126,7 +126,6 @@ trait SampleData {
 
   val updateCase: UpdateCase = UpdateCase(
     caseId = "C18",
-    documentsSupplied = documentsSupplied,
     supportingDocuments = supportingDocuments,
     additionalInfo = "Additional Info"
   )

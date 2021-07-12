@@ -16,19 +16,16 @@
 
 package models
 
-import models.DocumentTypes.DocumentType
-import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
 case class UpdateCase(caseId: String,
-                      documentsSupplied: Seq[DocumentType],
                       supportingDocuments: Seq[SupportingDocument],
                       additionalInfo: String)
 
 object UpdateCase {
   implicit val reads: Reads[UpdateCase] = (
     (__ \ "caseId").read[String] and
-      (__ \ "supportingDocumentTypes").read[Seq[DocumentType]] and
       (__ \ "supportingDocuments").read[Seq[SupportingDocument]] and
       (__ \ "additionalInfo").read[String]
     ) (UpdateCase.apply _)

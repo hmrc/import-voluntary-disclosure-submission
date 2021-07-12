@@ -38,10 +38,6 @@ class UpdateCaseSpec extends ModelSpecBase with SampleData {
         result.caseId shouldBe model.caseId
       }
 
-      "deserialize the supplied documents" in {
-        result.documentsSupplied shouldBe model.documentsSupplied
-      }
-
       "deserialize the supporting documents" in {
         result.supportingDocuments shouldBe model.supportingDocuments
       }
