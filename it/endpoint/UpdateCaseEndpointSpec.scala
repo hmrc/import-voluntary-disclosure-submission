@@ -19,7 +19,7 @@ package endpoint
 import data.SampleData
 import play.api.http.Status
 import play.api.libs.ws.{WSRequest, WSResponse}
-import stubs.{AuditStub, AuthStub, CreateCaseStub, FileTransferStub, UpdateCaseStub}
+import stubs.{AuditStub, AuthStub, FileTransferStub, UpdateCaseStub}
 import support.IntegrationSpec
 
 class UpdateCaseEndpointSpec extends IntegrationSpec with SampleData {
@@ -30,13 +30,12 @@ class UpdateCaseEndpointSpec extends IntegrationSpec with SampleData {
 
       AuditStub.audit()
       AuthStub.authorised()
-      CreateCaseStub.success()
       UpdateCaseStub.success()
       FileTransferStub.success()
 
-      val request: WSRequest = buildRequest("/case")
+      val request: WSRequest = buildRequest("/update-case")
 
-      val response: WSResponse = await(request.post(incomingJson))
+      val response: WSResponse = await(request.post(updateCaseJson))
 
       response.status shouldBe Status.OK
 
