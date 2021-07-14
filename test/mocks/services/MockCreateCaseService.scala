@@ -16,9 +16,8 @@
 
 package mocks.services
 
-import connectors.httpParsers.ResponseHttpParser.ExternalResponse
-import models.CreateCase
 import models.responses.CreateCaseResponse
+import models.{CreateCase, EisError}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import services.CreateCaseService
@@ -33,7 +32,7 @@ trait MockCreateCaseService extends MockFactory {
   object MockedCreateCaseService {
 
     def createCase(caseDetails: CreateCase,
-                   response: ExternalResponse[CreateCaseResponse]): CallHandler[Future[ExternalResponse[CreateCaseResponse]]] = {
+                   response: Either[EisError, CreateCaseResponse]): CallHandler[Future[Either[EisError, CreateCaseResponse]]] = {
       (mockCreateCaseService.createCase(_: CreateCase)(_: HeaderCarrier, _: ExecutionContext))
         .expects(caseDetails, *, *)
         .returns(Future.successful(response))

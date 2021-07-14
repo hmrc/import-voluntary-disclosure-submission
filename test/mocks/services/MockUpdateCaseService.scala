@@ -16,9 +16,8 @@
 
 package mocks.services
 
-import connectors.httpParsers.ResponseHttpParser.ExternalResponse
-import models.UpdateCase
 import models.responses.UpdateCaseResponse
+import models.{UpdateCase, UpdateCaseError}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import services.UpdateCaseService
@@ -33,7 +32,7 @@ trait MockUpdateCaseService extends MockFactory {
   object MockedUpdateCaseService {
 
     def updateCase(caseDetails: UpdateCase,
-                   response: ExternalResponse[UpdateCaseResponse]): CallHandler[Future[ExternalResponse[UpdateCaseResponse]]] = {
+                   response: Either[UpdateCaseError, UpdateCaseResponse]): CallHandler[Future[Either[UpdateCaseError, UpdateCaseResponse]]] = {
       (mockUpdateCaseService.updateCase(_: UpdateCase)(_: HeaderCarrier, _: ExecutionContext))
         .expects(caseDetails, *, *)
         .returns(Future.successful(response))

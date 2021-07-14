@@ -17,9 +17,8 @@
 package mocks.connectors
 
 import connectors.EisConnector
-import connectors.httpParsers.ResponseHttpParser.ExternalResponse
-import models.{CreateCase, UpdateCase}
 import models.responses.{CreateCaseResponse, UpdateCaseResponse}
+import models.{CreateCase, EisError, UpdateCase, UpdateCaseError}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
@@ -33,14 +32,14 @@ trait MockEisConnector extends MockFactory {
   object MockedEisConnector {
 
     def createCase(caseDetails: CreateCase,
-                   response: ExternalResponse[CreateCaseResponse]): CallHandler[Future[ExternalResponse[CreateCaseResponse]]] = {
+                   response: Either[EisError, CreateCaseResponse]): CallHandler[Future[Either[EisError, CreateCaseResponse]]] = {
       (mockEisConnector.createCase(_: CreateCase)(_: HeaderCarrier, _: ExecutionContext))
         .expects(caseDetails, *, *)
         .returns(Future.successful(response))
     }
 
     def updateCase(caseDetails: UpdateCase,
-                   response: ExternalResponse[UpdateCaseResponse]): CallHandler[Future[ExternalResponse[UpdateCaseResponse]]] = {
+                   response: Either[UpdateCaseError, UpdateCaseResponse]): CallHandler[Future[Either[UpdateCaseError, UpdateCaseResponse]]] = {
       (mockEisConnector.updateCase(_: UpdateCase)(_: HeaderCarrier, _: ExecutionContext))
         .expects(caseDetails, *, *)
         .returns(Future.successful(response))

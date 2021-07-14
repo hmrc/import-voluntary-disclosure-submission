@@ -86,7 +86,7 @@ class UpdateCaseControllerSpec extends SpecBase with Matchers {
 
     "case creation fails in downstream services" should {
 
-      val failedResponse = Left(ErrorModel(Status.BAD_REQUEST, "some error"))
+      val failedResponse = Left(UpdateCaseError.UnexpectedError("some error", Status.BAD_REQUEST))
 
       "return 500 (INTERNAL SERVER ERROR) response" in new Test {
         MockedUpdateCaseService.updateCase(updateCase, failedResponse)
@@ -107,6 +107,40 @@ class UpdateCaseControllerSpec extends SpecBase with Matchers {
         contentAsJson(result) shouldBe Json.obj()
       }
 
+    }
+
+    "case ID is not valid" should {
+      val failedResponse = Left(UpdateCaseError.InvalidCaseId)
+
+      "return 400 (BAD REQUEST) response" in new Test {
+        MockedUpdateCaseService.updateCase(updateCase, failedResponse)
+        private val result = target.onSubmit()(validRequest)
+        status(result) shouldBe Status.BAD_REQUEST
+      }
+
+      "return the correct JSON payload" in new Test {
+        MockedUpdateCaseService.updateCase(updateCase, failedResponse)
+        private val result = target.onSubmit()(validRequest)
+        contentType(result) shouldBe Some(ContentTypes.JSON)
+        contentAsJson(result) shouldBe Json.obj("errorCode" -> 1, "errorMessage" -> "Invalid case ID")
+      }
+    }
+
+    "case is already closed" should {
+      val failedResponse = Left(UpdateCaseError.CaseAlreadyClosed)
+
+      "return 400 (BAD REQUEST) response" in new Test {
+        MockedUpdateCaseService.updateCase(updateCase, failedResponse)
+        private val result = target.onSubmit()(validRequest)
+        status(result) shouldBe Status.BAD_REQUEST
+      }
+
+      "return the correct JSON payload" in new Test {
+        MockedUpdateCaseService.updateCase(updateCase, failedResponse)
+        private val result = target.onSubmit()(validRequest)
+        contentType(result) shouldBe Some(ContentTypes.JSON)
+        contentAsJson(result) shouldBe Json.obj("errorCode" -> 2, "errorMessage" -> "Requested case is already closed")
+      }
     }
 
     "called with invalid payload" should {

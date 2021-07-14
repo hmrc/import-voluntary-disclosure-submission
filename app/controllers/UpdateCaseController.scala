@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions.AuthorisedAction
-import models.UpdateCase
+import models.{UpdateCase, UpdateCaseError}
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.mvc.{Action, ControllerComponents}
@@ -39,7 +39,8 @@ class UpdateCaseController @Inject()(cc: ControllerComponents,
       case JsSuccess(value, _) =>
         service.updateCase(value).map {
           case Right(response) => Ok(Json.toJson(response))
-          case Left(_) => InternalServerError(Json.obj())
+          case Left(UpdateCaseError.UnexpectedError(_, _)) => InternalServerError(Json.obj())
+          case Left(err) => BadRequest(Json.toJson(err))
         }
       case JsError(errors) =>
         val pathsWithErrors: Map[String, String] = errors.map { error =>

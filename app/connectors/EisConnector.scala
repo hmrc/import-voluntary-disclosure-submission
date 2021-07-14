@@ -18,10 +18,9 @@ package connectors
 
 import config.AppConfig
 import connectors.httpParsers.EisHttpParsers._
-import connectors.httpParsers.ResponseHttpParser.ExternalResponse
-import models.{CreateCase, UpdateCase}
 import models.requests.EisRequest
 import models.responses.{CreateCaseResponse, UpdateCaseResponse}
+import models.{CreateCase, EisError, UpdateCase, UpdateCaseError}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import java.time.format.DateTimeFormatter
@@ -50,23 +49,23 @@ class EisConnector @Inject()(http: HttpClient,
   )
 
   def createCase(caseDetails: CreateCase)
-                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[ExternalResponse[CreateCaseResponse]] = {
+                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[EisError, CreateCaseResponse]] = {
 
     val acknowledgementReference: UUID = UUID.randomUUID()
     val eisHeaders = headers(acknowledgementReference)
 
     val request = EisRequest(acknowledgementReference, caseDetails)
-    http.POST[EisRequest[CreateCase], ExternalResponse[CreateCaseResponse]](createCaseUrl, request, eisHeaders)
+    http.POST[EisRequest[CreateCase], Either[EisError, CreateCaseResponse]](createCaseUrl, request, eisHeaders)
   }
 
   def updateCase(update: UpdateCase)
-                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[ExternalResponse[UpdateCaseResponse]] = {
+                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[UpdateCaseError, UpdateCaseResponse]] = {
 
     val acknowledgementReference: UUID = UUID.randomUUID()
     val eisHeaders = headers(acknowledgementReference)
 
     val request = EisRequest(acknowledgementReference, update)
-    http.POST[EisRequest[UpdateCase], ExternalResponse[UpdateCaseResponse]](updateCaseUrl, request, eisHeaders)
+    http.POST[EisRequest[UpdateCase], Either[UpdateCaseError, UpdateCaseResponse]](updateCaseUrl, request, eisHeaders)
   }
 
 }
