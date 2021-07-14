@@ -23,7 +23,8 @@ import play.api.{Configuration, Environment}
 class ModuleBindings extends Module {
 
   override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] = Seq(
-    bind[AuthorisedAction].to(classOf[AuthAction])
+    bind[AuthorisedAction].to(classOf[AuthAction]),
+    bind[AppConfig].to(classOf[AppConfigImpl])
   )
 
 }

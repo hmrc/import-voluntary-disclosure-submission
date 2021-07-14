@@ -19,9 +19,9 @@ package connectors
 import config.AppConfig
 import connectors.httpParsers.EisHttpParsers._
 import connectors.httpParsers.ResponseHttpParser.ExternalResponse
-import models.{CreateCase, UpdateCase}
 import models.requests.EisRequest
 import models.responses.{CreateCaseResponse, UpdateCaseResponse}
+import models.{CreateCase, UpdateCase}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import java.time.format.DateTimeFormatter

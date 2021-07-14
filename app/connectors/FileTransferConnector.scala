@@ -53,8 +53,9 @@ class FileTransferConnector @Inject()(val appConfig: AppConfig,
       )
     }.recover {
       case error =>
-        logger.error(s"""[FILE TRANSFER FAILURE][REFERENCE: ${fileTransferRequest.upscanReference}][CORRELATION ID: ${fileTransferRequest.correlationId}][CONVERSATION ID: ${fileTransferRequest.conversationId}]
-        | [MESSAGE: ${error.getMessage}]""".stripMargin)
+        logger.error(
+          s"""[FILE TRANSFER FAILURE][REFERENCE: ${fileTransferRequest.upscanReference}][CORRELATION ID: ${fileTransferRequest.correlationId}][CONVERSATION ID: ${fileTransferRequest.conversationId}]
+             | [MESSAGE: ${error.getMessage}]""".stripMargin)
 
         FileTransferResponse(
           fileTransferRequest.upscanReference,

@@ -22,12 +22,14 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
+class AppConfigImpl @Inject()(config: Configuration, servicesConfig: ServicesConfig) extends AppConfig {
+
+  val appName: String = servicesConfig.getString("appName")
 
   val authBaseUrl: String = servicesConfig.baseUrl("auth")
 
   val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
+  val graphiteHost: String = config.get[String]("microservice.metrics.graphite.host")
 
   lazy val sub09: String = servicesConfig.baseUrl("mdg")
   lazy val eisBaseUrl: String = servicesConfig.baseUrl("eis")
@@ -35,4 +37,18 @@ class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig)
   lazy val createCaseToken: String = config.get[String]("microservice.services.eis.tokens.create")
   lazy val eoriDetailsToken: String = config.get[String]("microservice.services.mdg.tokens.eoriDetails")
 
+}
+
+trait AppConfig {
+
+  val appName: String
+  val authBaseUrl: String
+  val auditingEnabled: Boolean
+  val graphiteHost: String
+  val sub09: String
+  val eisBaseUrl: String
+  val fileTransferUrl: String
+  val createCaseToken: String
+  val eoriDetailsToken: String
+  
 }

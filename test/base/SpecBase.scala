@@ -25,7 +25,6 @@ import play.api.test.Helpers.baseApplicationBuilder.injector
 import play.api.test.{FakeRequest, Helpers}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.ExecutionContext
 
@@ -39,8 +38,7 @@ trait SpecBase extends AnyWordSpec with MockFactory {
   val env: Environment = Environment.simple()
   val configuration: Configuration = Configuration.load(env)
 
-  val serviceConfig = new ServicesConfig(configuration)
-  val appConfig = new AppConfig(configuration, serviceConfig)
+  val appConfig: AppConfig = injector.instanceOf[AppConfig]
 
   val controllerComponents: ControllerComponents = Helpers.stubControllerComponents()
 
