@@ -18,8 +18,8 @@ package stubs
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import data.SampleData
-import play.api.http.Status.OK
 import play.api.libs.json.{JsObject, Json}
+import play.mvc.Http.Status
 import support.WireMockMethods
 
 import java.time.Instant
@@ -30,14 +30,27 @@ object UpdateCaseStub extends WireMockMethods with SampleData {
   private val authoriseUri = "/cpr/caserequest/c18/update/v1"
 
   val headers: Map[String, String] = Map("x-correlation-id" -> UUID.randomUUID().toString)
-  val body: JsObject = Json.obj(
-    "CaseID" -> "C18-101",
-    "ProcessingDate" -> Instant.now().toString,
-    "Status" -> "Success",
-    "StatusText" -> "Case updated successfully"
-  )
 
-  def success(): StubMapping =
+  def success(): StubMapping = {
+    val body: JsObject = Json.obj(
+      "CaseID" -> "C18-101",
+      "ProcessingDate" -> Instant.now().toString,
+      "Status" -> "Success",
+      "StatusText" -> "Case updated successfully"
+    )
     when(method = POST, uri = authoriseUri)
-      .thenReturn(OK, headers, body)
+      .thenReturn(Status.OK, headers, body)
+  }
+
+  def invalidCaseError(): StubMapping = {
+    val error = Json.obj("correlationId" -> "some id", "errorCode" -> "400", "errorMessage" -> "03- Invalid Case ID")
+    when(method = POST, uri = authoriseUri)
+      .thenReturn(Status.BAD_REQUEST, headers, Json.obj("errorDetail" -> error))
+  }
+
+  def caseClosedError(): StubMapping = {
+    val error = Json.obj("correlationId" -> "some id", "errorCode" -> "400", "errorMessage" -> "04 - Requested case already closed")
+    when(method = POST, uri = authoriseUri)
+      .thenReturn(Status.BAD_REQUEST, headers, Json.obj("errorDetail" -> error))
+  }
 }
