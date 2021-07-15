@@ -18,7 +18,7 @@ package services
 
 import connectors.EisConnector
 import models.responses.CreateCaseResponse
-import models.{CreateCase, ErrorModel}
+import models.{CreateCase, EisError}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -28,7 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CreateCaseService @Inject()(connector: EisConnector,
                                   fileTransferService: FileTransferService) {
 
-  def createCase(caseDetails: CreateCase)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ErrorModel, CreateCaseResponse]] = {
+  def createCase(caseDetails: CreateCase)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[EisError, CreateCaseResponse]] = {
     connector.createCase(caseDetails) map {
       case success@Right(details) =>
         fileTransferService.transferFiles(details.id, details.correlationId, caseDetails.supportingDocuments)

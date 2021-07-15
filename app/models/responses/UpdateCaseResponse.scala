@@ -16,4 +16,10 @@
 
 package models.responses
 
+import play.api.libs.json.{Json, Writes}
+
 case class UpdateCaseResponse(id: String, correlationId: String)
+
+object UpdateCaseResponse {
+  implicit val writes: Writes[UpdateCaseResponse] = data => Json.obj("id" -> data.id)
+}

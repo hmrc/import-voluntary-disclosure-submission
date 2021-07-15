@@ -18,7 +18,7 @@ package connectors.httpParsers
 
 import base.SpecBase
 import connectors.httpParsers.EisHttpParsers._
-import models.ErrorModel
+import models.EisError
 import models.responses.{CreateCaseResponse, UpdateCaseResponse}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status
@@ -82,22 +82,25 @@ class EisHttpParsersSpec extends SpecBase {
       val response = HttpResponse(Status.OK, body, headers)
 
       "return an error" in {
-        createCaseHttpParser.read("", "", response) mustBe Left(ErrorModel(Status.OK, "INVALID JSON"))
+        createCaseHttpParser.read("", "", response) mustBe Left(EisError.UnexpectedError(Status.OK, "Received invalid JSON"))
       }
 
     }
   }
 
-  "Parsing a non-200 response" should {
+  "Parsing a 400 response" should {
 
     val headers: Map[String, Seq[String]] = Map("x-correlation-id" -> Seq(correlationId))
-    val body: JsObject = Json.obj()
-    val response = HttpResponse(Status.BAD_REQUEST, body, headers)
 
-    "return an error" in {
-      createCaseHttpParser.read("", "", response) mustBe Left(ErrorModel(Status.BAD_REQUEST, "Non-success response"))
+    "the response is a specific EIS error" in {
+      val error = Json.obj("correlationId" -> correlationId, "errorCode" -> "400", "errorMessage" -> "03- Invalid Case ID")
+      val response = HttpResponse(Status.BAD_REQUEST, Json.obj("errorDetail" -> error), headers)
+      createCaseHttpParser.read("", "", response) mustBe Left(EisError.BackendError(correlationId, "400", Some("03- Invalid Case ID")))
     }
 
+    "the response is empty" in {
+      val response = HttpResponse(Status.BAD_REQUEST, Json.obj(), headers)
+      createCaseHttpParser.read("", "", response) mustBe Left(EisError.UnexpectedError(Status.BAD_REQUEST, "Received an unexpected error response"))
+    }
   }
-
 }

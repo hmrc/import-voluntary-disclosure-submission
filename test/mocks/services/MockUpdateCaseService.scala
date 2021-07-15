@@ -14,36 +14,30 @@
  * limitations under the License.
  */
 
-package mocks.connectors
+package mocks.services
 
-import connectors.EisConnector
-import models.responses.{CreateCaseResponse, UpdateCaseResponse}
-import models.{CreateCase, EisError, UpdateCase, UpdateCaseError}
+import models.responses.UpdateCaseResponse
+import models.{UpdateCase, UpdateCaseError}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import services.UpdateCaseService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockEisConnector extends MockFactory {
+trait MockUpdateCaseService extends MockFactory {
 
-  val mockEisConnector: EisConnector = mock[EisConnector]
+  val mockUpdateCaseService: UpdateCaseService = mock[UpdateCaseService]
 
-  object MockedEisConnector {
-
-    def createCase(caseDetails: CreateCase,
-                   response: Either[EisError, CreateCaseResponse]): CallHandler[Future[Either[EisError, CreateCaseResponse]]] = {
-      (mockEisConnector.createCase(_: CreateCase)(_: HeaderCarrier, _: ExecutionContext))
-        .expects(caseDetails, *, *)
-        .returns(Future.successful(response))
-    }
+  object MockedUpdateCaseService {
 
     def updateCase(caseDetails: UpdateCase,
                    response: Either[UpdateCaseError, UpdateCaseResponse]): CallHandler[Future[Either[UpdateCaseError, UpdateCaseResponse]]] = {
-      (mockEisConnector.updateCase(_: UpdateCase)(_: HeaderCarrier, _: ExecutionContext))
+      (mockUpdateCaseService.updateCase(_: UpdateCase)(_: HeaderCarrier, _: ExecutionContext))
         .expects(caseDetails, *, *)
         .returns(Future.successful(response))
     }
+
   }
 
 }
