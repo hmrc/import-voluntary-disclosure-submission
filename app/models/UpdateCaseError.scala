@@ -23,14 +23,14 @@ sealed trait UpdateCaseError extends Product with Serializable
 object UpdateCaseError {
   case object InvalidCaseId extends UpdateCaseError
   case object CaseAlreadyClosed extends UpdateCaseError
-  final case class UnexpectedError(message: String, status: Int) extends UpdateCaseError
+  final case class UnexpectedError(status: Int, message: Option[String]) extends UpdateCaseError
 
   def fromEisError(error: EisError): UpdateCaseError = {
     error match {
-      case EisError.BackendError(_, _, "03- Invalid Case ID") => UpdateCaseError.InvalidCaseId
-      case EisError.BackendError(_, _, "04 - Requested case already closed") => UpdateCaseError.CaseAlreadyClosed
-      case EisError.BackendError(_, status, message) => UpdateCaseError.UnexpectedError(message, status.toInt)
-      case EisError.UnexpectedError(status, reason) => UpdateCaseError.UnexpectedError(reason, status)
+      case EisError.BackendError(_, _, Some("03- Invalid Case ID")) => UpdateCaseError.InvalidCaseId
+      case EisError.BackendError(_, _, Some("04 - Requested case already closed")) => UpdateCaseError.CaseAlreadyClosed
+      case EisError.BackendError(_, status, message) => UpdateCaseError.UnexpectedError(status.toInt, message)
+      case EisError.UnexpectedError(status, reason) => UpdateCaseError.UnexpectedError(status, Some(reason))
     }
   }
 

@@ -86,7 +86,7 @@ class UpdateCaseControllerSpec extends SpecBase with Matchers {
 
     "case creation fails in downstream services" should {
 
-      val failedResponse = Left(UpdateCaseError.UnexpectedError("some error", Status.BAD_REQUEST))
+      val failedResponse = Left(UpdateCaseError.UnexpectedError(Status.BAD_REQUEST, Some("some error")))
 
       "return 500 (INTERNAL SERVER ERROR) response" in new Test {
         MockedUpdateCaseService.updateCase(updateCase, failedResponse)

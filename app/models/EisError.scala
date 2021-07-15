@@ -21,15 +21,16 @@ import play.api.libs.json.Reads
 sealed trait EisError extends Product with Serializable
 
 object EisError {
-  final case class BackendError(correlationId: String, errorCode: String, errorMessage: String) extends EisError
+  final case class BackendError(correlationId: String, errorCode: String, errorMessage: Option[String]) extends EisError
   final case class UnexpectedError(status: Int, reason: String) extends EisError
 
   implicit val reads: Reads[EisError] =
     Reads { json =>
+      val detail = json \ "errorDetail"
       for {
-        correlationId <- (json \ "CorrelationID").validate[String]
-        code <- (json \ "ErrorCode").validate[String]
-        message <- (json \ "ErrorMessage").validate[String]
+        correlationId <- (detail \ "correlationId").validate[String]
+        code <- (detail \ "errorCode").validate[String]
+        message <- (detail \ "errorMessage").validateOpt[String]
       } yield EisError.BackendError(correlationId, code, message)
     }
 }
