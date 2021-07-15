@@ -31,8 +31,11 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
 @Singleton
-class FileTransferService @Inject()(actorSystem: ActorSystem,
-                                    connector: FileTransferConnector) {
+class FileTransferService @Inject()(
+                                     actorSystem: ActorSystem,
+                                     connector: FileTransferConnector,
+                                     auditService: AuditService
+                                   ) {
 
   private val logger = Logger("application." + getClass.getCanonicalName)
 
@@ -77,7 +80,7 @@ class FileTransferService @Inject()(actorSystem: ActorSystem,
     }
 
     actorSystem.scheduler.scheduleOnce(0 milliseconds) {
-      val allResponses = requests.foldLeft(Future(List.empty[FileTransferResponse])) {
+      val allResponses: Future[List[FileTransferResponse]] = requests.foldLeft(Future(List.empty[FileTransferResponse])) {
         (previousResponses, req) ⇒
           for {
             responses ← previousResponses
