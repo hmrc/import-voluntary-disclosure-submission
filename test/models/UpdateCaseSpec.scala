@@ -24,7 +24,7 @@ class UpdateCaseSpec extends ModelSpecBase with SampleData {
 
   val model: UpdateCase = updateCase
 
-  "Reading case details from JSON" when {
+  "Reading case update from JSON" when {
 
     val json: JsObject = updateCaseJson
 
@@ -33,7 +33,7 @@ class UpdateCaseSpec extends ModelSpecBase with SampleData {
       case JsError(errors) => fail(s"Failed to read underpayment details from JSON: $errors")
     }
 
-    "the JSON is a valid" should {
+    "the JSON is valid" should {
       "deserialize the case ID" in {
         result.caseId shouldBe model.caseId
       }
@@ -51,6 +51,13 @@ class UpdateCaseSpec extends ModelSpecBase with SampleData {
       "deserialize the additional info" in {
         result.additionalInfo shouldBe model.additionalInfo
       }
+    }
+  }
+
+  "Converting update case to JSON" when {
+    "the data is valid" in {
+      Json.toJson(updateCase) shouldBe
+        Json.obj("CaseID" -> updateCase.caseId, "Description" -> updateCase.additionalInfo)
     }
   }
 }
