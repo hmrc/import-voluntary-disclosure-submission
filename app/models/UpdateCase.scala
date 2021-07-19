@@ -33,7 +33,7 @@ object UpdateCase {
 
   implicit val writes: Writes[UpdateCase] = (update: UpdateCase) =>
     Json.obj(
-      "CaseId" -> update.caseId,
+      "CaseID" -> update.caseId,
       "Description" -> update.additionalInfo
     )
 }

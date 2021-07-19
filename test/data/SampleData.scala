@@ -231,13 +231,6 @@ trait SampleData {
   val updateCaseJson: JsObject = Json.obj(
     "caseId" -> "C18",
     "additionalInfo" -> "Additional Info",
-    "supportingDocumentTypes" -> Json.arr(
-      "OriginalC88",
-      "OriginalC2",
-      "AmendedSubstituteEntryWorksheet",
-      "AmendedC88",
-      "AmendedC2"
-    ),
     "supportingDocuments" -> Json.arr(
       Json.obj(
         "reference" -> "file-reference",
