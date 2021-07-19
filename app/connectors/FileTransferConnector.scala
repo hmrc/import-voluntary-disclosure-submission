@@ -24,7 +24,7 @@ import play.api.http.Status
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
-import java.time.LocalDateTime
+import java.time.{Instant, LocalDateTime}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -37,6 +37,8 @@ class FileTransferConnector @Inject()(val appConfig: AppConfig,
 
   def transferFile(fileTransferRequest: FileTransferRequest)
                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[FileTransferResponse] = {
+
+    val startTime = Instant.now
     http.POST[FileTransferRequest, HttpResponse](url, fileTransferRequest).map { response =>
 
       if (isSuccess(response.status)) {
@@ -44,11 +46,13 @@ class FileTransferConnector @Inject()(val appConfig: AppConfig,
       } else {
         logger.error(s"[FILE TRANSFER FAILURE][REFERENCE: ${fileTransferRequest.upscanReference}][CORRELATION ID: ${fileTransferRequest.correlationId}][CONVERSATION ID: ${fileTransferRequest.conversationId}]")
       }
-
       FileTransferResponse(
         fileTransferRequest.upscanReference,
+        fileTransferRequest.fileName,
+        fileTransferRequest.fileMimeType,
         isSuccess(response.status),
         LocalDateTime.now(),
+        Instant.now().toEpochMilli - startTime.toEpochMilli,
         errorMessage(response.status)
       )
     }.recover {
@@ -59,8 +63,11 @@ class FileTransferConnector @Inject()(val appConfig: AppConfig,
 
         FileTransferResponse(
           fileTransferRequest.upscanReference,
+          fileTransferRequest.fileName,
+          fileTransferRequest.fileMimeType,
           success = false,
           LocalDateTime.now(),
+          Instant.now().toEpochMilli - startTime.toEpochMilli,
           Some(error.getMessage)
         )
     }
