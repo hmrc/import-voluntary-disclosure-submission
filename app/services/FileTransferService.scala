@@ -90,7 +90,6 @@ class FileTransferService @Inject()(
             response ← connector.transferFile(req)(hc, implicitly)
           } yield responses :+ response
       }
-      //allResponses.flatMap(fileTransferResponseList => auditFileTransfers(fileTransferResponseList, caseId))
       allResponses.map(file => auditFileTransfers(file, caseId))
         .onComplete{
           case Success(success) => logger.info("Successfully transferred files")
@@ -104,21 +103,12 @@ class FileTransferService @Inject()(
   private def auditFileTransfers(results: Seq[FileTransferResponse], caseId: String)
                                 (implicit hc: HeaderCarrier, ec: ExecutionContext, request: Request[_]): Future[Unit] = {
     val summaryMessage = s"\nTotal Size: ${results.size} | Success: ${results.count(_.success)} | Failed: ${results.count(!_.success)}\n\n"
-    println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    println(results)
     if (results.forall(_.success)) {
-      println(summaryMessage)
       logger.info(summaryMessage)
     } else {
-      println(summaryMessage)
       logger.error(summaryMessage)
     }
-    println("????????????????????????????? before audit")
-    println("")
-    println(FilesUploadedAuditEvent(results, caseId).detail)
-    println("")
     auditService.audit(FilesUploadedAuditEvent(results, caseId))
-    println("????????????????????????????? after audit")
 
     Future.successful({})
   }

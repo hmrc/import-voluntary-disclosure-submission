@@ -32,8 +32,6 @@ class CreateCaseService @Inject()(connector: EisConnector, fileTransferService: 
                 (implicit hc: HeaderCarrier, executionContext: ExecutionContext, request: Request[_]): Future[Either[EisError, CreateCaseResponse]] = {
     connector.createCase(caseDetails) map {
       case success@Right(details) =>
-        // http.request.method == "POST" && http.request.uri == "/write/audit"
-        println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Case created successfully")
         fileTransferService.transferFiles(details.id, details.correlationId, caseDetails.supportingDocuments)
         success
       case failure => failure
