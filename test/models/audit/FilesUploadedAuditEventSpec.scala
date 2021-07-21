@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-package config
+package models.audit
 
-import controllers.actions.{AuthAction, AuthorisedAction}
-import play.api.inject.{Binding, Module}
-import play.api.{Configuration, Environment}
+import base.SpecBase
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.libs.json.Json
 
-class ModuleBindings extends Module {
+class FilesUploadedAuditEventSpec extends SpecBase with AuditTestData {
 
-  override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] = Seq(
-    bind[AuthorisedAction].to(classOf[AuthAction]),
-    bind[AppConfig].to(classOf[AppConfigImpl])
-  )
+  "A valid FilesUploadedAuditEvent model" should {
+
+    "contain correct details" in {
+      val event = FilesUploadedAuditEvent(Seq(fileTransferResponse), caseID)
+
+      event.detail mustBe Json.parse(auditOutputJson)
+    }
+
+  }
 
 }

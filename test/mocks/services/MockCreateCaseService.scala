@@ -20,6 +20,7 @@ import models.responses.CreateCaseResponse
 import models.{CreateCase, EisError}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import play.api.mvc.Request
 import services.CreateCaseService
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -33,8 +34,8 @@ trait MockCreateCaseService extends MockFactory {
 
     def createCase(caseDetails: CreateCase,
                    response: Either[EisError, CreateCaseResponse]): CallHandler[Future[Either[EisError, CreateCaseResponse]]] = {
-      (mockCreateCaseService.createCase(_: CreateCase)(_: HeaderCarrier, _: ExecutionContext))
-        .expects(caseDetails, *, *)
+      (mockCreateCaseService.createCase(_: CreateCase)(_: HeaderCarrier, _: ExecutionContext, _: Request[_]))
+        .expects(caseDetails, *, *, *)
         .returns(Future.successful(response))
     }
 

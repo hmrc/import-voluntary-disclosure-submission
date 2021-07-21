@@ -25,7 +25,6 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 import java.util.UUID
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class UpdateCaseServiceSpec
   extends ServiceSpecBase
@@ -40,7 +39,7 @@ class UpdateCaseServiceSpec
       MockedEisConnector.updateCase(updateCase, expectedResponse)
       MockedFileTransferService.transferFiles()
       val service = new UpdateCaseService(mockEisConnector, mockFileTransferService)
-      await(service.updateCase(updateCase)) mustBe expectedResponse
+      await(service.updateCase(updateCase)(hc, ec, fakeRequest)) mustBe expectedResponse
     }
   }
 }

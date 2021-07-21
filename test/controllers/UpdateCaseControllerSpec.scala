@@ -27,7 +27,7 @@ import org.scalatest.matchers.should.Matchers
 import play.api.http.{ContentTypes, Status}
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsJson, contentType, defaultAwaitTimeout, status}
+import play.api.test.Helpers._
 import play.mvc.Http.HeaderNames
 
 import java.util.UUID

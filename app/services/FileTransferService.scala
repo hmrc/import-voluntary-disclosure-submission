@@ -19,9 +19,11 @@ package services
 import akka.actor.ActorSystem
 import connectors.FileTransferConnector
 import models.SupportingDocument
+import models.audit.FilesUploadedAuditEvent
 import models.requests.FileTransferRequest
 import models.responses.FileTransferResponse
 import play.api.Logger
+import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.util.UUID
@@ -29,15 +31,19 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
+import scala.util.{Failure, Success}
 
 @Singleton
-class FileTransferService @Inject()(actorSystem: ActorSystem,
-                                    connector: FileTransferConnector) {
+class FileTransferService @Inject()(
+                                     actorSystem: ActorSystem,
+                                     connector: FileTransferConnector,
+                                     auditService: AuditService
+                                   ) {
 
   private val logger = Logger("application." + getClass.getCanonicalName)
 
   def transferFiles(caseId: String, conversationId: String, files: Seq[SupportingDocument])
-                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+                   (implicit hc: HeaderCarrier, ec: ExecutionContext, request: Request[_]): Future[Unit] = {
     simpleTransfer(caseId, conversationId, files)
   }
 
@@ -59,7 +65,7 @@ class FileTransferService @Inject()(actorSystem: ActorSystem,
   //  }
 
   private def simpleTransfer(caseId: String, conversationId: String, files: Seq[SupportingDocument])
-                            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+                            (implicit hc: HeaderCarrier, ec: ExecutionContext, request: Request[_]): Future[Unit] = {
 
     val context: ExecutionContext = actorSystem.dispatchers.lookup("offline-dispatchers")
 
@@ -77,27 +83,32 @@ class FileTransferService @Inject()(actorSystem: ActorSystem,
     }
 
     actorSystem.scheduler.scheduleOnce(0 milliseconds) {
-      val allResponses = requests.foldLeft(Future(List.empty[FileTransferResponse])) {
+      val allResponses: Future[List[FileTransferResponse]] = requests.foldLeft(Future(List.empty[FileTransferResponse])) {
         (previousResponses, req) ⇒
           for {
             responses ← previousResponses
             response ← connector.transferFile(req)(hc, implicitly)
           } yield responses :+ response
       }
-
-      allResponses.flatMap(auditFileTransfers)
+      allResponses.map(file => auditFileTransfers(file, caseId))
+        .onComplete{
+          case Success(success) => logger.info("Successfully transferred files")
+          case Failure(errormessage) => logger.error(errormessage.toString)
+        }
     }(context)
 
     Future.successful({})
   }
 
-  private val auditFileTransfers: Seq[FileTransferResponse] => Future[Unit] = results => {
+  private def auditFileTransfers(results: Seq[FileTransferResponse], caseId: String)
+                                (implicit hc: HeaderCarrier, ec: ExecutionContext, request: Request[_]): Future[Unit] = {
     val summaryMessage = s"\nTotal Size: ${results.size} | Success: ${results.count(_.success)} | Failed: ${results.count(!_.success)}\n\n"
-    if (results.filter(!_.success).isEmpty) {
+    if (results.forall(_.success)) {
       logger.info(summaryMessage)
     } else {
       logger.error(summaryMessage)
     }
+    auditService.audit(FilesUploadedAuditEvent(results, caseId))
 
     Future.successful({})
   }

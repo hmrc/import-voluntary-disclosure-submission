@@ -21,8 +21,11 @@ import play.api.libs.json.{Format, Json}
 import java.time.LocalDateTime
 
 final case class FileTransferResponse(upscanReference: String,
+                                      fileName: String,
+                                      fileMimeType: String,
                                       success: Boolean,
                                       transferredAt: LocalDateTime,
+                                      duration: Long,
                                       error: Option[String] = None)
 
 object FileTransferResponse {

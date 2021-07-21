@@ -20,6 +20,7 @@ import models.responses.UpdateCaseResponse
 import models.{UpdateCase, UpdateCaseError}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import play.api.mvc.Request
 import services.UpdateCaseService
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -32,9 +33,10 @@ trait MockUpdateCaseService extends MockFactory {
   object MockedUpdateCaseService {
 
     def updateCase(caseDetails: UpdateCase,
-                   response: Either[UpdateCaseError, UpdateCaseResponse]): CallHandler[Future[Either[UpdateCaseError, UpdateCaseResponse]]] = {
-      (mockUpdateCaseService.updateCase(_: UpdateCase)(_: HeaderCarrier, _: ExecutionContext))
-        .expects(caseDetails, *, *)
+                   response: Either[UpdateCaseError, UpdateCaseResponse]
+                  ): CallHandler[Future[Either[UpdateCaseError, UpdateCaseResponse]]] = {
+      (mockUpdateCaseService.updateCase(_: UpdateCase)(_: HeaderCarrier, _: ExecutionContext, _: Request[_]))
+        .expects(caseDetails, *, *, *)
         .returns(Future.successful(response))
     }
 

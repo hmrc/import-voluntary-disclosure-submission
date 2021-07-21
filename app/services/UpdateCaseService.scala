@@ -19,16 +19,17 @@ package services
 import connectors.EisConnector
 import models.responses.UpdateCaseResponse
 import models.{UpdateCase, UpdateCaseError}
+import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UpdateCaseService @Inject()(connector: EisConnector,
-                                  fileTransferService: FileTransferService) {
+class UpdateCaseService @Inject()(connector: EisConnector, fileTransferService: FileTransferService) {
 
-  def updateCase(updateCase: UpdateCase)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[UpdateCaseError, UpdateCaseResponse]] = {
+  def updateCase(updateCase: UpdateCase)
+                (implicit hc: HeaderCarrier, executionContext: ExecutionContext, request: Request[_]): Future[Either[UpdateCaseError, UpdateCaseResponse]] = {
     connector.updateCase(updateCase) map {
       case success@Right(details) =>
         fileTransferService.transferFiles(details.id, details.correlationId, updateCase.supportingDocuments)

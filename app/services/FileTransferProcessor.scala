@@ -27,18 +27,18 @@ import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 
 import java.time.LocalDateTime
 import java.util.UUID
-import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
+import scala.concurrent.{ExecutionContext, Future}
 
 // $COVERAGE-OFF$Code taken from another [Route 1] service
 class FileTransferProcessor(caseReferenceNumber: String,
                             fileTransferConnector: FileTransferConnector,
                             conversationId: String,
-                            audit: Seq[FileTransferResponse] => Future[Unit])
-  extends Actor with Logging {
+                            audit: Seq[FileTransferResponse] => Future[Unit],
+                            implicit val executionContext: ExecutionContext
+                           ) extends Actor with Logging {
 
   import FileTransferProcessor._
-  import context.dispatcher
 
   var results: Seq[FileTransferResponse] = Seq.empty
   var clientRef: ActorRef = ActorRef.noSender
@@ -79,8 +79,11 @@ class FileTransferProcessor(caseReferenceNumber: String,
       logger.error(error.toString)
       results = results :+ FileTransferResponse(
         upscanReference = "<unknown>",
+        fileName = "",
+        fileMimeType = "",
         success = false,
         LocalDateTime.now(),
+        0,
         error = Some(message)
       )
 
@@ -88,8 +91,11 @@ class FileTransferProcessor(caseReferenceNumber: String,
       logger.error(error.toString)
       results = results :+ FileTransferResponse(
         upscanReference = "<unknown>",
+        fileName = "",
+        fileMimeType = "",
         success = false,
         LocalDateTime.now(),
+        0,
         error = Some(error.toString)
       )
 

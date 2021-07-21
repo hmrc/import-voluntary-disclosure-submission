@@ -17,10 +17,21 @@
 package base
 
 import org.scalatest.wordspec.AnyWordSpec
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.CSRFTokenHelper.CSRFRequest
+import play.api.test.FakeRequest
+import play.api.test.Helpers.baseApplicationBuilder.injector
+import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
+
+import scala.concurrent.ExecutionContext
 
 trait ServiceSpecBase extends AnyWordSpec {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
+
+  lazy val fakeRequest: FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest("GET", "/foo").withSession(SessionKeys.sessionId -> "foo").withCSRFToken.asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
+
+  implicit lazy val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
 
 }
