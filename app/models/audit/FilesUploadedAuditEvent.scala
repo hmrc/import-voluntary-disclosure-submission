@@ -16,11 +16,23 @@
 
 package models.audit
 
-import play.api.libs.json.{JsValue, Json}
+import models.responses.FileTransferResponse
+import play.api.libs.json._
 import services.JsonAuditModel
 
-case class FilesUploadedAuditEvent(submissionData: JsValue) extends JsonAuditModel {
+case class FilesUploadedAuditEvent(
+                                    fileTransferResponse: Seq[FileTransferResponse],
+                                    caseId: String
+                                  ) extends JsonAuditModel {
   override val auditType: String = "SupportingDocumentationTransfers"
   override val transactionName: String = "supporting-documentation-transfers"
-  override val detail: JsValue = Json.obj()
+  override val detail: JsValue = Json.obj(
+    fields = "summary" -> Json.obj(
+      fields = "caseID" -> caseId,
+      "totalFiles" -> fileTransferResponse.length,
+      "filesTransferredSuccessfully" -> fileTransferResponse.count(file => file.success),
+      "filesTransferFailures" -> fileTransferResponse.count(file => file.error.isDefined)
+    )
+  ) ++ Json.obj("files" -> Json.toJson(fileTransferResponse))
+
 }
