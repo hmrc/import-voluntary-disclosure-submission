@@ -24,8 +24,6 @@ import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import utils.ReusableValues
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 
 class EoriDetailsServiceSpec extends ServiceSpecBase {
 
@@ -37,7 +35,7 @@ class EoriDetailsServiceSpec extends ServiceSpecBase {
     "return successful EoriDetailsResponse" in new Test {
       setupMockGetAddress(Right(eoriDetails))
 
-      private val result = service.retrieveEoriDetails(idOne)
+      private val result = service.retrieveEoriDetails(idOne)(hc, ec)
 
       await(result) mustBe Right(eoriDetails)
     }
@@ -47,7 +45,7 @@ class EoriDetailsServiceSpec extends ServiceSpecBase {
     "attempt upto 3 calls before returning a failed response" in new Test {
       private val error = Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "some error"))
       setupMockGetAddress(error).repeat(3)
-      private val result = service.retrieveEoriDetails(idOne)
+      private val result = service.retrieveEoriDetails(idOne)(hc, ec)
 
       await(result) mustBe error
       verifyMockGetAddressCalls()

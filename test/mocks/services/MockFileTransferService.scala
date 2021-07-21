@@ -19,6 +19,7 @@ package mocks.services
 import models.SupportingDocument
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import play.api.mvc.Request
 import services.FileTransferService
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -31,8 +32,13 @@ trait MockFileTransferService extends MockFactory {
   object MockedFileTransferService {
 
     def transferFiles(): CallHandler[Future[Unit]] = {
-      (mockFileTransferService.transferFiles(_: String, _: String, _: Seq[SupportingDocument])(_: HeaderCarrier, _: ExecutionContext))
-        .expects(*, *, *, *, *)
+      (
+        mockFileTransferService.transferFiles(
+          _: String,
+          _: String,
+          _: Seq[SupportingDocument]
+        )(_: HeaderCarrier, _: ExecutionContext, _: Request[_]))
+        .expects(*, *, *, *, *, *)
         .returns(Future.successful({}))
     }
 

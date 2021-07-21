@@ -16,7 +16,7 @@
 
 package services
 
-import config.AppConfigImpl
+import config.AppConfig
 import play.api.libs.json.JsValue
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
@@ -27,7 +27,7 @@ import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class AuditService @Inject()(appConfig: AppConfigImpl,
+class AuditService @Inject()(appConfig: AppConfig,
                              auditConnector: AuditConnector) {
 
   def audit(dataSource: JsonAuditModel)(implicit hc: HeaderCarrier, ec: ExecutionContext, request: Request[_]): Unit =
