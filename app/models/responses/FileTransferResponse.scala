@@ -26,7 +26,7 @@ final case class FileTransferResponse(upscanReference: String,
                                       fileTransferSuccess: Boolean,
                                       transferredAt: LocalDateTime,
                                       duration: Long,
-                                      error: Option[String] = None)
+                                      fileTransferError: Option[String] = None)
 
 object FileTransferResponse {
   implicit val formats: Format[FileTransferResponse] = Json.format[FileTransferResponse]

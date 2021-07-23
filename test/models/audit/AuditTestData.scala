@@ -39,7 +39,7 @@ trait AuditTestData {
     fileTransferSuccess = true,
     transferredAt = LocalDateTime.of(year, month, dayOfMonth, hour, minute, second, nanoOfSecond),
     duration = duration,
-    error = None
+    fileTransferError = None
   )
 
   val auditOutputJson: String =

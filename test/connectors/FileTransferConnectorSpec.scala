@@ -70,7 +70,7 @@ class FileTransferConnectorSpec extends SpecBase {
 
         result.fileTransferSuccess shouldBe true
         result.upscanReference shouldBe upscanReference
-        result.error shouldBe None
+        result.fileTransferError shouldBe None
       }
 
     }
@@ -84,7 +84,7 @@ class FileTransferConnectorSpec extends SpecBase {
 
         result.fileTransferSuccess shouldBe false
         result.upscanReference shouldBe upscanReference
-        result.error shouldBe Some("HTTP response status 500")
+        result.fileTransferError shouldBe Some("HTTP response status 500")
       }
 
     }
@@ -99,7 +99,7 @@ class FileTransferConnectorSpec extends SpecBase {
 
         result.fileTransferSuccess shouldBe false
         result.upscanReference shouldBe upscanReference
-        result.error shouldBe Some("took too long")
+        result.fileTransferError shouldBe Some("took too long")
       }
 
     }

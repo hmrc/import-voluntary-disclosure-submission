@@ -84,7 +84,7 @@ class FileTransferProcessor(caseReferenceNumber: String,
         fileTransferSuccess = false,
         LocalDateTime.now(),
         0,
-        error = Some(message)
+        fileTransferError = Some(message)
       )
 
     case akka.actor.Status.Failure(error) =>
@@ -96,7 +96,7 @@ class FileTransferProcessor(caseReferenceNumber: String,
         fileTransferSuccess = false,
         LocalDateTime.now(),
         0,
-        error = Some(error.toString)
+        fileTransferError = Some(error.toString)
       )
 
     case CheckComplete(batchSize) =>
