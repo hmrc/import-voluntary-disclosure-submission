@@ -16,10 +16,12 @@
 
 package utils
 
-import models.EoriDetails
+import models.{EoriDetails, SupportingDocument}
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HttpResponse
+
+import java.time.LocalDateTime
 
 trait ReusableValues {
 
@@ -44,6 +46,16 @@ trait ReusableValues {
     "GB",
     Some("987654321000")
   )
+
+  val document: SupportingDocument =
+    SupportingDocument(
+      reference = "upscan-12345678",
+      fileName = "test.pdf",
+      downloadUrl = "http://localhost/test.pdf",
+      uploadTimestamp = LocalDateTime.of(2020, 12, 12, 0, 0),
+      checksum = "checksum",
+      fileMimeType = "application.pdf"
+    )
 
   val errorModel: HttpResponse = HttpResponse(Status.NOT_FOUND, "Error Message")
 

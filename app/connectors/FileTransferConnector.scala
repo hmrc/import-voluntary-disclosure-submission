@@ -89,7 +89,7 @@ class FileTransferConnector @Inject()(val appConfig: AppConfig,
                  |[CORRELATION ID: ${fileTransferRequest.correlationId}]
                  |[CONVERSATION ID: ${fileTransferRequest.conversationId}]
                  |[MESSAGE: Could not to parse response: $errors]""".stripMargin)
-            Left(ErrorModel(response.status, "Could not to parse upscan response"))
+            Left(ErrorModel(response.status, "Could not to parse file transfer response"))
         }
       } else {
         logger.error(
@@ -97,7 +97,7 @@ class FileTransferConnector @Inject()(val appConfig: AppConfig,
              |[CORRELATION ID: ${fileTransferRequest.correlationId}]
              |[CONVERSATION ID: ${fileTransferRequest.conversationId}]
              |[STATUS: ${response.status}]""".stripMargin)
-        Left(ErrorModel(response.status, "Unsuccessful upscan response"))
+        Left(ErrorModel(response.status, "Unsuccessful file transfer response"))
       }
 
     }.recover {

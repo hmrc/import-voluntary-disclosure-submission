@@ -122,7 +122,7 @@ class FileTransferService @Inject()(
   }
 
   private def auditFileTransfers(results: Seq[FileTransferResponse], caseId: String)
-                                (implicit hc: HeaderCarrier, ec: ExecutionContext, request: Request[_]): Future[Unit] = {
+                                (implicit hc: HeaderCarrier, ec: ExecutionContext, request: Request[_]): Unit = {
     val summaryMessage = s"\nTotal Size: ${results.size} | Success: ${results.count(_.fileTransferSuccess)} | Failed: ${results.count(!_.fileTransferSuccess)}\n\n"
     if (results.forall(_.fileTransferSuccess)) {
       logger.info(summaryMessage)
@@ -130,8 +130,6 @@ class FileTransferService @Inject()(
       logger.error(summaryMessage)
     }
     auditService.audit(FilesUploadedAuditEvent(results, caseId))
-
-    Future.successful({})
   }
 
 }

@@ -151,7 +151,7 @@ class FileTransferConnectorSpec extends SpecBase with EitherValues {
         private val resp = await(target.transferMultipleFiles(request)).left.value
 
         resp.status shouldBe Status.INTERNAL_SERVER_ERROR
-        resp.message shouldBe "Unsuccessful upscan response"
+        resp.message shouldBe "Unsuccessful file transfer response"
       }
 
     }
@@ -164,6 +164,17 @@ class FileTransferConnectorSpec extends SpecBase with EitherValues {
 
         private val resp = await(target.transferMultipleFiles(request)).left.value
         resp.message shouldBe "java.util.concurrent.TimeoutException: took too long"
+      }
+
+    }
+
+    "the file transfer microservice returns unexpected JSON" should {
+
+      "return a failed response" in new Test {
+        MockedHttp.post[MultiFileTransferRequest, HttpResponse](expectedMultiFileUrl, HttpResponse(Status.CREATED, "{}"))
+
+        private val resp = await(target.transferMultipleFiles(request)).left.value
+        resp.message shouldBe "Could not to parse file transfer response"
       }
 
     }
