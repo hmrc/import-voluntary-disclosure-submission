@@ -81,7 +81,7 @@ class FileTransferProcessor(caseReferenceNumber: String,
         upscanReference = "<unknown>",
         fileName = "",
         fileMimeType = "",
-        success = false,
+        fileTransferSuccess = false,
         LocalDateTime.now(),
         0,
         error = Some(message)
@@ -93,7 +93,7 @@ class FileTransferProcessor(caseReferenceNumber: String,
         upscanReference = "<unknown>",
         fileName = "",
         fileMimeType = "",
-        success = false,
+        fileTransferSuccess = false,
         LocalDateTime.now(),
         0,
         error = Some(error.toString)
@@ -112,8 +112,8 @@ class FileTransferProcessor(caseReferenceNumber: String,
 
   def completionMessage(transferRequests: Seq[FileTransferResponse], batchSize: Int, startTime: Long): String = {
     val totalRequests = transferRequests.size
-    val successCount = transferRequests.count(_.success)
-    val failureCount = transferRequests.count(!_.success)
+    val successCount = transferRequests.count(_.fileTransferSuccess)
+    val failureCount = transferRequests.count(!_.fileTransferSuccess)
     val timeToCompleteInSeconds = (System.currentTimeMillis() - startTime) / 1000
     s"Transferred $totalRequests out of $batchSize files in $timeToCompleteInSeconds seconds. With $successCount successes and $failureCount failures."
   }

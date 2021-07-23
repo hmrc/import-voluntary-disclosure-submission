@@ -68,7 +68,7 @@ class FileTransferConnectorSpec extends SpecBase {
 
         private val result = await(target.transferFile(request))
 
-        result.success shouldBe true
+        result.fileTransferSuccess shouldBe true
         result.upscanReference shouldBe upscanReference
         result.error shouldBe None
       }
@@ -82,7 +82,7 @@ class FileTransferConnectorSpec extends SpecBase {
 
         private val result = await(target.transferFile(request))
 
-        result.success shouldBe false
+        result.fileTransferSuccess shouldBe false
         result.upscanReference shouldBe upscanReference
         result.error shouldBe Some("HTTP response status 500")
       }
@@ -97,7 +97,7 @@ class FileTransferConnectorSpec extends SpecBase {
 
         private val result = await(target.transferFile(request))
 
-        result.success shouldBe false
+        result.fileTransferSuccess shouldBe false
         result.upscanReference shouldBe upscanReference
         result.error shouldBe Some("took too long")
       }

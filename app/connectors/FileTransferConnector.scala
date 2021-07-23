@@ -65,7 +65,7 @@ class FileTransferConnector @Inject()(val appConfig: AppConfig,
           fileTransferRequest.upscanReference,
           fileTransferRequest.fileName,
           fileTransferRequest.fileMimeType,
-          success = false,
+          fileTransferSuccess = false,
           LocalDateTime.now(),
           Instant.now().toEpochMilli - startTime.toEpochMilli,
           Some(error.getMessage)

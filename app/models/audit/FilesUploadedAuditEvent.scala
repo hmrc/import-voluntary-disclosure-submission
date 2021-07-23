@@ -30,7 +30,7 @@ case class FilesUploadedAuditEvent(
     fields = "summary" -> Json.obj(
       fields = "caseID" -> caseId,
       "totalFiles" -> fileTransferResponse.length,
-      "filesTransferredSuccessfully" -> fileTransferResponse.count(file => file.success),
+      "filesTransferredSuccessfully" -> fileTransferResponse.count(file => file.fileTransferSuccess),
       "filesTransferFailures" -> fileTransferResponse.count(file => file.error.isDefined)
     )
   ) ++ Json.obj("files" -> Json.toJson(fileTransferResponse))

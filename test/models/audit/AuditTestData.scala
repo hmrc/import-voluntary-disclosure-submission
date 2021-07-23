@@ -36,7 +36,7 @@ trait AuditTestData {
     upscanReference = "8d53fae2-4e5b-4351-b0d3-b996ec35d808",
     fileName = "AnExampleDoc.pdf",
     fileMimeType = "application/pdf",
-    success = true,
+    fileTransferSuccess = true,
     transferredAt = LocalDateTime.of(year, month, dayOfMonth, hour, minute, second, nanoOfSecond),
     duration = duration,
     error = None
