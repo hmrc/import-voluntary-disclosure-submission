@@ -23,10 +23,10 @@ import java.time.LocalDateTime
 final case class FileTransferResponse(upscanReference: String,
                                       fileName: String,
                                       fileMimeType: String,
-                                      success: Boolean,
+                                      fileTransferSuccess: Boolean,
                                       transferredAt: LocalDateTime,
                                       duration: Long,
-                                      error: Option[String] = None)
+                                      fileTransferError: Option[String] = None)
 
 object FileTransferResponse {
   implicit val formats: Format[FileTransferResponse] = Json.format[FileTransferResponse]
