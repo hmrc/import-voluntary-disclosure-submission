@@ -29,6 +29,8 @@ class AppConfigImpl @Inject()(config: Configuration, servicesConfig: ServicesCon
   val authBaseUrl: String = servicesConfig.baseUrl("auth")
 
   val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
+  val multiFileUploadEnabled: Boolean = config.get[Boolean]("features.multiFileUpload")
+
   val graphiteHost: String = config.get[String]("microservice.metrics.graphite.host")
 
   lazy val sub09: String = servicesConfig.baseUrl("mdg")
@@ -44,6 +46,7 @@ trait AppConfig {
   val appName: String
   val authBaseUrl: String
   val auditingEnabled: Boolean
+  val multiFileUploadEnabled: Boolean
   val graphiteHost: String
   val sub09: String
   val eisBaseUrl: String

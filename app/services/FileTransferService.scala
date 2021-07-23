@@ -17,10 +17,11 @@
 package services
 
 import akka.actor.ActorSystem
+import config.AppConfig
 import connectors.FileTransferConnector
 import models.SupportingDocument
 import models.audit.FilesUploadedAuditEvent
-import models.requests.FileTransferRequest
+import models.requests.{FileTransferRequest, MultiFileTransferRequest}
 import models.responses.FileTransferResponse
 import play.api.Logger
 import play.api.mvc.Request
@@ -37,14 +38,19 @@ import scala.util.{Failure, Success}
 class FileTransferService @Inject()(
                                      actorSystem: ActorSystem,
                                      connector: FileTransferConnector,
-                                     auditService: AuditService
+                                     auditService: AuditService,
+                                     config: AppConfig
                                    ) {
 
   private val logger = Logger("application." + getClass.getCanonicalName)
 
   def transferFiles(caseId: String, conversationId: String, files: Seq[SupportingDocument])
                    (implicit hc: HeaderCarrier, ec: ExecutionContext, request: Request[_]): Future[Unit] = {
-    simpleTransfer(caseId, conversationId, files)
+    if (config.multiFileUploadEnabled) {
+      batchTransfer(caseId, conversationId, files)
+    } else {
+      simpleTransfer(caseId, conversationId, files)
+    }
   }
 
   // TODO: the following method is for the alternative implementation of file transfers. It is maintained
@@ -63,6 +69,21 @@ class FileTransferService @Inject()(
   //      hc
   //    )
   //  }
+
+  private def batchTransfer(caseId: String, conversationId: String, files: Seq[SupportingDocument])
+                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+    val correlationId = UUID.randomUUID().toString
+    val request = MultiFileTransferRequest.fromSupportingDocuments(
+      caseReferenceNumber = caseId,
+      conversationId = conversationId,
+      correlationId = correlationId,
+      applicationName = "C18",
+      uploadedFiles = files
+    )
+    connector.transferMultipleFiles(request).map { _ =>
+      // todo: audit the response
+    }
+  }
 
   private def simpleTransfer(caseId: String, conversationId: String, files: Seq[SupportingDocument])
                             (implicit hc: HeaderCarrier, ec: ExecutionContext, request: Request[_]): Future[Unit] = {
@@ -91,7 +112,7 @@ class FileTransferService @Inject()(
           } yield responses :+ response
       }
       allResponses.map(file => auditFileTransfers(file, caseId))
-        .onComplete{
+        .onComplete {
           case Success(success) => logger.info("Successfully transferred files")
           case Failure(errormessage) => logger.error(errormessage.toString)
         }
