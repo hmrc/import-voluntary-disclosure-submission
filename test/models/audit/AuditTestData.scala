@@ -56,7 +56,7 @@ trait AuditTestData {
       |         "upscanReference":"8d53fae2-4e5b-4351-b0d3-b996ec35d808",
       |         "fileName":"AnExampleDoc.pdf",
       |         "fileMimeType":"application/pdf",
-      |         "success":true,
+      |         "fileTransferSuccess":true,
       |         "transferredAt":"2021-07-21T11:45:36.000000286",
       |         "duration":100
       |      }
