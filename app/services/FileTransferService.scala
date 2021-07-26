@@ -83,8 +83,6 @@ class FileTransferService @Inject()(
     connector.transferMultipleFiles(request).map { _ =>
       // todo: audit the response
     }
-    // we discard the transfer future and don't wait on it
-    Future.unit
   }
 
   private def simpleTransfer(caseId: String, conversationId: String, files: Seq[SupportingDocument])
