@@ -47,7 +47,7 @@ trait ReusableValues {
     Some("987654321000")
   )
 
-  val document: SupportingDocument =
+  val doc: SupportingDocument =
     SupportingDocument(
       reference = "upscan-12345678",
       fileName = "test.pdf",
