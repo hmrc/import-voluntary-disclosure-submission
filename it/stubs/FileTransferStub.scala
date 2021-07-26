@@ -24,7 +24,7 @@ import support.WireMockMethods
 
 object FileTransferStub extends WireMockMethods with SampleData {
 
-  private val authoriseUri = "/transfer-file"
+  private val authoriseUri = "/transfer-multiple-files"
 
   val headers: Map[String, String] = Map.empty
   val body: JsObject = Json.obj()
