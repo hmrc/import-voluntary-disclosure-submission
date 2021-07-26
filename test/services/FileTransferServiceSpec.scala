@@ -43,7 +43,7 @@ class FileTransferServiceSpec extends SpecBase with MockFactory with Waiters {
     val uploadResult: FileUploadResult =
       FileUploadResult(document.reference, document.fileName, document.fileMimeType, success = true, Status.ACCEPTED, document.uploadTimestamp, "123", None)
     val fileTransferResponse: FileTransferResponse =
-      FileTransferResponse(document.reference, document.fileName, document.fileMimeType, success = true, document.uploadTimestamp, 0)
+      FileTransferResponse(document.reference, document.fileName, document.fileMimeType, fileTransferSuccess = true, document.uploadTimestamp, 0)
     val multiFileTransferResponse: MultiFileTransferResponse =
       MultiFileTransferResponse("123", "C18123", "C18", Seq(uploadResult))
   }
