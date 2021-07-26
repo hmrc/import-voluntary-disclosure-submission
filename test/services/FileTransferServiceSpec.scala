@@ -26,6 +26,7 @@ import models.responses._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent.{Eventually, Waiters}
 import play.api.test.Helpers.baseApplicationBuilder.injector
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.mvc.Http.Status
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import utils.ReusableValues
@@ -41,9 +42,9 @@ class FileTransferServiceSpec extends SpecBase with MockFactory with Waiters {
     lazy val service = new FileTransferService(system, mockFileTransferConnector, mockAuditService, appConfig)
 
     val uploadResult: FileUploadResult =
-      FileUploadResult(document.reference, document.fileName, document.fileMimeType, success = true, Status.ACCEPTED, document.uploadTimestamp, "123", None)
+      FileUploadResult(doc.reference, doc.fileName, doc.fileMimeType, success = true, Status.ACCEPTED, doc.uploadTimestamp, "123", Some(0), None)
     val fileTransferResponse: FileTransferResponse =
-      FileTransferResponse(document.reference, document.fileName, document.fileMimeType, fileTransferSuccess = true, document.uploadTimestamp, 0)
+      FileTransferResponse(doc.reference, doc.fileName, doc.fileMimeType, fileTransferSuccess = true, doc.uploadTimestamp, 0)
     val multiFileTransferResponse: MultiFileTransferResponse =
       MultiFileTransferResponse("123", "C18123", "C18", Seq(uploadResult))
   }
@@ -55,8 +56,9 @@ class FileTransferServiceSpec extends SpecBase with MockFactory with Waiters {
           override val multiFileUploadEnabled: Boolean = true
         }
         FileTransferConnector.transferMultipleFiles(Future.successful(Right(multiFileTransferResponse)))
+        AuditService.audit(FilesUploadedAuditEvent(Seq(fileTransferResponse), "C18123"))
 
-        service.transferFiles("C18123", "123", Seq(document))(hc, ec, fakeRequest)
+        await(service.transferFiles("C18123", "123", Seq(doc))(hc, ec, fakeRequest))
         withExpectations(())
       }
     }
@@ -67,9 +69,9 @@ class FileTransferServiceSpec extends SpecBase with MockFactory with Waiters {
           override val multiFileUploadEnabled: Boolean = false
         }
         FileTransferConnector.transferFile(Future.successful(fileTransferResponse))
-        AuditService.audit(FilesUploadedAuditEvent(Seq(fileTransferResponse), "C18"))
+        AuditService.audit(FilesUploadedAuditEvent(Seq(fileTransferResponse), "C18123"))
 
-        service.transferFiles("C18123", "123", Seq(document))(hc, ec, fakeRequest)
+        service.transferFiles("C18123", "123", Seq(doc))(hc, ec, fakeRequest)
         // files are uploaded asynchronously, so we have to wait
         eventually {
           Thread.sleep(100)

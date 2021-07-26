@@ -27,6 +27,7 @@ import play.api.Logger
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.Instant
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.DurationInt
@@ -71,17 +72,34 @@ class FileTransferService @Inject()(
   //  }
 
   private def batchTransfer(caseId: String, conversationId: String, files: Seq[SupportingDocument])
-                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+                           (implicit hc: HeaderCarrier, ec: ExecutionContext, request: Request[_]): Future[Unit] = {
+    val timeStarted = Instant.now()
     val correlationId = UUID.randomUUID().toString
-    val request = MultiFileTransferRequest.fromSupportingDocuments(
+    val req = MultiFileTransferRequest.fromSupportingDocuments(
       caseReferenceNumber = caseId,
       conversationId = conversationId,
       correlationId = correlationId,
       applicationName = "C18",
       uploadedFiles = files
     )
-    connector.transferMultipleFiles(request).map { _ =>
-      // todo: audit the response
+    connector.transferMultipleFiles(req).map {
+      case Right(response) =>
+        val timeCompleted = Instant.now()
+        val duration = timeCompleted.toEpochMilli - timeStarted.toEpochMilli
+        
+        val results = response.results.map { res =>
+          FileTransferResponse(
+            upscanReference = res.upscanReference,
+            fileName = res.fileName,
+            fileMimeType = res.fileMimeType,
+            fileTransferSuccess = res.success,
+            transferredAt = res.transferredAt,
+            duration = res.duration.getOrElse(duration),
+            fileTransferError = res.error
+          )
+        }
+        auditFileTransfers(results, caseId)
+      case Left(_) =>
     }
   }
 
