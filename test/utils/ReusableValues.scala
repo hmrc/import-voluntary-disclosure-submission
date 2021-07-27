@@ -16,6 +16,7 @@
 
 package utils
 
+import models.responses.FileUploadResult
 import models.{EoriDetails, SupportingDocument}
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
@@ -49,12 +50,25 @@ trait ReusableValues {
 
   val doc: SupportingDocument =
     SupportingDocument(
-      reference = "upscan-12345678",
-      fileName = "test.pdf",
+      reference = "XYZ0123456789",
+      fileName = "test1.pdf",
       downloadUrl = "http://localhost/test.pdf",
       uploadTimestamp = LocalDateTime.of(2020, 12, 12, 0, 0),
       checksum = "checksum",
-      fileMimeType = "application.pdf"
+      fileMimeType = "application/pdf"
+    )
+
+  val uploadResult: FileUploadResult =
+    FileUploadResult(
+      upscanReference = doc.reference,
+      fileName = doc.fileName,
+      fileMimeType = doc.fileMimeType,
+      success = true,
+      httpStatus = Status.ACCEPTED,
+      transferredAt = doc.uploadTimestamp,
+      correlationId = "123",
+      durationMillis = Some(1),
+      error = None
     )
 
   val errorModel: HttpResponse = HttpResponse(Status.NOT_FOUND, "Error Message")

@@ -94,7 +94,7 @@ class FileTransferService @Inject()(
             fileMimeType = res.fileMimeType,
             fileTransferSuccess = res.success,
             transferredAt = res.transferredAt,
-            duration = res.duration.getOrElse(duration),
+            duration = res.durationMillis.getOrElse(duration),
             fileTransferError = res.error
           )
         }

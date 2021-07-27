@@ -27,7 +27,6 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent.{Eventually, Waiters}
 import play.api.test.Helpers.baseApplicationBuilder.injector
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import play.mvc.Http.Status
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import utils.ReusableValues
 
@@ -41,10 +40,8 @@ class FileTransferServiceSpec extends SpecBase with MockFactory with Waiters {
     def appConfig: AppConfig = new AppConfigImpl(configuration, servicesConfig)
     lazy val service = new FileTransferService(system, mockFileTransferConnector, mockAuditService, appConfig)
 
-    val uploadResult: FileUploadResult =
-      FileUploadResult(doc.reference, doc.fileName, doc.fileMimeType, success = true, Status.ACCEPTED, doc.uploadTimestamp, "123", Some(0), None)
     val fileTransferResponse: FileTransferResponse =
-      FileTransferResponse(doc.reference, doc.fileName, doc.fileMimeType, fileTransferSuccess = true, doc.uploadTimestamp, 0)
+      FileTransferResponse(doc.reference, doc.fileName, doc.fileMimeType, fileTransferSuccess = true, doc.uploadTimestamp, 1)
     val multiFileTransferResponse: MultiFileTransferResponse =
       MultiFileTransferResponse("123", "C18123", "C18", Seq(uploadResult))
   }

@@ -19,11 +19,10 @@ package connectors
 import base.SpecBase
 import data.SampleData
 import mocks.MockHttp
-import models.requests.{FileTransferRequest, MultiFileTransferRequest, SingleFile}
+import models.requests._
 import org.scalatest.EitherValues
 import org.scalatest.matchers.should.Matchers._
 import play.api.http.Status
-import play.api.libs.json.{JsObject, Json}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.HttpResponse
 
@@ -32,7 +31,7 @@ import scala.concurrent.TimeoutException
 
 class FileTransferConnectorSpec extends SpecBase with EitherValues {
 
-  trait Test extends MockHttp with SampleData with FileTransferTestData {
+  trait Test extends MockHttp with SampleData {
     val correlationId: UUID = UUID.randomUUID()
     lazy val target = new FileTransferConnector(appConfig, mockHttp)
   }
@@ -181,38 +180,4 @@ class FileTransferConnectorSpec extends SpecBase with EitherValues {
 
   }
 
-}
-
-trait FileTransferTestData {
-  val multiFileResponsePayload: JsObject =
-    Json.obj(
-      "conversationId" -> "074c3823-c941-417e-a08b-e47b08e9a9b7",
-      "caseReferenceNumber" -> "C18123",
-      "applicationName" -> "C18",
-      "results" -> Json.arr(
-        Json.obj(
-          "upscanReference" -> "XYZ0123456789",
-          "fileName" -> "test1.jpeg",
-          "fileMimeType" -> "image/jpeg",
-          "checksum" -> "a38d7dd155b1ec9703e5f19f839922ad5a1b0aa4f255c6c2b03e61535997d75",
-          "fileSize" -> 1210290,
-          "success" -> true,
-          "httpStatus" -> 202,
-          "transferredAt" -> "2021-07-11T12:53:46",
-          "correlationId" -> "07b8090f-69c8-4708-bfc4-bf1731d4b4a8"
-        ),
-        Json.obj(
-          "upscanReference" -> "XYZ0123456789",
-          "fileName" -> "test2.jpeg",
-          "fileMimeType" -> "image/jpeg",
-          "checksum" -> "a38d7dd155b1ec9703e5f19f839922ad5a1b0aa4f255c6c2b03e61535997d75",
-          "fileSize" -> 98989,
-          "success" -> false,
-          "httpStatus" -> 500,
-          "transferredAt" -> "2021-07-11T12:54:01",
-          "correlationId" -> "07b8090f-69c8-4708-bfc4-bf1731d4b4a8",
-          "error" -> "some error description"
-        )
-      )
-    )
 }
