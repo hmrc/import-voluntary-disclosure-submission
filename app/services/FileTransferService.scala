@@ -73,7 +73,6 @@ class FileTransferService @Inject()(
 
   private def batchTransfer(caseId: String, conversationId: String, files: Seq[SupportingDocument])
                            (implicit hc: HeaderCarrier, ec: ExecutionContext, request: Request[_]): Future[Unit] = {
-    val timeStarted = Instant.now()
     val correlationId = UUID.randomUUID().toString
     val req = MultiFileTransferRequest.fromSupportingDocuments(
       caseReferenceNumber = caseId,
@@ -84,9 +83,6 @@ class FileTransferService @Inject()(
     )
     connector.transferMultipleFiles(req).map {
       case Right(response) =>
-        val timeCompleted = Instant.now()
-        val duration = timeCompleted.toEpochMilli - timeStarted.toEpochMilli
-        
         val results = response.results.map { res =>
           FileTransferResponse(
             upscanReference = res.upscanReference,
@@ -94,7 +90,7 @@ class FileTransferService @Inject()(
             fileMimeType = res.fileMimeType,
             fileTransferSuccess = res.success,
             transferredAt = res.transferredAt,
-            duration = res.durationMillis.getOrElse(duration),
+            duration = res.durationMillis,
             fileTransferError = res.error
           )
         }

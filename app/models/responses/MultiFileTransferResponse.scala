@@ -36,7 +36,7 @@ final case class FileUploadResult(upscanReference: String,
                                   httpStatus: Int,
                                   transferredAt: LocalDateTime,
                                   correlationId: String,
-                                  durationMillis: Option[Long],
+                                  durationMillis: Long,
                                   error: Option[String])
 
 object FileUploadResult {

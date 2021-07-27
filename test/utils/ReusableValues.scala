@@ -67,7 +67,7 @@ trait ReusableValues {
       httpStatus = Status.ACCEPTED,
       transferredAt = doc.uploadTimestamp,
       correlationId = "123",
-      durationMillis = Some(1),
+      durationMillis = 1,
       error = None
     )
 
