@@ -29,7 +29,7 @@ case class TraderDetails(eori: String,
                          city: String,
                          county: Option[String],
                          countryCode: String,
-                         postalCode: String,
+                         postalCode: Option[String],
                          vatNumber: Option[String])
 
 object TraderDetails {
@@ -43,7 +43,7 @@ object TraderDetails {
       (__ \ "address" \ "city").read[String] and
       (__ \ "address" \ "county").readNullable[String] and
       (__ \ "address" \ "countryCode").read[String] and
-      (__ \ "address" \ "postalCode").read[String] and
+      (__ \ "address" \ "postalCode").readNullable[String] and
       (__ \ "vatNumber").readNullable[String]
 
     ) (TraderDetails.apply _)

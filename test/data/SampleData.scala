@@ -94,7 +94,7 @@ trait SampleData {
     city = "Any Old Town",
     county = None,
     countryCode = "GB",
-    postalCode = "ZZ11ZZ",
+    postalCode = Some("ZZ11ZZ"),
     vatNumber = Some("123456789")
   )
 
@@ -108,7 +108,7 @@ trait SampleData {
     city = "Any Old Town",
     county = None,
     countryCode = "GB",
-    postalCode = "ZZ11ZZ",
+    postalCode = Some("ZZ11ZZ"),
     vatNumber = None
   )
 
