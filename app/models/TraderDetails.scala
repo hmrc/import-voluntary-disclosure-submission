@@ -49,6 +49,11 @@ object TraderDetails {
     ) (TraderDetails.apply _)
 
   implicit val writes: Writes[TraderDetails] = (data: TraderDetails) => {
+   val postCode = data.postalCode match {
+     case Some(pc) => Json.obj("PostalCode" -> pc)
+     case _ => Json.obj()
+   }
+
     val mandatoryData: JsObject = Json.obj(
       "EORI" -> data.eori,
       "Name" -> data.name,
@@ -56,10 +61,9 @@ object TraderDetails {
         "AddressLine1" -> data.addressLine1,
         "City" -> data.city,
         "CountryCode" -> data.countryCode,
-        "PostalCode" -> data.postalCode,
         "TelephoneNumber" -> data.phoneNumber,
         "EmailAddress" -> data.emailAddress
-      )
+      ).++(postCode)
     )
 
     val optionalData: JsObject = data.vatNumber
