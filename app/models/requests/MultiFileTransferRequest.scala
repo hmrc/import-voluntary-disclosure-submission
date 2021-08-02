@@ -31,14 +31,16 @@ object MultiFileTransferRequest {
                               conversationId: String,
                               correlationId: String,
                               applicationName: String,
-                              uploadedFiles: Seq[SupportingDocument]
+                              uploadedFiles: Seq[SupportingDocument],
+                              callbackUrl: Option[String]
                              ): MultiFileTransferRequest =
     MultiFileTransferRequest(
       conversationId = conversationId,
       caseReferenceNumber = caseReferenceNumber,
       applicationName = applicationName,
       files = uploadedFiles.map(SingleFile.fromSupportingDocument),
-      correlationId = Some(correlationId)
+      correlationId = Some(correlationId),
+      callbackUrl = callbackUrl
     )
 
   implicit val formats: Format[MultiFileTransferRequest] = Json.format[MultiFileTransferRequest]

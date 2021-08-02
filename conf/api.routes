@@ -1,3 +1,4 @@
 GET         /eoriDetails        controllers.EoriDetailsController.onLoad(id: String ?= "")
 POST        /case               controllers.CreateCaseController.onSubmit()
 POST        /update-case        controllers.UpdateCaseController.onSubmit()
+POST        /upload-completion  controllers.FileUploadCompletionController.onSubmit()

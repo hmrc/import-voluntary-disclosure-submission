@@ -19,10 +19,9 @@ package connectors
 import config.AppConfig
 import models.ErrorModel
 import models.requests.{FileTransferRequest, MultiFileTransferRequest}
-import models.responses.{FileTransferResponse, MultiFileTransferResponse}
+import models.responses.FileTransferResponse
 import play.api.Logger
 import play.api.http.Status
-import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
@@ -77,20 +76,11 @@ class FileTransferConnector @Inject()(val appConfig: AppConfig,
   }
 
   def transferMultipleFiles(fileTransferRequest: MultiFileTransferRequest)
-                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ErrorModel, MultiFileTransferResponse]] = {
+                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ErrorModel, Unit]] = {
     http.POST[MultiFileTransferRequest, HttpResponse](multiFileUrl, fileTransferRequest).map { response =>
-      if (response.status == Status.CREATED) {
+      if (isSuccess(response.status)) {
         logger.info(s"[FILE TRANSFER SUCCESS][CORRELATION ID: ${fileTransferRequest.correlationId}][CONVERSATION ID: ${fileTransferRequest.conversationId}]")
-        response.json.validate[MultiFileTransferResponse] match {
-          case JsSuccess(value, _) => Right(value)
-          case JsError(errors) =>
-            logger.error(
-              s"""[FILE TRANSFER FAILURE]
-                 |[CORRELATION ID: ${fileTransferRequest.correlationId}]
-                 |[CONVERSATION ID: ${fileTransferRequest.conversationId}]
-                 |[MESSAGE: Could not to parse response: $errors]""".stripMargin)
-            Left(ErrorModel(response.status, "Could not to parse file transfer response"))
-        }
+        Right(())
       } else {
         logger.error(
           s"""[FILE TRANSFER FAILURE]

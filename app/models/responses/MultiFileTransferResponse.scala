@@ -16,7 +16,7 @@
 
 package models.responses
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Format, Json, OFormat}
 
 import java.time.LocalDateTime
 
@@ -26,7 +26,7 @@ final case class MultiFileTransferResponse(conversationId: String,
                                            results: Seq[FileUploadResult])
 
 object MultiFileTransferResponse {
-  implicit val formats: Format[MultiFileTransferResponse] = Json.format[MultiFileTransferResponse]
+  implicit val formats: OFormat[MultiFileTransferResponse] = Json.format[MultiFileTransferResponse]
 }
 
 final case class FileUploadResult(upscanReference: String,

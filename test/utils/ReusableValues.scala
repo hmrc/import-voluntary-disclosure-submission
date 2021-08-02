@@ -16,7 +16,7 @@
 
 package utils
 
-import models.responses.FileUploadResult
+import models.responses.{FileTransferResponse, FileUploadResult, MultiFileTransferResponse}
 import models.{EoriDetails, SupportingDocument}
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
@@ -71,6 +71,11 @@ trait ReusableValues {
       error = None
     )
 
+  val fileTransferResponse: FileTransferResponse =
+    FileTransferResponse(doc.reference, doc.fileName, doc.fileMimeType, fileTransferSuccess = true, doc.uploadTimestamp, 1)
+  val multiFileTransferResponse: MultiFileTransferResponse =
+    MultiFileTransferResponse("123", "C18123", "C18", Seq(uploadResult))
+    
   val errorModel: HttpResponse = HttpResponse(Status.NOT_FOUND, "Error Message")
 
   val detailsJson: JsObject = Json.obj(
