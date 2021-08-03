@@ -91,7 +91,6 @@ class TraderDetailsSpec extends ModelSpecBase with SampleData {
       s"have the correct value for $propertyName" in {
         (generatedJson \ propertyName).as[JsValue] shouldBe (json \ propertyName).as[JsValue]
       }
-
     }
   }
 
