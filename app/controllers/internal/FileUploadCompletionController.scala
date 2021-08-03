@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.internal
 
-import controllers.actions.AuthorisedAction
 import models.audit.FilesUploadedAuditEvent
 import models.responses.{FileTransferResponse, MultiFileTransferResponse}
 import play.api.Logging

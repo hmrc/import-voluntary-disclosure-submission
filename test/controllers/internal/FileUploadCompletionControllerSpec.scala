@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.internal
 
 import base.SpecBase
 import mocks.services.MockAuditService
@@ -32,14 +32,14 @@ class FileUploadCompletionControllerSpec extends SpecBase with Matchers {
   trait Test extends MockAuditService with ReusableValues {
     lazy val target = new FileUploadCompletionController(controllerComponents, mockAuditService, ec)
 
-    val validRequest: FakeRequest[JsObject] = FakeRequest(controllers.routes.FileUploadCompletionController.onSubmit())
+    val validRequest: FakeRequest[JsObject] = FakeRequest(controllers.internal.routes.FileUploadCompletionController.onSubmit())
       .withHeaders(
         HeaderNames.CONTENT_TYPE -> ContentTypes.JSON,
         HeaderNames.ACCEPT -> ContentTypes.JSON
       )
       .withBody(Json.toJsObject(multiFileTransferResponse))
 
-    val invalidRequest: FakeRequest[JsObject] = FakeRequest(controllers.routes.FileUploadCompletionController.onSubmit())
+    val invalidRequest: FakeRequest[JsObject] = FakeRequest(controllers.internal.routes.FileUploadCompletionController.onSubmit())
       .withHeaders(
         HeaderNames.CONTENT_TYPE -> ContentTypes.JSON,
         HeaderNames.ACCEPT -> ContentTypes.JSON
