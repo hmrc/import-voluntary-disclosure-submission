@@ -39,6 +39,7 @@ class AppConfigImpl @Inject()(config: Configuration, servicesConfig: ServicesCon
   lazy val createCaseToken: String = config.get[String]("microservice.services.eis.tokens.create")
   lazy val eoriDetailsToken: String = config.get[String]("microservice.services.mdg.tokens.eoriDetails")
 
+  val fileUploadCallbackUrl: String = config.get[String]("file-upload.callback-url")
 }
 
 trait AppConfig {
@@ -53,5 +54,5 @@ trait AppConfig {
   val fileTransferUrl: String
   val createCaseToken: String
   val eoriDetailsToken: String
-  
+  val fileUploadCallbackUrl: String
 }

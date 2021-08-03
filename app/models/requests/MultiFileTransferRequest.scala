@@ -23,22 +23,24 @@ final case class MultiFileTransferRequest(conversationId: String,
                                           caseReferenceNumber: String,
                                           applicationName: String,
                                           files: Seq[SingleFile],
-                                          correlationId: Option[String] = None,
-                                          callbackUrl: Option[String] = None)
+                                          callbackUrl: String,
+                                          correlationId: Option[String] = None)
 
 object MultiFileTransferRequest {
   def fromSupportingDocuments(caseReferenceNumber: String,
                               conversationId: String,
                               correlationId: String,
                               applicationName: String,
-                              uploadedFiles: Seq[SupportingDocument]
+                              uploadedFiles: Seq[SupportingDocument],
+                              callbackUrl: String
                              ): MultiFileTransferRequest =
     MultiFileTransferRequest(
       conversationId = conversationId,
       caseReferenceNumber = caseReferenceNumber,
       applicationName = applicationName,
       files = uploadedFiles.map(SingleFile.fromSupportingDocument),
-      correlationId = Some(correlationId)
+      correlationId = Some(correlationId),
+      callbackUrl = callbackUrl
     )
 
   implicit val formats: Format[MultiFileTransferRequest] = Json.format[MultiFileTransferRequest]

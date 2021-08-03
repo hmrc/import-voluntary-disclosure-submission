@@ -124,20 +124,17 @@ class FileTransferConnectorSpec extends SpecBase with EitherValues {
           fileName = "file name",
           fileMimeType = "file MIME type",
         )
-      )
+      ),
+      callbackUrl = "localhost/internal/callback"
     )
 
     "a success response is returned from the file transfer microservice" should {
 
       "return a success MultiFileTransferResponse" in new Test {
-        MockedHttp.post[MultiFileTransferRequest, HttpResponse](expectedMultiFileUrl, HttpResponse(Status.CREATED, multiFileResponsePayload.toString()))
+        MockedHttp.post[MultiFileTransferRequest, HttpResponse](expectedMultiFileUrl, HttpResponse(Status.ACCEPTED, ""))
 
-        private val resp = await(target.transferMultipleFiles(request)).right.value
-        private val result = resp.results.head
-
-        result.success shouldBe true
-        result.upscanReference shouldBe upscanReference
-        result.error shouldBe None
+        private val resp = await(target.transferMultipleFiles(request))
+        resp shouldBe Right(())
       }
 
     }
@@ -166,18 +163,6 @@ class FileTransferConnectorSpec extends SpecBase with EitherValues {
       }
 
     }
-
-    "the file transfer microservice returns unexpected JSON" should {
-
-      "return a failed response" in new Test {
-        MockedHttp.post[MultiFileTransferRequest, HttpResponse](expectedMultiFileUrl, HttpResponse(Status.CREATED, "{}"))
-
-        private val resp = await(target.transferMultipleFiles(request)).left.value
-        resp.message shouldBe "Could not to parse file transfer response"
-      }
-
-    }
-
   }
 
 }

@@ -22,7 +22,6 @@ import config.{AppConfig, AppConfigImpl}
 import mocks.connectors.MockFileTransferConnector
 import mocks.services.MockAuditService
 import models.audit.FilesUploadedAuditEvent
-import models.responses._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent.{Eventually, Waiters}
 import play.api.test.Helpers.baseApplicationBuilder.injector
@@ -39,11 +38,6 @@ class FileTransferServiceSpec extends SpecBase with MockFactory with Waiters {
     val servicesConfig: ServicesConfig = injector.instanceOf[ServicesConfig]
     def appConfig: AppConfig = new AppConfigImpl(configuration, servicesConfig)
     lazy val service = new FileTransferService(system, mockFileTransferConnector, mockAuditService, appConfig)
-
-    val fileTransferResponse: FileTransferResponse =
-      FileTransferResponse(doc.reference, doc.fileName, doc.fileMimeType, fileTransferSuccess = true, doc.uploadTimestamp, 1)
-    val multiFileTransferResponse: MultiFileTransferResponse =
-      MultiFileTransferResponse("123", "C18123", "C18", Seq(uploadResult))
   }
 
   "Attempting a file transfer" when {
@@ -52,8 +46,7 @@ class FileTransferServiceSpec extends SpecBase with MockFactory with Waiters {
         override def appConfig: AppConfig = new AppConfigImpl(configuration, servicesConfig) {
           override val multiFileUploadEnabled: Boolean = true
         }
-        FileTransferConnector.transferMultipleFiles(Future.successful(Right(multiFileTransferResponse)))
-        AuditService.audit(FilesUploadedAuditEvent(Seq(fileTransferResponse), "C18123"))
+        FileTransferConnector.transferMultipleFiles(Future.successful(Right(())))
 
         await(service.transferFiles("C18123", "123", Seq(doc))(hc, ec, fakeRequest))
         withExpectations(())

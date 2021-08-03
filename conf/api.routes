@@ -1,3 +1,3 @@
-GET         /eoriDetails        controllers.EoriDetailsController.onLoad(id: String ?= "")
-POST        /case               controllers.CreateCaseController.onSubmit()
-POST        /update-case        controllers.UpdateCaseController.onSubmit()
+GET         /eoriDetails                    controllers.EoriDetailsController.onLoad(id: String ?= "")
+POST        /case                           controllers.CreateCaseController.onSubmit()
+POST        /update-case                    controllers.UpdateCaseController.onSubmit()

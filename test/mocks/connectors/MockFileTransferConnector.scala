@@ -19,7 +19,7 @@ package mocks.connectors
 import connectors.FileTransferConnector
 import models.ErrorModel
 import models.requests.{FileTransferRequest, MultiFileTransferRequest}
-import models.responses.{FileTransferResponse, MultiFileTransferResponse}
+import models.responses.FileTransferResponse
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
@@ -37,8 +37,8 @@ trait MockFileTransferConnector extends MockFactory {
         .returns(response)
     }
 
-    def transferMultipleFiles(response: Future[Either[ErrorModel, MultiFileTransferResponse]])
-    : CallHandler[Future[Either[ErrorModel, MultiFileTransferResponse]]] = {
+    def transferMultipleFiles(response: Future[Either[ErrorModel, Unit]])
+    : CallHandler[Future[Either[ErrorModel, Unit]]] = {
       (mockFileTransferConnector.transferMultipleFiles(_: MultiFileTransferRequest)(_: HeaderCarrier, _: ExecutionContext))
         .expects(*, *, *)
         .returns(response)
