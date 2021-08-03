@@ -22,7 +22,6 @@ import config.{AppConfig, AppConfigImpl}
 import mocks.connectors.MockFileTransferConnector
 import mocks.services.MockAuditService
 import models.audit.FilesUploadedAuditEvent
-import models.responses._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent.{Eventually, Waiters}
 import play.api.test.Helpers.baseApplicationBuilder.injector

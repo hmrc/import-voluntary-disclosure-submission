@@ -44,8 +44,6 @@ class FileTransferService @Inject()(
 
   private val logger = Logger("application." + getClass.getCanonicalName)
 
-  private[this] def uploadCallbackUrl = s"${config.submissionBaseUrl}/upload-completion"
-
   def transferFiles(caseId: String, conversationId: String, files: Seq[SupportingDocument])
                    (implicit hc: HeaderCarrier, ec: ExecutionContext, request: Request[_]): Future[Unit] = {
     if (config.multiFileUploadEnabled) {
@@ -81,7 +79,7 @@ class FileTransferService @Inject()(
       correlationId = correlationId,
       applicationName = "C18",
       uploadedFiles = files,
-      callbackUrl = Some(uploadCallbackUrl)
+      callbackUrl = Some(config.fileUploadCallbackUrl)
     )
     connector.transferMultipleFiles(req).map(_ => ())
   }
