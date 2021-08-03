@@ -54,6 +54,11 @@ object TraderDetails {
      case _ => Json.obj()
    }
 
+    val addressLine2 = data.addressLine2 match {
+      case Some(addressLine) => Json.obj("AddressLine2" -> addressLine)
+      case _ => Json.obj()
+    }
+
     val mandatoryData: JsObject = Json.obj(
       "EORI" -> data.eori,
       "Name" -> data.name,
@@ -63,7 +68,7 @@ object TraderDetails {
         "CountryCode" -> data.countryCode,
         "TelephoneNumber" -> data.phoneNumber,
         "EmailAddress" -> data.emailAddress
-      ).++(postCode)
+      ).++(postCode).++(addressLine2)
     )
 
     val optionalData: JsObject = data.vatNumber

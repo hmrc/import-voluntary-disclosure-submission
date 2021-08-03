@@ -89,8 +89,8 @@ trait SampleData {
     name = "Importer Inc",
     emailAddress = "notsupplied@example.com",
     phoneNumber = "000000000",
-    addressLine1 = "99 Avenue Road",
-    addressLine2 = None,
+    addressLine1 = "99",
+    addressLine2 = Some("Avenue Road"),
     city = "Any Old Town",
     county = None,
     countryCode = "GB",
@@ -103,8 +103,8 @@ trait SampleData {
     name = "Representative Inc",
     emailAddress = "test@test.com",
     phoneNumber = "1234567890",
-    addressLine1 = "99 Avenue Road",
-    addressLine2 = None,
+    addressLine1 = "99",
+    addressLine2 = Some("Avenue Road"),
     city = "Any Old Town",
     county = None,
     countryCode = "GB",
@@ -205,7 +205,8 @@ trait SampleData {
         "email" -> "notsupplied@example.com"
       ),
       "address" -> Json.obj(
-        "addressLine1" -> "99 Avenue Road",
+        "addressLine1" -> "99",
+        "addressLine2" -> "Avenue Road",
         "city" -> "Any Old Town",
         "countryCode" -> "GB",
         "postalCode" -> "ZZ11ZZ"
@@ -220,7 +221,8 @@ trait SampleData {
         "phoneNumber" -> "1234567890"
       ),
       "address" -> Json.obj(
-        "addressLine1" -> "99 Avenue Road",
+        "addressLine1" -> "99",
+        "addressLine2" -> "Avenue Road",
         "city" -> "Any Old Town",
         "countryCode" -> "GB",
         "postalCode" -> "ZZ11ZZ"
@@ -309,7 +311,8 @@ trait SampleData {
         "email" -> "notsupplied@example.com"
       ),
       "address" -> Json.obj(
-        "addressLine1" -> "99 Avenue Road",
+        "addressLine1" -> "99",
+        "addressLine2" -> "Avenue Road",
         "city" -> "Any Old Town",
         "countryCode" -> "GB",
         "postalCode" -> "ZZ11ZZ"
@@ -324,7 +327,8 @@ trait SampleData {
         "phoneNumber" -> "1234567890"
       ),
       "address" -> Json.obj(
-        "addressLine1" -> "99 Avenue Road",
+        "addressLine1" -> "99",
+        "addressLine2" -> "Avenue Road",
         "city" -> "Any Old Town",
         "countryCode" -> "GB",
         "postalCode" -> "ZZ11ZZ"
@@ -382,7 +386,8 @@ trait SampleData {
         "EORI" -> "GB000000000000002",
         "Name" -> "Representative Inc",
         "EstablishmentAddress" -> Json.obj(
-          "AddressLine1" -> "99 Avenue Road",
+          "AddressLine1" -> "99",
+          "AddressLine2" -> "Avenue Road",
           "City" -> "Any Old Town",
           "CountryCode" -> "GB",
           "PostalCode" -> "ZZ11ZZ",
@@ -395,7 +400,8 @@ trait SampleData {
         "EORI" -> "GB000000000000001",
         "Name" -> "Importer Inc",
         "EstablishmentAddress" -> Json.obj(
-          "AddressLine1" -> "99 Avenue Road",
+          "AddressLine1" -> "99",
+          "AddressLine2" -> "Avenue Road",
           "City" -> "Any Old Town",
           "CountryCode" -> "GB",
           "PostalCode" -> "ZZ11ZZ",
@@ -468,7 +474,8 @@ trait SampleData {
         "EORI" -> "GB000000000000002",
         "Name" -> "Representative Inc",
         "EstablishmentAddress" -> Json.obj(
-          "AddressLine1" -> "99 Avenue Road",
+          "AddressLine1" -> "99",
+          "AddressLine2" -> "Avenue Road",
           "City" -> "Any Old Town",
           "CountryCode" -> "GB",
           "PostalCode" -> "ZZ11ZZ",
@@ -481,7 +488,8 @@ trait SampleData {
         "EORI" -> "GB000000000000001",
         "Name" -> "Importer Inc",
         "EstablishmentAddress" -> Json.obj(
-          "AddressLine1" -> "99 Avenue Road",
+          "AddressLine1" -> "99",
+          "AddressLine2" -> "Avenue Road",
           "City" -> "Any Old Town",
           "CountryCode" -> "GB",
           "PostalCode" -> "ZZ11ZZ",
