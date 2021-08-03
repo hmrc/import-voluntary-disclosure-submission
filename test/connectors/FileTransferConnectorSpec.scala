@@ -124,7 +124,8 @@ class FileTransferConnectorSpec extends SpecBase with EitherValues {
           fileName = "file name",
           fileMimeType = "file MIME type",
         )
-      )
+      ),
+      callbackUrl = "localhost/internal/callback"
     )
 
     "a success response is returned from the file transfer microservice" should {

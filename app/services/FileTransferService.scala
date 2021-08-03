@@ -79,7 +79,7 @@ class FileTransferService @Inject()(
       correlationId = correlationId,
       applicationName = "C18",
       uploadedFiles = files,
-      callbackUrl = Some(config.fileUploadCallbackUrl)
+      callbackUrl = config.fileUploadCallbackUrl
     )
     connector.transferMultipleFiles(req).map(_ => ())
   }
