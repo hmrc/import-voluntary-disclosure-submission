@@ -66,6 +66,17 @@ class FileTransferServiceSpec extends SpecBase with Matchers with MockFactory wi
         await(service.transferFiles("C18123", "123", Seq(doc))(hc, ec, fakeRequest))
         withExpectations(())
       }
+
+      "give up after 3 failed attempts" in new Test {
+        override def appConfig: AppConfig = new AppConfigImpl(configuration, servicesConfig) {
+          override val multiFileUploadEnabled: Boolean = true
+        }
+        FileTransferConnector.transferMultipleFiles(Future.successful(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "temporary issue"))))
+          .repeat(3)
+
+        await(service.transferFiles("C18123", "123", Seq(doc))(hc, ec, fakeRequest))
+        withExpectations(())
+      }
     }
 
     "the multiFileUpload feature is off" should {
