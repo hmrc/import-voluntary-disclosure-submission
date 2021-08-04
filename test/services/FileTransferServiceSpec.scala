@@ -21,9 +21,12 @@ import base.SpecBase
 import config.{AppConfig, AppConfigImpl}
 import mocks.connectors.MockFileTransferConnector
 import mocks.services.MockAuditService
+import models.ErrorModel
 import models.audit.FilesUploadedAuditEvent
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent.{Eventually, Waiters}
+import org.scalatest.matchers.must.Matchers
+import play.api.http.Status
 import play.api.test.Helpers.baseApplicationBuilder.injector
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -31,7 +34,7 @@ import utils.ReusableValues
 
 import scala.concurrent.Future
 
-class FileTransferServiceSpec extends SpecBase with MockFactory with Waiters {
+class FileTransferServiceSpec extends SpecBase with Matchers with MockFactory with Waiters {
 
   trait Test extends MockFileTransferConnector with MockAuditService with ReusableValues with Eventually {
     val system: ActorSystem = injector.instanceOf[ActorSystem]
@@ -46,6 +49,18 @@ class FileTransferServiceSpec extends SpecBase with MockFactory with Waiters {
         override def appConfig: AppConfig = new AppConfigImpl(configuration, servicesConfig) {
           override val multiFileUploadEnabled: Boolean = true
         }
+        FileTransferConnector.transferMultipleFiles(Future.successful(Right(())))
+
+        await(service.transferFiles("C18123", "123", Seq(doc))(hc, ec, fakeRequest))
+        withExpectations(())
+      }
+
+      "succeed even after 2 requests fail" in new Test {
+        override def appConfig: AppConfig = new AppConfigImpl(configuration, servicesConfig) {
+          override val multiFileUploadEnabled: Boolean = true
+        }
+        FileTransferConnector.transferMultipleFiles(Future.successful(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "temporary issue"))))
+          .repeat(2)
         FileTransferConnector.transferMultipleFiles(Future.successful(Right(())))
 
         await(service.transferFiles("C18123", "123", Seq(doc))(hc, ec, fakeRequest))
