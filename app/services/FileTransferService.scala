@@ -84,17 +84,17 @@ class FileTransferService @Inject()(
       callbackUrl = config.fileUploadCallbackUrl
     )
 
-    def loop(counter: Int): Future[Unit] =
+    def tryTransfer(counter: Int): Future[Unit] =
       connector.transferMultipleFiles(req).flatMap {
         case Left(_) if counter <= MAX_RETRIES =>
-          after(1.second * counter, actorSystem.scheduler)(loop(counter + 1))
+          after(1.second * counter, actorSystem.scheduler)(tryTransfer(counter + 1))
         case failure@Left(_) =>
           logger.error(s"All file transfer retries have failed for case $caseId")
           Future.successful(failure)
         case Right(res) => Future.successful(res)
       }
 
-    loop(1)
+    tryTransfer(1)
   }
 
   private def simpleTransfer(caseId: String, conversationId: String, files: Seq[SupportingDocument])
