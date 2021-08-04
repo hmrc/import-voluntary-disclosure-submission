@@ -17,6 +17,7 @@
 package services
 
 import akka.actor.ActorSystem
+import akka.pattern.after
 import config.AppConfig
 import connectors.FileTransferConnector
 import models.SupportingDocument
@@ -43,6 +44,7 @@ class FileTransferService @Inject()(
                                    ) {
 
   private val logger = Logger("application." + getClass.getCanonicalName)
+  val MAX_RETRIES = 2
 
   def transferFiles(caseId: String, conversationId: String, files: Seq[SupportingDocument])
                    (implicit hc: HeaderCarrier, ec: ExecutionContext, request: Request[_]): Future[Unit] = {
@@ -81,7 +83,18 @@ class FileTransferService @Inject()(
       uploadedFiles = files,
       callbackUrl = config.fileUploadCallbackUrl
     )
-    connector.transferMultipleFiles(req).map(_ => ())
+
+    def tryTransfer(counter: Int): Future[Unit] =
+      connector.transferMultipleFiles(req).flatMap {
+        case Left(_) if counter <= MAX_RETRIES =>
+          after(1.second * counter, actorSystem.scheduler)(tryTransfer(counter + 1))
+        case failure@Left(_) =>
+          logger.error(s"All file transfer retries have failed for case $caseId")
+          Future.successful(failure)
+        case Right(res) => Future.successful(res)
+      }
+
+    tryTransfer(1)
   }
 
   private def simpleTransfer(caseId: String, conversationId: String, files: Seq[SupportingDocument])
