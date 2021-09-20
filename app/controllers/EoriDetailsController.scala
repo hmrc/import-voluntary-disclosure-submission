@@ -26,16 +26,17 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton()
-class EoriDetailsController @Inject()(cc: ControllerComponents,
-                                      eoriDetailsService: EoriDetailsService,
-                                      implicit val ec: ExecutionContext)
-  extends BackendController(cc) {
+class EoriDetailsController @Inject() (
+  cc: ControllerComponents,
+  eoriDetailsService: EoriDetailsService,
+  implicit val ec: ExecutionContext
+) extends BackendController(cc) {
 
   def onLoad(id: String): Action[AnyContent] = Action.async { implicit request =>
     eoriDetailsService.retrieveEoriDetails(id).map {
-      case Right(eoriDetails) => Ok(Json.toJson(eoriDetails))
+      case Right(eoriDetails)             => Ok(Json.toJson(eoriDetails))
       case Left(ErrorModel(NOT_FOUND, _)) => NotFound("Could not retrieve eori details")
-      case Left(_) => InternalServerError("Something went wrong retrieving eori details")
+      case Left(_)                        => InternalServerError("Something went wrong retrieving eori details")
     }
   }
 

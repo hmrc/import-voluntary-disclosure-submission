@@ -21,21 +21,20 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 
-case class DutyItem(dutyType: DutyType,
-                    originalAmount: BigDecimal,
-                    amendedAmount: BigDecimal)
+case class DutyItem(dutyType: DutyType, originalAmount: BigDecimal, amendedAmount: BigDecimal)
 
 object DutyItem {
   implicit val reads: Reads[DutyItem] = (
     (__ \ "duty").read[DutyType] and
       (__ \ "original").read[BigDecimal] and
       (__ \ "amended").read[BigDecimal]
-    ) (DutyItem.apply _)
+  )(DutyItem.apply _)
 
-  implicit val writes: Writes[DutyItem] = (data: DutyItem) => Json.obj(
-    "Type" -> data.dutyType,
-    "PaidAmount" -> data.originalAmount.toString(),
-    "DueAmount" -> data.amendedAmount.toString(),
-    "OutstandingAmount" -> (data.amendedAmount - data.originalAmount).toString()
-  )
+  implicit val writes: Writes[DutyItem] = (data: DutyItem) =>
+    Json.obj(
+      "Type"              -> data.dutyType,
+      "PaidAmount"        -> data.originalAmount.toString(),
+      "DueAmount"         -> data.amendedAmount.toString(),
+      "OutstandingAmount" -> (data.amendedAmount - data.originalAmount).toString()
+    )
 }

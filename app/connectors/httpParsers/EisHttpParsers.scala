@@ -26,15 +26,13 @@ import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 object EisHttpParsers {
 
   implicit val createCaseHttpParser: HttpReads[Either[EisError, CreateCaseResponse]] =
-    jsonParser("IVD - Create Case") { correlationId =>
-      json =>
-        (json \ "CaseID").validate[String].map(CreateCaseResponse(_, correlationId))
+    jsonParser("IVD - Create Case") { correlationId => json =>
+      (json \ "CaseID").validate[String].map(CreateCaseResponse(_, correlationId))
     }
 
   implicit val updateCaseHttpParser: HttpReads[Either[UpdateCaseError, UpdateCaseResponse]] =
-    jsonParser("IVD - Update Case") { correlationId =>
-      json =>
-        (json \ "CaseID").validate[String].map(UpdateCaseResponse(_, correlationId))
+    jsonParser("IVD - Update Case") { correlationId => json =>
+      (json \ "CaseID").validate[String].map(UpdateCaseResponse(_, correlationId))
     }.map(_.left.map(UpdateCaseError.fromEisError))
 
   private def jsonParser[A](apiName: String)(reads: String => Reads[A]): HttpReads[Either[EisError, A]] =

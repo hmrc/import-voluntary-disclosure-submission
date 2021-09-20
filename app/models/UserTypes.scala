@@ -22,13 +22,13 @@ object UserTypes extends Enumeration {
 
   type UserType = Value
 
-  val Importer: UserType = Value("importer")
+  val Importer: UserType       = Value("importer")
   val Representative: UserType = Value("representative")
 
   implicit val reads: Reads[UserType] = Reads.enumNameReads(this)
 
   implicit val writes: Writes[UserType] = {
-    case Importer => JsString("01")
+    case Importer       => JsString("01")
     case Representative => JsString("02")
   }
 }

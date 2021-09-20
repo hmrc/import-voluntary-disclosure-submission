@@ -38,10 +38,10 @@ class EisHttpParsersSpec extends SpecBase {
 
       val headers: Map[String, Seq[String]] = Map("x-correlation-id" -> Seq(correlationId))
       val body: JsObject = Json.obj(
-        "CaseID" -> "C18-101",
+        "CaseID"         -> "C18-101",
         "ProcessingDate" -> Instant.now().toString,
-        "Status" -> "Success",
-        "StatusText" -> "Case created successfully"
+        "Status"         -> "Success",
+        "StatusText"     -> "Case created successfully"
       )
 
       val response = HttpResponse(Status.OK, body, headers)
@@ -56,10 +56,10 @@ class EisHttpParsersSpec extends SpecBase {
 
       val headers: Map[String, Seq[String]] = Map("x-correlation-id" -> Seq(correlationId))
       val body: JsObject = Json.obj(
-        "CaseID" -> "C18-101",
+        "CaseID"         -> "C18-101",
         "ProcessingDate" -> Instant.now().toString,
-        "Status" -> "Success",
-        "StatusText" -> "Case created successfully"
+        "Status"         -> "Success",
+        "StatusText"     -> "Case created successfully"
       )
 
       val response = HttpResponse(Status.OK, body, headers)
@@ -75,14 +75,16 @@ class EisHttpParsersSpec extends SpecBase {
       val headers: Map[String, Seq[String]] = Map("x-correlation-id" -> Seq(correlationId))
       val body: JsObject = Json.obj(
         "ProcessingDate" -> Instant.now().toString,
-        "Status" -> "Success",
-        "StatusText" -> "Case created successfully"
+        "Status"         -> "Success",
+        "StatusText"     -> "Case created successfully"
       )
 
       val response = HttpResponse(Status.OK, body, headers)
 
       "return an error" in {
-        createCaseHttpParser.read("", "", response) mustBe Left(EisError.UnexpectedError(Status.OK, "Received invalid JSON"))
+        createCaseHttpParser.read("", "", response) mustBe Left(
+          EisError.UnexpectedError(Status.OK, "Received invalid JSON")
+        )
       }
 
     }
@@ -93,14 +95,19 @@ class EisHttpParsersSpec extends SpecBase {
     val headers: Map[String, Seq[String]] = Map("x-correlation-id" -> Seq(correlationId))
 
     "the response is a specific EIS error" in {
-      val error = Json.obj("correlationId" -> correlationId, "errorCode" -> "400", "errorMessage" -> "03- Invalid Case ID")
+      val error =
+        Json.obj("correlationId" -> correlationId, "errorCode" -> "400", "errorMessage" -> "03- Invalid Case ID")
       val response = HttpResponse(Status.BAD_REQUEST, Json.obj("errorDetail" -> error), headers)
-      createCaseHttpParser.read("", "", response) mustBe Left(EisError.BackendError(correlationId, "400", Some("03- Invalid Case ID")))
+      createCaseHttpParser.read("", "", response) mustBe Left(
+        EisError.BackendError(correlationId, "400", Some("03- Invalid Case ID"))
+      )
     }
 
     "the response is empty" in {
       val response = HttpResponse(Status.BAD_REQUEST, Json.obj(), headers)
-      createCaseHttpParser.read("", "", response) mustBe Left(EisError.UnexpectedError(Status.BAD_REQUEST, "Received an unexpected error response"))
+      createCaseHttpParser.read("", "", response) mustBe Left(
+        EisError.UnexpectedError(Status.BAD_REQUEST, "Received an unexpected error response")
+      )
     }
   }
 }

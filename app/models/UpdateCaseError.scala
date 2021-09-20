@@ -21,22 +21,23 @@ import play.api.libs.json.{Json, Writes}
 sealed trait UpdateCaseError extends Product with Serializable
 
 object UpdateCaseError {
-  case object InvalidCaseId extends UpdateCaseError
-  case object CaseAlreadyClosed extends UpdateCaseError
+  case object InvalidCaseId                                              extends UpdateCaseError
+  case object CaseAlreadyClosed                                          extends UpdateCaseError
   final case class UnexpectedError(status: Int, message: Option[String]) extends UpdateCaseError
 
   def fromEisError(error: EisError): UpdateCaseError = {
     error match {
-      case EisError.BackendError(_, _, Some("03- Invalid Case ID")) => UpdateCaseError.InvalidCaseId
+      case EisError.BackendError(_, _, Some("03- Invalid Case ID"))                => UpdateCaseError.InvalidCaseId
       case EisError.BackendError(_, _, Some("04 - Requested case already closed")) => UpdateCaseError.CaseAlreadyClosed
       case EisError.BackendError(_, status, message) => UpdateCaseError.UnexpectedError(status.toInt, message)
-      case EisError.UnexpectedError(status, reason) => UpdateCaseError.UnexpectedError(status, Some(reason))
+      case EisError.UnexpectedError(status, reason)  => UpdateCaseError.UnexpectedError(status, Some(reason))
     }
   }
 
   implicit val writes: Writes[UpdateCaseError] = Writes {
     case UpdateCaseError.InvalidCaseId => Json.obj("errorCode" -> 1, "errorMessage" -> "Invalid case ID")
-    case UpdateCaseError.CaseAlreadyClosed => Json.obj("errorCode" -> 2, "errorMessage" -> "Requested case is already closed")
+    case UpdateCaseError.CaseAlreadyClosed =>
+      Json.obj("errorCode" -> 2, "errorMessage" -> "Requested case is already closed")
     case UpdateCaseError.UnexpectedError(message, _) => Json.obj("errorCode" -> 3, "errorMessage" -> message)
   }
 }

@@ -22,25 +22,25 @@ object DocumentTypes extends Enumeration {
 
   type DocumentType = Value
 
-  val OriginalC88: DocumentType = Value("OriginalC88")
-  val OriginalC2: DocumentType = Value("OriginalC2")
-  val AmendedSubstituteEntryWorksheet: DocumentType = Value("AmendedSubstituteEntryWorksheet")
-  val AmendedC88: DocumentType = Value("AmendedC88")
-  val AmendedC2: DocumentType = Value("AmendedC2")
+  val OriginalC88: DocumentType                            = Value("OriginalC88")
+  val OriginalC2: DocumentType                             = Value("OriginalC2")
+  val AmendedSubstituteEntryWorksheet: DocumentType        = Value("AmendedSubstituteEntryWorksheet")
+  val AmendedC88: DocumentType                             = Value("AmendedC88")
+  val AmendedC2: DocumentType                              = Value("AmendedC2")
   val InvoiceAirwayBillPreferenceCertificate: DocumentType = Value("InvoiceAirwayBillPreferenceCertificate")
-  val DefermentAuthorisation: DocumentType = Value("DefermentAuthorisation")
-  val Other: DocumentType = Value("Other")
+  val DefermentAuthorisation: DocumentType                 = Value("DefermentAuthorisation")
+  val Other: DocumentType                                  = Value("Other")
 
   implicit val reads: Reads[DocumentType] = Reads.enumNameReads(this)
 
   implicit val writes: Writes[DocumentType] = {
-    case OriginalC88 => Json.obj("Type" -> "01")
-    case OriginalC2 => Json.obj("Type" -> "02")
-    case AmendedSubstituteEntryWorksheet => Json.obj("Type" -> "03")
-    case AmendedC88 => Json.obj("Type" -> "04")
-    case AmendedC2 => Json.obj("Type" -> "05")
+    case OriginalC88                            => Json.obj("Type" -> "01")
+    case OriginalC2                             => Json.obj("Type" -> "02")
+    case AmendedSubstituteEntryWorksheet        => Json.obj("Type" -> "03")
+    case AmendedC88                             => Json.obj("Type" -> "04")
+    case AmendedC2                              => Json.obj("Type" -> "05")
     case InvoiceAirwayBillPreferenceCertificate => Json.obj("Type" -> "06")
-    case DefermentAuthorisation => Json.obj("Type" -> "07")
-    case Other => Json.obj("Type" -> "08")
+    case DefermentAuthorisation                 => Json.obj("Type" -> "07")
+    case Other                                  => Json.obj("Type" -> "08")
   }
 }

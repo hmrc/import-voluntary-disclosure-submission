@@ -28,7 +28,9 @@ class UpdateCaseErrorSpec extends ModelSpecBase {
     }
 
     "correctly handle CaseAlreadyClosed" in {
-      UpdateCaseError.fromEisError(EisError.BackendError("id", "400", Some("04 - Requested case already closed"))) shouldBe
+      UpdateCaseError.fromEisError(
+        EisError.BackendError("id", "400", Some("04 - Requested case already closed"))
+      ) shouldBe
         UpdateCaseError.CaseAlreadyClosed
     }
 

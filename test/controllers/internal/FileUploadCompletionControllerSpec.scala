@@ -32,25 +32,29 @@ class FileUploadCompletionControllerSpec extends SpecBase with Matchers {
   trait Test extends MockAuditService with ReusableValues {
     lazy val target = new FileUploadCompletionController(controllerComponents, mockAuditService, ec)
 
-    val validRequest: FakeRequest[JsObject] = FakeRequest(controllers.internal.routes.FileUploadCompletionController.onSubmit())
-      .withHeaders(
-        HeaderNames.CONTENT_TYPE -> ContentTypes.JSON,
-        HeaderNames.ACCEPT -> ContentTypes.JSON
-      )
-      .withBody(Json.toJsObject(multiFileTransferResponse))
+    val validRequest: FakeRequest[JsObject] =
+      FakeRequest(controllers.internal.routes.FileUploadCompletionController.onSubmit())
+        .withHeaders(
+          HeaderNames.CONTENT_TYPE -> ContentTypes.JSON,
+          HeaderNames.ACCEPT       -> ContentTypes.JSON
+        )
+        .withBody(Json.toJsObject(multiFileTransferResponse))
 
-    val invalidRequest: FakeRequest[JsObject] = FakeRequest(controllers.internal.routes.FileUploadCompletionController.onSubmit())
-      .withHeaders(
-        HeaderNames.CONTENT_TYPE -> ContentTypes.JSON,
-        HeaderNames.ACCEPT -> ContentTypes.JSON
-      )
-      .withBody(Json.obj())
+    val invalidRequest: FakeRequest[JsObject] =
+      FakeRequest(controllers.internal.routes.FileUploadCompletionController.onSubmit())
+        .withHeaders(
+          HeaderNames.CONTENT_TYPE -> ContentTypes.JSON,
+          HeaderNames.ACCEPT       -> ContentTypes.JSON
+        )
+        .withBody(Json.obj())
   }
 
   "onSubmit" when {
     "submit a file upload response to be audited" should {
       "return 204 (NO CONTENT) response" in new Test {
-        AuditService.audit(FilesUploadedAuditEvent(Seq(fileTransferResponse), multiFileTransferResponse.caseReferenceNumber))
+        AuditService.audit(
+          FilesUploadedAuditEvent(Seq(fileTransferResponse), multiFileTransferResponse.caseReferenceNumber)
+        )
 
         private val result = target.onSubmit()(validRequest)
         status(result) shouldBe Status.NO_CONTENT

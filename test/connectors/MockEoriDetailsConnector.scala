@@ -29,11 +29,10 @@ trait MockEoriDetailsConnector extends MockFactory {
 
   type EoriDetailsResponse = Either[ErrorModel, EoriDetails]
 
-  def setupMockGetAddress(response: EoriDetailsResponse): CallHandler[Future[EoriDetailsResponse]] = {
+  def setupMockGetAddress(response: EoriDetailsResponse): CallHandler[Future[EoriDetailsResponse]] =
     (mockEoriDetailsConnector.getEoriDetails(_: String)(_: HeaderCarrier, _: ExecutionContext))
       .expects(*, *, *)
       .returns(Future.successful(response))
-  }
 
   def verifyMockGetAddressCalls(): Unit = withExpectations(() => ())
 

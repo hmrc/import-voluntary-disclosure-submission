@@ -19,29 +19,32 @@ package models.requests
 import models.SupportingDocument
 import play.api.libs.json.{Format, Json}
 
-case class FileTransferRequest(conversationId: String,
-                               caseReferenceNumber: String,
-                               applicationName: String,
-                               upscanReference: String,
-                               downloadUrl: String,
-                               checksum: String,
-                               fileName: String,
-                               fileMimeType: String,
-                               batchSize: Int,
-                               batchCount: Int,
-                               correlationId: Option[String] = None,
-                               fileSize: Option[Int] = None)
+case class FileTransferRequest(
+  conversationId: String,
+  caseReferenceNumber: String,
+  applicationName: String,
+  upscanReference: String,
+  downloadUrl: String,
+  checksum: String,
+  fileName: String,
+  fileMimeType: String,
+  batchSize: Int,
+  batchCount: Int,
+  correlationId: Option[String] = None,
+  fileSize: Option[Int] = None
+)
 
 object FileTransferRequest {
 
-  def fromSupportingDocument(caseReferenceNumber: String,
-                             conversationId: String,
-                             correlationId: String,
-                             applicationName: String,
-                             batchSize: Int,
-                             batchCount: Int,
-                             uploadedFile: SupportingDocument
-                            ): FileTransferRequest =
+  def fromSupportingDocument(
+    caseReferenceNumber: String,
+    conversationId: String,
+    correlationId: String,
+    applicationName: String,
+    batchSize: Int,
+    batchCount: Int,
+    uploadedFile: SupportingDocument
+  ): FileTransferRequest =
     FileTransferRequest(
       conversationId = conversationId,
       caseReferenceNumber = caseReferenceNumber,

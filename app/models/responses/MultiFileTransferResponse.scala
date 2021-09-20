@@ -20,24 +20,28 @@ import play.api.libs.json.{Format, Json, OFormat}
 
 import java.time.LocalDateTime
 
-final case class MultiFileTransferResponse(conversationId: String,
-                                           caseReferenceNumber: String,
-                                           applicationName: String,
-                                           results: Seq[FileUploadResult])
+final case class MultiFileTransferResponse(
+  conversationId: String,
+  caseReferenceNumber: String,
+  applicationName: String,
+  results: Seq[FileUploadResult]
+)
 
 object MultiFileTransferResponse {
   implicit val formats: OFormat[MultiFileTransferResponse] = Json.format[MultiFileTransferResponse]
 }
 
-final case class FileUploadResult(upscanReference: String,
-                                  fileName: String,
-                                  fileMimeType: String,
-                                  success: Boolean,
-                                  httpStatus: Int,
-                                  transferredAt: LocalDateTime,
-                                  correlationId: String,
-                                  durationMillis: Long,
-                                  error: Option[String])
+final case class FileUploadResult(
+  upscanReference: String,
+  fileName: String,
+  fileMimeType: String,
+  success: Boolean,
+  httpStatus: Int,
+  transferredAt: LocalDateTime,
+  correlationId: String,
+  durationMillis: Long,
+  error: Option[String]
+)
 
 object FileUploadResult {
   implicit val formats: Format[FileUploadResult] = Json.format[FileUploadResult]

@@ -19,21 +19,24 @@ package models.requests
 import models.SupportingDocument
 import play.api.libs.json.{Format, Json}
 
-final case class MultiFileTransferRequest(conversationId: String,
-                                          caseReferenceNumber: String,
-                                          applicationName: String,
-                                          files: Seq[SingleFile],
-                                          callbackUrl: String,
-                                          correlationId: Option[String] = None)
+final case class MultiFileTransferRequest(
+  conversationId: String,
+  caseReferenceNumber: String,
+  applicationName: String,
+  files: Seq[SingleFile],
+  callbackUrl: String,
+  correlationId: Option[String] = None
+)
 
 object MultiFileTransferRequest {
-  def fromSupportingDocuments(caseReferenceNumber: String,
-                              conversationId: String,
-                              correlationId: String,
-                              applicationName: String,
-                              uploadedFiles: Seq[SupportingDocument],
-                              callbackUrl: String
-                             ): MultiFileTransferRequest =
+  def fromSupportingDocuments(
+    caseReferenceNumber: String,
+    conversationId: String,
+    correlationId: String,
+    applicationName: String,
+    uploadedFiles: Seq[SupportingDocument],
+    callbackUrl: String
+  ): MultiFileTransferRequest =
     MultiFileTransferRequest(
       conversationId = conversationId,
       caseReferenceNumber = caseReferenceNumber,
@@ -46,12 +49,14 @@ object MultiFileTransferRequest {
   implicit val formats: Format[MultiFileTransferRequest] = Json.format[MultiFileTransferRequest]
 }
 
-final case class SingleFile(upscanReference: String,
-                            downloadUrl: String,
-                            fileName: String,
-                            fileMimeType: String,
-                            checksum: String,
-                            fileSize: Option[Int] = None)
+final case class SingleFile(
+  upscanReference: String,
+  downloadUrl: String,
+  fileName: String,
+  fileMimeType: String,
+  checksum: String,
+  fileSize: Option[Int] = None
+)
 
 object SingleFile {
   def fromSupportingDocument(doc: SupportingDocument): SingleFile =

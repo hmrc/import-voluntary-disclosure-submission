@@ -19,16 +19,13 @@ package models.responses
 import models.{EoriDetails, EoriStatus}
 import play.api.libs.json.{Format, Json, Reads, Writes, __}
 
-case class Sub09Response(eoriStatus: EoriStatus,
-                         eoriDetails: Option[EoriDetails])
+case class Sub09Response(eoriStatus: EoriStatus, eoriDetails: Option[EoriDetails])
 
 object Sub09Response {
   val reads: Reads[Sub09Response] = for {
-    eoriStatus <- (__ \\ "subscriptionDisplayResponse" \\ "responseCommon" ).read[EoriStatus]
+    eoriStatus  <- (__ \\ "subscriptionDisplayResponse" \\ "responseCommon").read[EoriStatus]
     eoriDetails <- (__ \\ "subscriptionDisplayResponse" \\ "responseDetail").readNullable[EoriDetails]
-  } yield {
-    Sub09Response(eoriStatus, eoriDetails)
-  }
+  } yield Sub09Response(eoriStatus, eoriDetails)
 
   val writes: Writes[Sub09Response] = Json.writes[Sub09Response]
 

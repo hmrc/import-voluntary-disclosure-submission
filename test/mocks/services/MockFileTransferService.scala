@@ -32,14 +32,13 @@ trait MockFileTransferService extends MockFactory {
   object MockedFileTransferService {
 
     def transferFiles(): CallHandler[Future[Unit]] = {
-      (
-        mockFileTransferService.transferFiles(
-          _: String,
-          _: String,
-          _: Seq[SupportingDocument]
-        )(_: HeaderCarrier, _: ExecutionContext, _: Request[_]))
+      (mockFileTransferService.transferFiles(
+        _: String,
+        _: String,
+        _: Seq[SupportingDocument]
+      )(_: HeaderCarrier, _: ExecutionContext, _: Request[_]))
         .expects(*, *, *, *, *, *)
-        .returns(Future.successful({}))
+        .returns(Future.successful {})
     }
 
   }

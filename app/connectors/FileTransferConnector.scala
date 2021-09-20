@@ -30,23 +30,26 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FileTransferConnector @Inject()(val appConfig: AppConfig,
-                                      val http: HttpClient) {
+class FileTransferConnector @Inject() (val appConfig: AppConfig, val http: HttpClient) {
 
   private[connectors] lazy val singleFileUrl = s"${appConfig.fileTransferUrl}/transfer-file"
-  private[connectors] lazy val multiFileUrl = s"${appConfig.fileTransferUrl}/transfer-multiple-files"
-  private val logger = Logger("application." + getClass.getCanonicalName)
+  private[connectors] lazy val multiFileUrl  = s"${appConfig.fileTransferUrl}/transfer-multiple-files"
+  private val logger                         = Logger("application." + getClass.getCanonicalName)
 
-  def transferFile(fileTransferRequest: FileTransferRequest)
-                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[FileTransferResponse] = {
+  def transferFile(
+    fileTransferRequest: FileTransferRequest
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[FileTransferResponse] = {
 
     val startTime = Instant.now
     http.POST[FileTransferRequest, HttpResponse](singleFileUrl, fileTransferRequest).map { response =>
-
       if (isSuccess(response.status)) {
-        logger.info(s"[FILE TRANSFER SUCCESS][REFERENCE: ${fileTransferRequest.upscanReference}][CORRELATION ID: ${fileTransferRequest.correlationId}][CONVERSATION ID: ${fileTransferRequest.conversationId}]")
+        logger.info(
+          s"[FILE TRANSFER SUCCESS][REFERENCE: ${fileTransferRequest.upscanReference}][CORRELATION ID: ${fileTransferRequest.correlationId}][CONVERSATION ID: ${fileTransferRequest.conversationId}]"
+        )
       } else {
-        logger.error(s"[FILE TRANSFER FAILURE][REFERENCE: ${fileTransferRequest.upscanReference}][CORRELATION ID: ${fileTransferRequest.correlationId}][CONVERSATION ID: ${fileTransferRequest.conversationId}]")
+        logger.error(
+          s"[FILE TRANSFER FAILURE][REFERENCE: ${fileTransferRequest.upscanReference}][CORRELATION ID: ${fileTransferRequest.correlationId}][CONVERSATION ID: ${fileTransferRequest.conversationId}]"
+        )
       }
       FileTransferResponse(
         fileTransferRequest.upscanReference,
@@ -57,47 +60,47 @@ class FileTransferConnector @Inject()(val appConfig: AppConfig,
         Instant.now().toEpochMilli - startTime.toEpochMilli,
         errorMessage(response.status)
       )
-    }.recover {
-      case error =>
-        logger.error(
-          s"""[FILE TRANSFER FAILURE][REFERENCE: ${fileTransferRequest.upscanReference}][CORRELATION ID: ${fileTransferRequest.correlationId}][CONVERSATION ID: ${fileTransferRequest.conversationId}]
-             | [MESSAGE: ${error.getMessage}]""".stripMargin)
+    }.recover { case error =>
+      logger.error(
+        s"""[FILE TRANSFER FAILURE][REFERENCE: ${fileTransferRequest.upscanReference}][CORRELATION ID: ${fileTransferRequest.correlationId}][CONVERSATION ID: ${fileTransferRequest.conversationId}]
+             | [MESSAGE: ${error.getMessage}]""".stripMargin
+      )
 
-        FileTransferResponse(
-          fileTransferRequest.upscanReference,
-          fileTransferRequest.fileName,
-          fileTransferRequest.fileMimeType,
-          fileTransferSuccess = false,
-          LocalDateTime.now(),
-          Instant.now().toEpochMilli - startTime.toEpochMilli,
-          Some(error.getMessage)
-        )
+      FileTransferResponse(
+        fileTransferRequest.upscanReference,
+        fileTransferRequest.fileName,
+        fileTransferRequest.fileMimeType,
+        fileTransferSuccess = false,
+        LocalDateTime.now(),
+        Instant.now().toEpochMilli - startTime.toEpochMilli,
+        Some(error.getMessage)
+      )
     }
   }
 
-  def transferMultipleFiles(fileTransferRequest: MultiFileTransferRequest)
-                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ErrorModel, Unit]] = {
+  def transferMultipleFiles(
+    fileTransferRequest: MultiFileTransferRequest
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ErrorModel, Unit]] = {
     http.POST[MultiFileTransferRequest, HttpResponse](multiFileUrl, fileTransferRequest).map { response =>
       if (isSuccess(response.status)) {
-        logger.info(s"[FILE TRANSFER SUCCESS][CORRELATION ID: ${fileTransferRequest.correlationId}][CONVERSATION ID: ${fileTransferRequest.conversationId}]")
+        logger.info(
+          s"[FILE TRANSFER SUCCESS][CORRELATION ID: ${fileTransferRequest.correlationId}][CONVERSATION ID: ${fileTransferRequest.conversationId}]"
+        )
         Right(())
       } else {
-        logger.error(
-          s"""[FILE TRANSFER FAILURE]
+        logger.error(s"""[FILE TRANSFER FAILURE]
              |[CORRELATION ID: ${fileTransferRequest.correlationId}]
              |[CONVERSATION ID: ${fileTransferRequest.conversationId}]
              |[STATUS: ${response.status}]""".stripMargin)
         Left(ErrorModel(response.status, "Unsuccessful file transfer response"))
       }
 
-    }.recover {
-      case error =>
-        logger.error(
-          s"""[FILE TRANSFER FAILURE]
+    }.recover { case error =>
+      logger.error(s"""[FILE TRANSFER FAILURE]
              |[CORRELATION ID: ${fileTransferRequest.correlationId}]
              |[CONVERSATION ID: ${fileTransferRequest.conversationId}]
              |[MESSAGE: ${error.getMessage}]""".stripMargin)
-        Left(ErrorModel(-1, error.toString))
+      Left(ErrorModel(-1, error.toString))
     }
   }
 

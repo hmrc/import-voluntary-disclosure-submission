@@ -28,10 +28,10 @@ class BoxItemSpec extends ModelSpecBase {
     "the JSON is a valid" should {
 
       val json: JsObject = Json.obj(
-        "boxNumber" -> 22,
+        "boxNumber"  -> 22,
         "itemNumber" -> 1,
-        "original" -> "1",
-        "amended" -> "2"
+        "original"   -> "1",
+        "amended"    -> "2"
       )
 
       lazy val result: BoxItem = json.as[BoxItem]
@@ -57,10 +57,10 @@ class BoxItemSpec extends ModelSpecBase {
     "the JSON is invalid" should {
 
       val json: JsObject = Json.obj(
-        "boxNumber" -> 2, // invalid box number
+        "boxNumber"  -> 2, // invalid box number
         "itemNumber" -> 1,
-        "original" -> "1",
-        "amended" -> "2"
+        "original"   -> "1",
+        "amended"    -> "2"
       )
 
       "throw an exception" in {
@@ -72,16 +72,15 @@ class BoxItemSpec extends ModelSpecBase {
   "Writing a box item to JSON" should {
 
     val json: JsObject = Json.obj(
-      "BoxNumber" -> "22",
+      "BoxNumber"  -> "22",
       "ItemNumber" -> "01",
-      "EnteredAs" -> "1",
-      "AmendedTo" -> "2"
+      "EnteredAs"  -> "1",
+      "AmendedTo"  -> "2"
     )
 
     val generatedJson: JsObject = Json.toJson(model).as[JsObject]
 
     json.keys.foreach { propertyName =>
-
       s"generate a property named $propertyName" in {
         generatedJson.keys should contain(propertyName)
       }

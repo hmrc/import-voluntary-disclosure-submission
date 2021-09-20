@@ -28,23 +28,34 @@ trait MockHttp extends SpecBase with MockFactory {
   val mockHttp: HttpClient = mock[HttpClient]
 
   object MockedHttp {
-    def post[I, O](url: String, response: O): Any = {
-      (mockHttp.POST[I, O](_: String, _: I, _: Seq[(String, String)])(_: Writes[I], _: HttpReads[O], _: HeaderCarrier, _: ExecutionContext))
+    def post[I, O](url: String, response: O): Any =
+      (mockHttp.POST[I, O](_: String, _: I, _: Seq[(String, String)])(
+        _: Writes[I],
+        _: HttpReads[O],
+        _: HeaderCarrier,
+        _: ExecutionContext
+      ))
         .expects(url, *, *, *, *, *, *)
         .returns(Future.successful(response))
-    }
 
-    def postError[I, O](url: String, exception: Exception): Any = {
-      (mockHttp.POST[I, O](_: String, _: I, _: Seq[(String, String)])(_: Writes[I], _: HttpReads[O], _: HeaderCarrier, _: ExecutionContext))
+    def postError[I, O](url: String, exception: Exception): Any =
+      (mockHttp.POST[I, O](_: String, _: I, _: Seq[(String, String)])(
+        _: Writes[I],
+        _: HttpReads[O],
+        _: HeaderCarrier,
+        _: ExecutionContext
+      ))
         .expects(url, *, *, *, *, *, *)
         .returns(Future.failed(exception))
-    }
 
-    def get[O](url: String, response: O): Any = {
-      (mockHttp.GET[O](_: String, _: Seq[(String, String)], _: Seq[(String, String)])(_: HttpReads[O], _: HeaderCarrier, _: ExecutionContext))
+    def get[O](url: String, response: O): Any =
+      (mockHttp.GET[O](_: String, _: Seq[(String, String)], _: Seq[(String, String)])(
+        _: HttpReads[O],
+        _: HeaderCarrier,
+        _: ExecutionContext
+      ))
         .expects(url, *, *, *, *, *)
         .returns(Future.successful(response))
-    }
 
   }
 

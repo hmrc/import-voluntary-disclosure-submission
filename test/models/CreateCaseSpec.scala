@@ -22,7 +22,7 @@ import play.api.libs.json._
 
 class CreateCaseSpec extends ModelSpecBase with SampleData {
 
-  val model: CreateCase = caseDetails
+  val model: CreateCase     = caseDetails
   val bulkModel: CreateCase = bulkCaseDetails
 
   "Reading case details from JSON" when {
@@ -31,7 +31,7 @@ class CreateCaseSpec extends ModelSpecBase with SampleData {
 
     lazy val result: CreateCase = json.validate[CreateCase] match {
       case JsSuccess(value, _) => value
-      case JsError(errors) => fail(s"Failed to read underpayment details from JSON: $errors")
+      case JsError(errors)     => fail(s"Failed to read underpayment details from JSON: $errors")
     }
 
     "the JSON is a valid" should {
@@ -72,7 +72,7 @@ class CreateCaseSpec extends ModelSpecBase with SampleData {
 
     lazy val result: CreateCase = json.validate[CreateCase] match {
       case JsSuccess(value, _) => value
-      case JsError(errors) => fail(s"Failed to read underpayment details from JSON: $errors")
+      case JsError(errors)     => fail(s"Failed to read underpayment details from JSON: $errors")
     }
 
     "the JSON is a valid" should {
@@ -114,7 +114,6 @@ class CreateCaseSpec extends ModelSpecBase with SampleData {
     implicit val generatedJson: JsObject = Json.toJson(model).as[JsObject]
 
     json.keys.foreach { propertyName =>
-
       s"generate a property named $propertyName" in {
         generatedJson.keys should contain(propertyName)
       }
@@ -133,7 +132,6 @@ class CreateCaseSpec extends ModelSpecBase with SampleData {
     implicit val generatedJson: JsObject = Json.toJson(bulkModel).as[JsObject]
 
     json.keys.foreach { propertyName =>
-
       s"generate a property named $propertyName" in {
         generatedJson.keys should contain(propertyName)
       }

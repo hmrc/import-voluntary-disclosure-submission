@@ -20,12 +20,14 @@ import play.api.libs.json.{Format, Json}
 
 import java.time.LocalDateTime
 
-case class SupportingDocument(reference: String,
-                              fileName: String,
-                              downloadUrl: String,
-                              uploadTimestamp: LocalDateTime,
-                              checksum: String,
-                              fileMimeType: String)
+case class SupportingDocument(
+  reference: String,
+  fileName: String,
+  downloadUrl: String,
+  uploadTimestamp: LocalDateTime,
+  checksum: String,
+  fileMimeType: String
+)
 
 object SupportingDocument {
   implicit val formats: Format[SupportingDocument] = Json.format[SupportingDocument]

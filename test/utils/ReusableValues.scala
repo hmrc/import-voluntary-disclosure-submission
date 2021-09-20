@@ -72,53 +72,59 @@ trait ReusableValues {
     )
 
   val fileTransferResponse: FileTransferResponse =
-    FileTransferResponse(doc.reference, doc.fileName, doc.fileMimeType, fileTransferSuccess = true, doc.uploadTimestamp, 1)
+    FileTransferResponse(
+      doc.reference,
+      doc.fileName,
+      doc.fileMimeType,
+      fileTransferSuccess = true,
+      doc.uploadTimestamp,
+      1
+    )
   val multiFileTransferResponse: MultiFileTransferResponse =
     MultiFileTransferResponse("123", "C18123", "C18", Seq(uploadResult))
-    
+
   val errorModel: HttpResponse = HttpResponse(Status.NOT_FOUND, "Error Message")
 
   val detailsJson: JsObject = Json.obj(
     "subscriptionDisplayResponse" -> Json.obj(
       "responseCommon" -> Json.obj(
-        "status" -> "OK",
-        "statusText" -> "Optional status text from ETMP",
+        "status"         -> "OK",
+        "statusText"     -> "Optional status text from ETMP",
         "processingDate" -> "2016-09-17T19:33:47Z",
         "returnParameters" -> Json.arr(
-          Json.obj("paramName" -> "POSITION",
-            "paramValue" -> "LINK")
+          Json.obj("paramName" -> "POSITION", "paramValue" -> "LINK")
         )
       ),
       "responseDetail" -> Json.obj(
-        "EORINo" -> "GB987654321000",
+        "EORINo"      -> "GB987654321000",
         "CDSFullName" -> "Fast Food ltd",
         "CDSEstablishmentAddress" -> Json.obj(
           "streetAndNumber" -> "99 Avenue Road",
-          "city" -> "Anyold Town",
-          "postalCode" -> "99JZ 1AA",
-          "countryCode" -> "GB"
+          "city"            -> "Anyold Town",
+          "postalCode"      -> "99JZ 1AA",
+          "countryCode"     -> "GB"
         )
       )
     )
   )
 
   val cleanedDetailsJson: JsObject = Json.obj(
-    "eori" -> "GB987654321000",
-    "name" -> "Fast Food ltd",
+    "eori"            -> "GB987654321000",
+    "name"            -> "Fast Food ltd",
     "streetAndNumber" -> "99 Avenue Road",
-    "city" -> "Anyold Town",
-    "postalCode" -> "99JZ 1AA",
-    "countryCode" -> "GB"
+    "city"            -> "Anyold Town",
+    "postalCode"      -> "99JZ 1AA",
+    "countryCode"     -> "GB"
   )
 
   val cleanedDetailsWithVatIdJson: JsObject = Json.obj(
-    "eori" -> "GB987654321000",
-    "name" -> "Fast Food ltd",
+    "eori"            -> "GB987654321000",
+    "name"            -> "Fast Food ltd",
     "streetAndNumber" -> "99 Avenue Road",
-    "city" -> "Anyold Town",
-    "postalCode" -> "99JZ 1AA",
-    "countryCode" -> "GB",
-    "vatNumber" -> "987654321000"
+    "city"            -> "Anyold Town",
+    "postalCode"      -> "99JZ 1AA",
+    "countryCode"     -> "GB",
+    "vatNumber"       -> "987654321000"
   )
 
 }

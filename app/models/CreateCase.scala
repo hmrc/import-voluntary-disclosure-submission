@@ -21,13 +21,15 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 
-case class CreateCase(underpaymentDetails: UnderpaymentDetails,
-                      duties: Seq[DutyItem],
-                      documentsSupplied: Seq[DocumentType],
-                      supportingDocuments: Seq[SupportingDocument],
-                      amendedItems: Option[Seq[BoxItem]],
-                      importer: TraderDetails,
-                      representative: Option[TraderDetails] = None)
+case class CreateCase(
+  underpaymentDetails: UnderpaymentDetails,
+  duties: Seq[DutyItem],
+  documentsSupplied: Seq[DocumentType],
+  supportingDocuments: Seq[SupportingDocument],
+  amendedItems: Option[Seq[BoxItem]],
+  importer: TraderDetails,
+  representative: Option[TraderDetails] = None
+)
 
 object CreateCase {
   implicit val reads: Reads[CreateCase] = (
@@ -38,8 +40,7 @@ object CreateCase {
       (__ \\ "amendedItems").readNullable[Seq[BoxItem]] and
       (__ \ "importer").read[TraderDetails] and
       (__ \ "representative").readNullable[TraderDetails]
-    ) (CreateCase.apply _)
-
+  )(CreateCase.apply _)
 
   implicit val writes: Writes[CreateCase] = (o: CreateCase) => {
 
@@ -49,13 +50,14 @@ object CreateCase {
     }
 
     val traders: Seq[JsObject] = Seq(representative, importer).flatten
-    val importInfoList = if (o.underpaymentDetails.isBulkEntry) Json.obj() else Json.obj("ImportInfoList" -> o.amendedItems)
+    val importInfoList =
+      if (o.underpaymentDetails.isBulkEntry) Json.obj() else Json.obj("ImportInfoList" -> o.amendedItems)
 
     Json.obj(
       "UnderpaymentDetails" -> o.underpaymentDetails,
-      "DutyTypeList" -> o.duties,
-      "DocumentList" -> o.documentsSupplied,
-      "TraderList" -> traders
+      "DutyTypeList"        -> o.duties,
+      "DocumentList"        -> o.documentsSupplied,
+      "TraderList"          -> traders
     ) ++ importInfoList
   }
 }

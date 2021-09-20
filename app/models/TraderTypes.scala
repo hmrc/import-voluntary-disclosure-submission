@@ -22,15 +22,15 @@ object TraderTypes extends Enumeration {
 
   type TraderType = Value
 
-  val Importer: TraderType = Value("importer")
+  val Importer: TraderType       = Value("importer")
   val Representative: TraderType = Value("representative")
-  val Additional: TraderType = Value("additional")
+  val Additional: TraderType     = Value("additional")
 
   implicit val reads: Reads[TraderType] = Reads.enumNameReads(this)
 
   implicit val writes: Writes[TraderType] = {
-    case Importer => JsString("01")
+    case Importer       => JsString("01")
     case Representative => JsString("02")
-    case Additional => JsString("03")
+    case Additional     => JsString("03")
   }
 }
