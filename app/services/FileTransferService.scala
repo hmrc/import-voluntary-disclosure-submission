@@ -58,23 +58,6 @@ class FileTransferService @Inject() (
     }
   }
 
-  // TODO: the following method is for the alternative implementation of file transfers. It is maintained
-  //        so that quick turnaround of alternative solution can be implemented if transfers takes too long
-  //        in production. The simple implementation will be used initially.
-
-  //  private def actorTransfer(caseId: String, conversationId: String, files: Seq[SupportingDocument])
-  //                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = Future {
-  //    val fileTransferActor: ActorRef = actorSystem.actorOf(
-  //      Props(classOf[FileTransferProcessor], caseId, connector, conversationId, auditFileTransfers)
-  //    )
-  //
-  //    fileTransferActor ! FileTransferProcessor.TransferMultipleFiles(
-  //      files.zipWithIndex,
-  //      files.size,
-  //      hc
-  //    )
-  //  }
-
   private def batchTransfer(caseId: String, conversationId: String, files: Seq[SupportingDocument])(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
