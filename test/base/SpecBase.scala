@@ -35,7 +35,7 @@ trait SpecBase extends AnyWordSpec with MockFactory {
     .withCSRFToken
     .asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
 
-  val env: Environment = Environment.simple()
+  val env: Environment             = Environment.simple()
   val configuration: Configuration = Configuration.load(env)
 
   val appConfig: AppConfig = injector.instanceOf[AppConfig]

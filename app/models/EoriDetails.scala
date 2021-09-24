@@ -18,30 +18,31 @@ package models
 
 import play.api.libs.json.{Json, Reads, _}
 
-case class EoriDetails(eori: String,
-                       name: String,
-                       streetAndNumber: String,
-                       city: String,
-                       postalCode: Option[String],
-                       countryCode: String,
-                       vatNumber: Option[String]
-                      )
+case class EoriDetails(
+  eori: String,
+  name: String,
+  streetAndNumber: String,
+  city: String,
+  postalCode: Option[String],
+  countryCode: String,
+  vatNumber: Option[String]
+)
 
 object EoriDetails {
 
   private def getExpectedString(json: JsObject, key: String): Option[String] = (json \ key) match {
-      case JsDefined(data: JsString) => Some(data.value)
-      case _ => None
-    }
+    case JsDefined(data: JsString) => Some(data.value)
+    case _                         => None
+  }
 
   implicit val reads: Reads[EoriDetails] = for {
-    eori <- (__ \\ "EORINo").read[String]
-    name <- (__ \\ "CDSFullName").read[String]
+    eori            <- (__ \\ "EORINo").read[String]
+    name            <- (__ \\ "CDSFullName").read[String]
     streetAndNumber <- (__ \\ "CDSEstablishmentAddress" \ "streetAndNumber").read[String]
-    city <- (__ \\ "CDSEstablishmentAddress" \ "city").read[String]
-    postalCode <- (__ \\ "CDSEstablishmentAddress" \ "postalCode").readNullable[String]
-    countryCode <- (__ \\ "CDSEstablishmentAddress" \ "countryCode").read[String]
-    vatIds <- (__ \\ "VATIDs").readNullable[Seq[JsObject]]
+    city            <- (__ \\ "CDSEstablishmentAddress" \ "city").read[String]
+    postalCode      <- (__ \\ "CDSEstablishmentAddress" \ "postalCode").readNullable[String]
+    countryCode     <- (__ \\ "CDSEstablishmentAddress" \ "countryCode").read[String]
+    vatIds          <- (__ \\ "VATIDs").readNullable[Seq[JsObject]]
   } yield {
     val vatNumber = vatIds.getOrElse(Seq(Json.obj()))
       .find(getExpectedString(_, "countryCode").contains("GB"))

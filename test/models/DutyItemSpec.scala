@@ -30,9 +30,9 @@ class DutyItemSpec extends ModelSpecBase {
   "Reading a duty item from JSON" when {
 
     val json: JsObject = Json.obj(
-      "duty" -> "A00",
+      "duty"     -> "A00",
       "original" -> BigDecimal(1),
-      "amended" -> BigDecimal(2)
+      "amended"  -> BigDecimal(2)
     )
 
     lazy val result: DutyItem = json.as[DutyItem]
@@ -60,16 +60,15 @@ class DutyItemSpec extends ModelSpecBase {
   "Writing Duty item to JSON" should {
 
     val json: JsObject = Json.obj(
-      "Type" -> "A00",
-      "PaidAmount" -> "1",
-      "DueAmount" -> "2",
+      "Type"              -> "A00",
+      "PaidAmount"        -> "1",
+      "DueAmount"         -> "2",
       "OutstandingAmount" -> "1"
     )
 
     val generatedJson: JsObject = Json.toJson(model).as[JsObject]
 
     json.keys.foreach { propertyName =>
-
       s"generate a property named $propertyName" in {
         generatedJson.keys should contain(propertyName)
       }

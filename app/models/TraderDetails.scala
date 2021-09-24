@@ -20,17 +20,19 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 
-case class TraderDetails(eori: String,
-                         name: String,
-                         emailAddress: String,
-                         phoneNumber: String,
-                         addressLine1: String,
-                         addressLine2: Option[String],
-                         city: String,
-                         county: Option[String],
-                         countryCode: String,
-                         postalCode: Option[String],
-                         vatNumber: Option[String])
+case class TraderDetails(
+  eori: String,
+  name: String,
+  emailAddress: String,
+  phoneNumber: String,
+  addressLine1: String,
+  addressLine2: Option[String],
+  city: String,
+  county: Option[String],
+  countryCode: String,
+  postalCode: Option[String],
+  vatNumber: Option[String]
+)
 
 object TraderDetails {
   implicit val reads: Reads[TraderDetails] = (
@@ -45,29 +47,28 @@ object TraderDetails {
       (__ \ "address" \ "countryCode").read[String] and
       (__ \ "address" \ "postalCode").readNullable[String] and
       (__ \ "vatNumber").readNullable[String]
-
-    ) (TraderDetails.apply _)
+  )(TraderDetails.apply _)
 
   implicit val writes: Writes[TraderDetails] = (data: TraderDetails) => {
-   val postCode = data.postalCode match {
-     case Some(pc) => Json.obj("PostalCode" -> pc)
-     case _ => Json.obj()
-   }
+    val postCode = data.postalCode match {
+      case Some(pc) => Json.obj("PostalCode" -> pc)
+      case _        => Json.obj()
+    }
 
     val addressLine2 = data.addressLine2 match {
       case Some(addressLine) => Json.obj("AddressLine2" -> addressLine)
-      case _ => Json.obj()
+      case _                 => Json.obj()
     }
 
     val mandatoryData: JsObject = Json.obj(
       "EORI" -> data.eori,
       "Name" -> data.name,
       "EstablishmentAddress" -> Json.obj(
-        "AddressLine1" -> data.addressLine1,
-        "City" -> data.city,
-        "CountryCode" -> data.countryCode,
+        "AddressLine1"    -> data.addressLine1,
+        "City"            -> data.city,
+        "CountryCode"     -> data.countryCode,
         "TelephoneNumber" -> data.phoneNumber,
-        "EmailAddress" -> data.emailAddress
+        "EmailAddress"    -> data.emailAddress
       ).++(postCode).++(addressLine2)
     )
 

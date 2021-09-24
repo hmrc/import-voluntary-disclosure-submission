@@ -30,10 +30,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton()
-class FileUploadCompletionController @Inject()(cc: ControllerComponents,
-                                               auditService: AuditService,
-                                               implicit val ec: ExecutionContext)
-  extends BackendController(cc) with Logging {
+class FileUploadCompletionController @Inject() (
+  cc: ControllerComponents,
+  auditService: AuditService,
+  implicit val ec: ExecutionContext
+) extends BackendController(cc)
+    with Logging {
 
   def onSubmit(): Action[JsValue] = Action(parse.json).apply { implicit request =>
     request.body.validate[MultiFileTransferResponse] match {
@@ -50,7 +52,7 @@ class FileUploadCompletionController @Inject()(cc: ControllerComponents,
           )
         }
         auditFileTransfers(results, response.caseReferenceNumber)
-        
+
         NoContent
       case JsError(errors) =>
         val pathsWithErrors: Map[String, String] = errors.map { error =>
@@ -61,8 +63,11 @@ class FileUploadCompletionController @Inject()(cc: ControllerComponents,
     }
   }
 
-  private def auditFileTransfers(results: Seq[FileTransferResponse], caseId: String)
-                                (implicit hc: HeaderCarrier, ec: ExecutionContext, request: Request[_]): Unit = {
+  private def auditFileTransfers(results: Seq[FileTransferResponse], caseId: String)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext,
+    request: Request[_]
+  ): Unit = {
     val summaryMessage =
       s"""Total Size: ${results.size}
          |Success: ${results.count(_.fileTransferSuccess)}

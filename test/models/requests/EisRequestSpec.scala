@@ -26,7 +26,7 @@ import java.util.UUID
 class EisRequestSpec extends ModelSpecBase with SampleData {
 
   val acknowledgementReference: UUID = UUID.randomUUID()
-  val model: EisRequest[CreateCase] = EisRequest(acknowledgementReference, caseDetails)
+  val model: EisRequest[CreateCase]  = EisRequest(acknowledgementReference, caseDetails)
 
   "Serialising a create case request" should {
 
@@ -34,13 +34,12 @@ class EisRequestSpec extends ModelSpecBase with SampleData {
 
     lazy val resultingJson = Json.obj(
       "AcknowledgementReference" -> acknowledgementReference.toString.replace("-", ""),
-      "OriginatingSystem" -> "Digital",
-      "ApplicationType" -> "C18",
-      "Content" -> outgoingJson
+      "OriginatingSystem"        -> "Digital",
+      "ApplicationType"          -> "C18",
+      "Content"                  -> outgoingJson
     )
 
     json.keys.foreach { propertyName =>
-
       s"generate a property named $propertyName" in {
         resultingJson.keys should contain(propertyName)
       }

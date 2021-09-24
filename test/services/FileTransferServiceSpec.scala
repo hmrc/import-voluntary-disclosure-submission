@@ -37,9 +37,9 @@ import scala.concurrent.Future
 class FileTransferServiceSpec extends SpecBase with Matchers with MockFactory with Waiters {
 
   trait Test extends MockFileTransferConnector with MockAuditService with ReusableValues with Eventually {
-    val system: ActorSystem = injector.instanceOf[ActorSystem]
+    val system: ActorSystem            = injector.instanceOf[ActorSystem]
     val servicesConfig: ServicesConfig = injector.instanceOf[ServicesConfig]
-    def appConfig: AppConfig = new AppConfigImpl(configuration, servicesConfig)
+    def appConfig: AppConfig           = new AppConfigImpl(configuration, servicesConfig)
     lazy val service = new FileTransferService(system, mockFileTransferConnector, mockAuditService, appConfig)
   }
 
@@ -59,7 +59,9 @@ class FileTransferServiceSpec extends SpecBase with Matchers with MockFactory wi
         override def appConfig: AppConfig = new AppConfigImpl(configuration, servicesConfig) {
           override val multiFileUploadEnabled: Boolean = true
         }
-        FileTransferConnector.transferMultipleFiles(Future.successful(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "temporary issue"))))
+        FileTransferConnector.transferMultipleFiles(
+          Future.successful(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "temporary issue")))
+        )
           .repeat(2)
         FileTransferConnector.transferMultipleFiles(Future.successful(Right(())))
 
@@ -71,7 +73,9 @@ class FileTransferServiceSpec extends SpecBase with Matchers with MockFactory wi
         override def appConfig: AppConfig = new AppConfigImpl(configuration, servicesConfig) {
           override val multiFileUploadEnabled: Boolean = true
         }
-        FileTransferConnector.transferMultipleFiles(Future.successful(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "temporary issue"))))
+        FileTransferConnector.transferMultipleFiles(
+          Future.successful(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "temporary issue")))
+        )
           .repeat(3)
 
         await(service.transferFiles("C18123", "123", Seq(doc))(hc, ec, fakeRequest))

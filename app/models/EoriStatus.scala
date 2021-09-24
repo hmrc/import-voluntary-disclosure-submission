@@ -18,17 +18,14 @@ package models
 
 import play.api.libs.json.{Json, Reads, Writes, __}
 
-case class EoriStatus(status: String,
-                      statusText: String)
+case class EoriStatus(status: String, statusText: String)
 
 object EoriStatus {
 
   implicit val reads: Reads[EoriStatus] = for {
-    status <- (__ \\ "status").read[String]
+    status     <- (__ \\ "status").read[String]
     statusText <- (__ \\ "statusText").read[String]
-  } yield {
-    EoriStatus(status, statusText)
-  }
+  } yield EoriStatus(status, statusText)
 
   implicit val writes: Writes[EoriStatus] = Json.writes[EoriStatus]
 

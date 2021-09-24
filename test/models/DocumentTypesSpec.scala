@@ -35,7 +35,9 @@ class DocumentTypesSpec extends ModelSpecBase {
       }
 
       "deserialize a AmendedSubstituteEntryWorksheet" in {
-        JsString("AmendedSubstituteEntryWorksheet").as[DocumentType] shouldBe DocumentTypes.AmendedSubstituteEntryWorksheet
+        JsString("AmendedSubstituteEntryWorksheet").as[
+          DocumentType
+        ] shouldBe DocumentTypes.AmendedSubstituteEntryWorksheet
       }
 
       "deserialize a AmendedC88" in {
@@ -47,7 +49,9 @@ class DocumentTypesSpec extends ModelSpecBase {
       }
 
       "deserialize a InvoiceAirwayBillPreferenceCertificate" in {
-        JsString("InvoiceAirwayBillPreferenceCertificate").as[DocumentType] shouldBe DocumentTypes.InvoiceAirwayBillPreferenceCertificate
+        JsString("InvoiceAirwayBillPreferenceCertificate").as[
+          DocumentType
+        ] shouldBe DocumentTypes.InvoiceAirwayBillPreferenceCertificate
       }
 
       "deserialize a DefermentAuthorisation" in {

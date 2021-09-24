@@ -45,14 +45,14 @@ class CreateCaseControllerSpec extends SpecBase with Matchers {
     val validRequest: FakeRequest[JsObject] = FakeRequest(controllers.routes.CreateCaseController.onSubmit())
       .withHeaders(
         HeaderNames.CONTENT_TYPE -> ContentTypes.JSON,
-        HeaderNames.ACCEPT -> ContentTypes.JSON
+        HeaderNames.ACCEPT       -> ContentTypes.JSON
       )
       .withBody(incomingJson)
 
     val invalidRequest: FakeRequest[JsObject] = FakeRequest(controllers.routes.CreateCaseController.onSubmit())
       .withHeaders(
         HeaderNames.CONTENT_TYPE -> ContentTypes.JSON,
-        HeaderNames.ACCEPT -> ContentTypes.JSON
+        HeaderNames.ACCEPT       -> ContentTypes.JSON
       )
       .withBody(Json.obj())
 
@@ -74,7 +74,6 @@ class CreateCaseControllerSpec extends SpecBase with Matchers {
         private val result = target.onSubmit()(validRequest)
         contentType(result) shouldBe Some(ContentTypes.JSON)
       }
-
 
       "return the correct JSON" in new Test {
         MockedCreateCaseService.createCase(caseDetails, successResponse)
@@ -99,7 +98,6 @@ class CreateCaseControllerSpec extends SpecBase with Matchers {
         private val result = target.onSubmit()(validRequest)
         contentType(result) shouldBe Some(ContentTypes.JSON)
       }
-
 
       "return the correct JSON" in new Test {
         MockedCreateCaseService.createCase(caseDetails, failedResponse)

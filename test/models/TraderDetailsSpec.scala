@@ -83,7 +83,6 @@ class TraderDetailsSpec extends ModelSpecBase with SampleData {
     val generatedJson: JsObject = Json.toJson(model).as[JsObject]
 
     json.keys.foreach { propertyName =>
-
       s"generate a property named $propertyName" in {
         generatedJson.keys should contain(propertyName)
       }
@@ -105,7 +104,6 @@ class TraderDetailsSpec extends ModelSpecBase with SampleData {
     val generatedJson: JsObject = Json.toJson(model).as[JsObject]
 
     json.keys.foreach { propertyName =>
-
       s"generate a property named $propertyName" in {
         generatedJson.keys should contain(propertyName)
       }

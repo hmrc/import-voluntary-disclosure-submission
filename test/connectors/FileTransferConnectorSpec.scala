@@ -33,11 +33,11 @@ class FileTransferConnectorSpec extends SpecBase with EitherValues {
 
   trait Test extends MockHttp with SampleData {
     val correlationId: UUID = UUID.randomUUID()
-    lazy val target = new FileTransferConnector(appConfig, mockHttp)
+    lazy val target         = new FileTransferConnector(appConfig, mockHttp)
   }
 
   val expectedSingleFileUrl = "http://localhost:10003/transfer-file"
-  val expectedMultiFileUrl = "http://localhost:10003/transfer-multiple-files"
+  val expectedMultiFileUrl  = "http://localhost:10003/transfer-multiple-files"
 
   "transferFile" should {
 
@@ -81,7 +81,10 @@ class FileTransferConnectorSpec extends SpecBase with EitherValues {
     "an error response is returned from the file transfer microservice" should {
 
       "return a failed FileTransferResponse" in new Test {
-        MockedHttp.post[FileTransferRequest, HttpResponse](expectedSingleFileUrl, HttpResponse(Status.INTERNAL_SERVER_ERROR, ""))
+        MockedHttp.post[FileTransferRequest, HttpResponse](
+          expectedSingleFileUrl,
+          HttpResponse(Status.INTERNAL_SERVER_ERROR, "")
+        )
 
         private val result = await(target.transferFile(request))
 
@@ -122,7 +125,7 @@ class FileTransferConnectorSpec extends SpecBase with EitherValues {
           downloadUrl = "some url",
           checksum = "file checksum",
           fileName = "file name",
-          fileMimeType = "file MIME type",
+          fileMimeType = "file MIME type"
         )
       ),
       callbackUrl = "localhost/internal/callback"
@@ -142,7 +145,10 @@ class FileTransferConnectorSpec extends SpecBase with EitherValues {
     "an error response is returned from the file transfer microservice" should {
 
       "return a failed response" in new Test {
-        MockedHttp.post[MultiFileTransferRequest, HttpResponse](expectedMultiFileUrl, HttpResponse(Status.INTERNAL_SERVER_ERROR, ""))
+        MockedHttp.post[MultiFileTransferRequest, HttpResponse](
+          expectedMultiFileUrl,
+          HttpResponse(Status.INTERNAL_SERVER_ERROR, "")
+        )
 
         private val resp = await(target.transferMultipleFiles(request)).left.value
 

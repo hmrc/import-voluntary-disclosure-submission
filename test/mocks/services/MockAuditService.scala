@@ -29,10 +29,9 @@ trait MockAuditService extends MockFactory {
   val mockAuditService: AuditService = mock[AuditService]
 
   object AuditService {
-    def audit(event: JsonAuditModel): CallHandler[Unit] = {
+    def audit(event: JsonAuditModel): CallHandler[Unit] =
       (mockAuditService.audit(_: JsonAuditModel)(_: HeaderCarrier, _: ExecutionContext, _: Request[_]))
         .expects(event, *, *, *)
         .returns(())
-    }
   }
 }

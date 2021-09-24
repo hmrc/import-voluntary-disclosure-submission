@@ -19,21 +19,18 @@ package models
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-case class UpdateCase(caseId: String,
-                      supportingDocuments: Seq[SupportingDocument],
-                      additionalInfo: String)
+case class UpdateCase(caseId: String, supportingDocuments: Seq[SupportingDocument], additionalInfo: String)
 
 object UpdateCase {
   implicit val reads: Reads[UpdateCase] = (
     (__ \ "caseId").read[String] and
       (__ \ "supportingDocuments").readNullable[Seq[SupportingDocument]].map(_.getOrElse(Seq.empty)) and
       (__ \ "additionalInfo").read[String]
-    ) (UpdateCase.apply _)
-
+  )(UpdateCase.apply _)
 
   implicit val writes: Writes[UpdateCase] = (update: UpdateCase) =>
     Json.obj(
-      "CaseID" -> update.caseId,
+      "CaseID"      -> update.caseId,
       "Description" -> update.additionalInfo
     )
 }

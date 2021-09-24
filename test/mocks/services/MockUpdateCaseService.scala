@@ -32,13 +32,13 @@ trait MockUpdateCaseService extends MockFactory {
 
   object MockedUpdateCaseService {
 
-    def updateCase(caseDetails: UpdateCase,
-                   response: Either[UpdateCaseError, UpdateCaseResponse]
-                  ): CallHandler[Future[Either[UpdateCaseError, UpdateCaseResponse]]] = {
+    def updateCase(
+      caseDetails: UpdateCase,
+      response: Either[UpdateCaseError, UpdateCaseResponse]
+    ): CallHandler[Future[Either[UpdateCaseError, UpdateCaseResponse]]] =
       (mockUpdateCaseService.updateCase(_: UpdateCase)(_: HeaderCarrier, _: ExecutionContext, _: Request[_]))
         .expects(caseDetails, *, *, *)
         .returns(Future.successful(response))
-    }
 
   }
 

@@ -58,7 +58,7 @@ class AuthorisedActionSpec extends SpecBase with Matchers {
         val externalId = "user-external-id"
         MockedAuthConnector.authorise(Future.successful(Some(externalId)))
         private val expectedRequest = AuthorisedRequest(fakeRequest, externalId)
-        private val result = await(target.test(fakeRequest))
+        private val result          = await(target.test(fakeRequest))
         result mustBe Right(expectedRequest)
       }
     }

@@ -30,11 +30,10 @@ trait MockAuthConnector extends MockFactory {
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
 
   object MockedAuthConnector {
-    def authorise(response: Future[_]): CallHandler[Future[Any]] = {
+    def authorise(response: Future[_]): CallHandler[Future[Any]] =
       (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
         .expects(*, *, *, *)
         .returns(response)
-    }
   }
 
 }

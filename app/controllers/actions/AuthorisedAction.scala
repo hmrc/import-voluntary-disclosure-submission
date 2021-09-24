@@ -31,9 +31,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait AuthorisedAction extends ActionRefiner[Request, AuthorisedRequest]
 
-class AuthAction @Inject()(override val authConnector: AuthConnector)
-                          (implicit val executionContext: ExecutionContext)
-  extends AuthorisedAction with AuthorisedFunctions with Logging {
+class AuthAction @Inject() (override val authConnector: AuthConnector)(implicit val executionContext: ExecutionContext)
+    extends AuthorisedAction
+    with AuthorisedFunctions
+    with Logging {
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
 
@@ -47,10 +48,9 @@ class AuthAction @Inject()(override val authConnector: AuthConnector)
         logger.warn("Auth error - Unable to retrieve an external ID from auth")
         val unknownUserError = Json.obj("error" -> "Unable to retrieve an external ID from auth")
         Future.successful(Left(Unauthorized(unknownUserError)))
-    } recover {
-      case x: AuthorisationException =>
-        logger.warn(s"Authorisation Exception ${x.reason}")
-        Left(Unauthorized(Json.obj("error" -> x.reason)))
+    } recover { case x: AuthorisationException =>
+      logger.warn(s"Authorisation Exception ${x.reason}")
+      Left(Unauthorized(Json.obj("error" -> x.reason)))
     }
 
   }

@@ -30,7 +30,7 @@ class UpdateCaseSpec extends ModelSpecBase with SampleData {
 
     lazy val result: UpdateCase = json.validate[UpdateCase] match {
       case JsSuccess(value, _) => value
-      case JsError(errors) => fail(s"Failed to read underpayment details from JSON: $errors")
+      case JsError(errors)     => fail(s"Failed to read underpayment details from JSON: $errors")
     }
 
     "the JSON is valid" should {

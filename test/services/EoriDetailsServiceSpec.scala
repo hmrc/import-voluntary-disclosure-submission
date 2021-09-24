@@ -24,7 +24,6 @@ import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import utils.ReusableValues
 
-
 class EoriDetailsServiceSpec extends ServiceSpecBase {
 
   trait Test extends MockEoriDetailsConnector with ReusableValues {

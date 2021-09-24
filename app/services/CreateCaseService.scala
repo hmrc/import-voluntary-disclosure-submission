@@ -26,12 +26,15 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CreateCaseService @Inject()(connector: EisConnector, fileTransferService: FileTransferService) {
+class CreateCaseService @Inject() (connector: EisConnector, fileTransferService: FileTransferService) {
 
-  def createCase(caseDetails: CreateCase)
-                (implicit hc: HeaderCarrier, executionContext: ExecutionContext, request: Request[_]): Future[Either[EisError, CreateCaseResponse]] = {
+  def createCase(caseDetails: CreateCase)(implicit
+    hc: HeaderCarrier,
+    executionContext: ExecutionContext,
+    request: Request[_]
+  ): Future[Either[EisError, CreateCaseResponse]] = {
     connector.createCase(caseDetails) map {
-      case success@Right(details) =>
+      case success @ Right(details) =>
         fileTransferService.transferFiles(details.id, details.correlationId, caseDetails.supportingDocuments)
         success
       case failure => failure

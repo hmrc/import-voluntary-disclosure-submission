@@ -31,19 +31,21 @@ trait MockEisConnector extends MockFactory {
 
   object MockedEisConnector {
 
-    def createCase(caseDetails: CreateCase,
-                   response: Either[EisError, CreateCaseResponse]): CallHandler[Future[Either[EisError, CreateCaseResponse]]] = {
+    def createCase(
+      caseDetails: CreateCase,
+      response: Either[EisError, CreateCaseResponse]
+    ): CallHandler[Future[Either[EisError, CreateCaseResponse]]] =
       (mockEisConnector.createCase(_: CreateCase)(_: HeaderCarrier, _: ExecutionContext))
         .expects(caseDetails, *, *)
         .returns(Future.successful(response))
-    }
 
-    def updateCase(caseDetails: UpdateCase,
-                   response: Either[UpdateCaseError, UpdateCaseResponse]): CallHandler[Future[Either[UpdateCaseError, UpdateCaseResponse]]] = {
+    def updateCase(
+      caseDetails: UpdateCase,
+      response: Either[UpdateCaseError, UpdateCaseResponse]
+    ): CallHandler[Future[Either[UpdateCaseError, UpdateCaseResponse]]] =
       (mockEisConnector.updateCase(_: UpdateCase)(_: HeaderCarrier, _: ExecutionContext))
         .expects(caseDetails, *, *)
         .returns(Future.successful(response))
-    }
   }
 
 }

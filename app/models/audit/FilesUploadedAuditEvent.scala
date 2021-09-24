@@ -21,17 +21,17 @@ import play.api.libs.json._
 import services.JsonAuditModel
 
 case class FilesUploadedAuditEvent(
-                                    fileTransferResponse: Seq[FileTransferResponse],
-                                    caseId: String
-                                  ) extends JsonAuditModel {
-  override val auditType: String = "SupportingDocumentationTransfers"
+  fileTransferResponse: Seq[FileTransferResponse],
+  caseId: String
+) extends JsonAuditModel {
+  override val auditType: String       = "SupportingDocumentationTransfers"
   override val transactionName: String = "supporting-documentation-transfers"
   override val detail: JsValue = Json.obj(
     fields = "summary" -> Json.obj(
       fields = "caseID" -> caseId,
-      "totalFiles" -> fileTransferResponse.length,
+      "totalFiles"                   -> fileTransferResponse.length,
       "filesTransferredSuccessfully" -> fileTransferResponse.count(file => file.fileTransferSuccess),
-      "filesTransferFailures" -> fileTransferResponse.count(file => file.fileTransferError.isDefined)
+      "filesTransferFailures"        -> fileTransferResponse.count(file => file.fileTransferError.isDefined)
     )
   ) ++ Json.obj("files" -> Json.toJson(fileTransferResponse))
 

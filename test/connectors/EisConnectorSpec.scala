@@ -33,7 +33,7 @@ class EisConnectorSpec extends SpecBase {
 
   trait Test extends MockHttp with SampleData {
     val correlationId: UUID = UUID.randomUUID()
-    lazy val target = new EisConnector(mockHttp, appConfig)
+    lazy val target         = new EisConnector(mockHttp, appConfig)
   }
 
   val expectedCreateCaseUrl = "http://localhost:7952/cpr/caserequest/c18/create/v1"

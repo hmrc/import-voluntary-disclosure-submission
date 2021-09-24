@@ -24,25 +24,26 @@ import play.api.libs.json._
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-case class UnderpaymentDetails(userType: UserType,
-                               isBulkEntry: Boolean,
-                               isEuropeanUnionDuty: Boolean,
-                               reasonForAmendment: String,
-                               entryProcessingUnit: Option[String],
-                               entryNumber: Option[String],
-                               entryDate: Option[LocalDate],
-                               originalCustomsProcedureCode: String,
-                               declarantName: String,
-                               declarantPhoneNumber: String,
-                               defermentType: Option[String] = None,
-                               defermentAccountNumber: Option[String] = None,
-                               additionalDefermentNumber: Option[String] = None
-                              )
+case class UnderpaymentDetails(
+  userType: UserType,
+  isBulkEntry: Boolean,
+  isEuropeanUnionDuty: Boolean,
+  reasonForAmendment: String,
+  entryProcessingUnit: Option[String],
+  entryNumber: Option[String],
+  entryDate: Option[LocalDate],
+  originalCustomsProcedureCode: String,
+  declarantName: String,
+  declarantPhoneNumber: String,
+  defermentType: Option[String] = None,
+  defermentAccountNumber: Option[String] = None,
+  additionalDefermentNumber: Option[String] = None
+)
 
 object UnderpaymentDetails {
 
-  private val formattedDate = DateTimeFormatter.ofPattern("yyyyMMdd")
-  private val knownDefermentTypes = Seq("A", "B", "C", "D")
+  private val formattedDate                 = DateTimeFormatter.ofPattern("yyyyMMdd")
+  private val knownDefermentTypes           = Seq("A", "B", "C", "D")
   val validDefermentType: String => Boolean = defermentType => knownDefermentTypes.contains(defermentType)
 
   implicit val reads: Reads[UnderpaymentDetails] = (
@@ -54,50 +55,57 @@ object UnderpaymentDetails {
       (__ \\ "entryNumber").readNullable[String] and
       (__ \\ "entryDate").readNullable[LocalDate] and
       (__ \ "customsProcessingCode").read[String] and
-      (__ \ "declarantContactDetails" \ "fullName").read[String] and // TODO: needs to come from declarant specific location
+      (__ \ "declarantContactDetails" \ "fullName").read[
+        String
+      ] and // TODO: needs to come from declarant specific location
       (__ \ "declarantContactDetails" \ "phoneNumber").read[String] and
-      (__ \ "defermentType").readNullable[String](filter(JsonValidationError("Invalid Deferement Type"))(validDefermentType)) and
+      (__ \ "defermentType").readNullable[String](
+        filter(JsonValidationError("Invalid Deferement Type"))(validDefermentType)
+      ) and
       (__ \ "defermentAccountNumber").readNullable[String] and
       (__ \ "additionalDefermentAccountNumber").readNullable[String]
-    ) (UnderpaymentDetails.apply _)
+  )(UnderpaymentDetails.apply _)
 
   implicit val writes: Writes[UnderpaymentDetails] = (data: UnderpaymentDetails) => {
 
-    val various = "VARIOUS"
-    val isBulk = data.isBulkEntry
-    val isBulkEntry = if (isBulk) "01" else "02"
+    val various             = "VARIOUS"
+    val isBulk              = data.isBulkEntry
+    val isBulkEntry         = if (isBulk) "01" else "02"
     val isEuropeanUnionDuty = if (data.isEuropeanUnionDuty) "01" else "02"
     val epu = if (isBulk) various else data.entryProcessingUnit.getOrElse(throw new RuntimeException("EPU invalid"))
-    val entryNumber = if (isBulk) various else data.entryNumber.getOrElse(throw new RuntimeException("Entry Number invalid"))
-    val entryDate = if (isBulk) various else data.entryDate.getOrElse(throw new RuntimeException("Entry date invalid")).format(formattedDate)
+    val entryNumber =
+      if (isBulk) various else data.entryNumber.getOrElse(throw new RuntimeException("Entry Number invalid"))
+    val entryDate =
+      if (isBulk) various
+      else data.entryDate.getOrElse(throw new RuntimeException("Entry date invalid")).format(formattedDate)
 
     val defermentDetails = (data.defermentType, data.defermentAccountNumber, data.additionalDefermentNumber) match {
       case (Some(dt), Some(dan), Some(add)) =>
         Json.obj(
-          "DefermentType" -> dt,
-          "DefermentAccountNumber" -> dan,
+          "DefermentType"             -> dt,
+          "DefermentAccountNumber"    -> dan,
           "AdditionalDefermentNumber" -> add
         )
       case (Some(dt), Some(dan), _) =>
         Json.obj(
-          "DefermentType" -> dt,
+          "DefermentType"          -> dt,
           "DefermentAccountNumber" -> dan
         )
       case _ => Json.obj()
     }
 
     Json.obj(
-      "RequestedBy" -> data.userType,
-      "IsBulkEntry" -> isBulkEntry,
-      "IsEUDuty" -> isEuropeanUnionDuty,
-      "EPU" -> epu,
-      "EntryNumber" -> entryNumber,
-      "EntryDate" -> entryDate,
-      "ReasonForAmendment" -> data.reasonForAmendment,
+      "RequestedBy"             -> data.userType,
+      "IsBulkEntry"             -> isBulkEntry,
+      "IsEUDuty"                -> isEuropeanUnionDuty,
+      "EPU"                     -> epu,
+      "EntryNumber"             -> entryNumber,
+      "EntryDate"               -> entryDate,
+      "ReasonForAmendment"      -> data.reasonForAmendment,
       "OriginalCustomsProcCode" -> data.originalCustomsProcedureCode,
-      "DeclarantDate" -> LocalDate.now().format(formattedDate),
-      "DeclarantPhoneNumber" -> data.declarantPhoneNumber,
-      "DeclarantName" -> data.declarantName
+      "DeclarantDate"           -> LocalDate.now().format(formattedDate),
+      "DeclarantPhoneNumber"    -> data.declarantPhoneNumber,
+      "DeclarantName"           -> data.declarantName
     ) ++ defermentDetails
   }
 }

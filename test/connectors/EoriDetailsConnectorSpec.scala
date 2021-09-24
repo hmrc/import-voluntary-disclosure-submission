@@ -33,9 +33,9 @@ import scala.util.Try
 class EoriDetailsConnectorSpec extends SpecBase with MockHttp with ReusableValues {
 
   trait Test extends MockHttp with SampleData {
-    val expectedCorrelationId = "effd019b-0d2e-42a2-bb98-1e8e14738b59"
-    val correlationId: UUID = UUID.fromString(expectedCorrelationId)
-    lazy val target = new EoriDetailsConnector(mockHttp, appConfig)
+    val expectedCorrelationId               = "effd019b-0d2e-42a2-bb98-1e8e14738b59"
+    val correlationId: UUID                 = UUID.fromString(expectedCorrelationId)
+    lazy val target                         = new EoriDetailsConnector(mockHttp, appConfig)
     lazy val headers: Seq[(String, String)] = target.headers(correlationId)
   }
 
@@ -54,8 +54,8 @@ class EoriDetailsConnectorSpec extends SpecBase with MockHttp with ReusableValue
         .ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH)
         .withZone(ZoneId.of("GMT"))
 
-      headers.filter(item => item._1 == "Date").map {
-        item => Try(dateFormat.parse(item._2)).isSuccess shouldBe true
+      headers.filter(item => item._1 == "Date").map { item =>
+        Try(dateFormat.parse(item._2)).isSuccess shouldBe true
       }
     }
     "generate the correct Correlation ID header required for sub09" in new Test {
@@ -78,7 +78,15 @@ class EoriDetailsConnectorSpec extends SpecBase with MockHttp with ReusableValue
 
       "return a EoriDetails" in new Test {
         val response = Right(
-          EoriDetails("GB987654321000", "Fast Food ltd", "99 Avenue Road", "Anyold Town", Some("99JZ 1AA"), "GB", Some("987654321000"))
+          EoriDetails(
+            "GB987654321000",
+            "Fast Food ltd",
+            "99 Avenue Road",
+            "Anyold Town",
+            Some("99JZ 1AA"),
+            "GB",
+            Some("987654321000")
+          )
         )
         MockedHttp.get[ExternalResponse[EoriDetails]](expectedEoriDetailsUrl, response)
 

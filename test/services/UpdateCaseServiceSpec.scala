@@ -26,11 +26,7 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 import java.util.UUID
 
-class UpdateCaseServiceSpec
-  extends ServiceSpecBase
-    with MockFileTransferService
-    with MockEisConnector
-    with SampleData {
+class UpdateCaseServiceSpec extends ServiceSpecBase with MockFileTransferService with MockEisConnector with SampleData {
 
   "updateCase" should {
 

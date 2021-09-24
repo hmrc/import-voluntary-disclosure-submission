@@ -35,7 +35,12 @@ object EoriDetailsHttpParser {
           response.json.validate[Sub09Response](Sub09Response.reads).fold(
             invalid => {
               logger.error("Failed to parse Sub09 response: " + invalid)
-              Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Invalid Json returned from SUB09 API for EoriDetailsHttpParser"))
+              Left(
+                ErrorModel(
+                  Status.INTERNAL_SERVER_ERROR,
+                  "Invalid Json returned from SUB09 API for EoriDetailsHttpParser"
+                )
+              )
             },
             okResponse => handleOkResponse(okResponse)
           )

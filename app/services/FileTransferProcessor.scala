@@ -31,18 +31,20 @@ import scala.concurrent.duration.DurationInt
 import scala.concurrent.{ExecutionContext, Future}
 
 // $COVERAGE-OFF$Code taken from another [Route 1] service
-class FileTransferProcessor(caseReferenceNumber: String,
-                            fileTransferConnector: FileTransferConnector,
-                            conversationId: String,
-                            audit: Seq[FileTransferResponse] => Future[Unit],
-                            implicit val executionContext: ExecutionContext
-                           ) extends Actor with Logging {
+class FileTransferProcessor(
+  caseReferenceNumber: String,
+  fileTransferConnector: FileTransferConnector,
+  conversationId: String,
+  audit: Seq[FileTransferResponse] => Future[Unit],
+  implicit val executionContext: ExecutionContext
+) extends Actor
+    with Logging {
 
   import FileTransferProcessor._
 
   var results: Seq[FileTransferResponse] = Seq.empty
-  var clientRef: ActorRef = ActorRef.noSender
-  var startTimestamp: Long = 0
+  var clientRef: ActorRef                = ActorRef.noSender
+  var startTimestamp: Long               = 0
 
   def transferFileRequest(file: SupportingDocument, index: Int, batchSize: Int): FileTransferRequest =
     FileTransferRequest.fromSupportingDocument(
@@ -55,16 +57,17 @@ class FileTransferProcessor(caseReferenceNumber: String,
       uploadedFile = file
     )
 
-  def doTransferFile(file: SupportingDocument, index: Int, batchSize: Int)
-                    (implicit hc: HeaderCarrier): Future[FileTransferResponse] =
+  def doTransferFile(file: SupportingDocument, index: Int, batchSize: Int)(implicit
+    hc: HeaderCarrier
+  ): Future[FileTransferResponse] =
     fileTransferConnector.transferFile(transferFileRequest(file, index, batchSize))
 
   override def receive: Receive = {
     case TransferMultipleFiles(files, batchSize, headerCarrier) =>
       startTimestamp = System.currentTimeMillis()
       clientRef = sender()
-      files.map {
-        case (file, index) => TransferSingleFile(file, index, batchSize, headerCarrier)
+      files.map { case (file, index) =>
+        TransferSingleFile(file, index, batchSize, headerCarrier)
       }.foreach(request => self ! request)
       self ! CheckComplete(batchSize)
 
@@ -75,7 +78,7 @@ class FileTransferProcessor(caseReferenceNumber: String,
     case result: FileTransferResponse =>
       results = results :+ result
 
-    case akka.actor.Status.Failure(error@UpstreamErrorResponse(message, code, _, _)) =>
+    case akka.actor.Status.Failure(error @ UpstreamErrorResponse(message, code, _, _)) =>
       logger.error(error.toString)
       results = results :+ FileTransferResponse(
         upscanReference = "<unknown>",
@@ -111,9 +114,9 @@ class FileTransferProcessor(caseReferenceNumber: String,
   }
 
   def completionMessage(transferRequests: Seq[FileTransferResponse], batchSize: Int, startTime: Long): String = {
-    val totalRequests = transferRequests.size
-    val successCount = transferRequests.count(_.fileTransferSuccess)
-    val failureCount = transferRequests.count(!_.fileTransferSuccess)
+    val totalRequests           = transferRequests.size
+    val successCount            = transferRequests.count(_.fileTransferSuccess)
+    val failureCount            = transferRequests.count(!_.fileTransferSuccess)
     val timeToCompleteInSeconds = (System.currentTimeMillis() - startTime) / 1000
     s"Transferred $totalRequests out of $batchSize files in $timeToCompleteInSeconds seconds. With $successCount successes and $failureCount failures."
   }

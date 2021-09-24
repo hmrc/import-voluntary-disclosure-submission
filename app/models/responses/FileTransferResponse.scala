@@ -20,13 +20,15 @@ import play.api.libs.json.{Format, Json}
 
 import java.time.LocalDateTime
 
-final case class FileTransferResponse(upscanReference: String,
-                                      fileName: String,
-                                      fileMimeType: String,
-                                      fileTransferSuccess: Boolean,
-                                      transferredAt: LocalDateTime,
-                                      duration: Long,
-                                      fileTransferError: Option[String] = None)
+final case class FileTransferResponse(
+  upscanReference: String,
+  fileName: String,
+  fileMimeType: String,
+  fileTransferSuccess: Boolean,
+  transferredAt: LocalDateTime,
+  duration: Long,
+  fileTransferError: Option[String] = None
+)
 
 object FileTransferResponse {
   implicit val formats: Format[FileTransferResponse] = Json.format[FileTransferResponse]

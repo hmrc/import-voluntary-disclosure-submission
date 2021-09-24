@@ -25,22 +25,24 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EoriDetailsService @Inject()(eoriDetailsConnector: EoriDetailsConnector)
-  extends Logging {
+class EoriDetailsService @Inject() (eoriDetailsConnector: EoriDetailsConnector) extends Logging {
 
-  def retrieveEoriDetails(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ErrorModel, EoriDetails]] = {
+  def retrieveEoriDetails(
+    id: String
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ErrorModel, EoriDetails]] = {
 
     val MAX_RETRIES = 3
 
-    def getEoriDetails(counter: Int = 1): Future[Either[ErrorModel, EoriDetails]] = eoriDetailsConnector.getEoriDetails(id).flatMap {
-      case Left(error) if counter < MAX_RETRIES =>
-        logger.warn(s"Call #$counter to SUB09 for EORI $id failed with status ${error.status}")
-        getEoriDetails(counter + 1)
-      case failure@Left(error) =>
-        logger.warn(s"Call #$counter to SUB09 for EORI $id failed with status ${error.status}")
-        Future.successful(failure)
-      case success => Future.successful(success)
-    }
+    def getEoriDetails(counter: Int = 1): Future[Either[ErrorModel, EoriDetails]] =
+      eoriDetailsConnector.getEoriDetails(id).flatMap {
+        case Left(error) if counter < MAX_RETRIES =>
+          logger.warn(s"Call #$counter to SUB09 for EORI $id failed with status ${error.status}")
+          getEoriDetails(counter + 1)
+        case failure @ Left(error) =>
+          logger.warn(s"Call #$counter to SUB09 for EORI $id failed with status ${error.status}")
+          Future.successful(failure)
+        case success => Future.successful(success)
+      }
 
     getEoriDetails()
   }

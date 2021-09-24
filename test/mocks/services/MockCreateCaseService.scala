@@ -32,12 +32,13 @@ trait MockCreateCaseService extends MockFactory {
 
   object MockedCreateCaseService {
 
-    def createCase(caseDetails: CreateCase,
-                   response: Either[EisError, CreateCaseResponse]): CallHandler[Future[Either[EisError, CreateCaseResponse]]] = {
+    def createCase(
+      caseDetails: CreateCase,
+      response: Either[EisError, CreateCaseResponse]
+    ): CallHandler[Future[Either[EisError, CreateCaseResponse]]] =
       (mockCreateCaseService.createCase(_: CreateCase)(_: HeaderCarrier, _: ExecutionContext, _: Request[_]))
         .expects(caseDetails, *, *, *)
         .returns(Future.successful(response))
-    }
 
   }
 

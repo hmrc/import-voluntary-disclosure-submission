@@ -29,8 +29,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EoriDetailsConnector @Inject()(val http: HttpClient,
-                                     implicit val config: AppConfig) {
+class EoriDetailsConnector @Inject() (val http: HttpClient, implicit val config: AppConfig) {
 
   private[connectors] val httpDateFormat = DateTimeFormatter
     .ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH)
@@ -39,21 +38,23 @@ class EoriDetailsConnector @Inject()(val http: HttpClient,
   private[connectors] def getEoriDetailsUrl = s"${config.sub09}/subscriptions/subscriptiondisplay/v1"
 
   private[connectors] def headers(correlationId: UUID): Seq[(String, String)] = Seq(
-    "Authorization" -> s"Bearer ${config.eoriDetailsToken}",
-    "Date" -> httpDateFormat.format(ZonedDateTime.now),
+    "Authorization"    -> s"Bearer ${config.eoriDetailsToken}",
+    "Date"             -> httpDateFormat.format(ZonedDateTime.now),
     "X-Correlation-ID" -> correlationId.toString,
-    "Accept" -> "application/json",
+    "Accept"           -> "application/json",
     "X-Forwarded-Host" -> "MDTP"
   )
 
-  def getEoriDetails(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[EoriDetails]] = {
+  def getEoriDetails(
+    id: String
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[EoriDetails]] = {
 
     val acknowledgementReference: UUID = UUID.randomUUID()
 
     val parameters = Seq(
-      "regime" -> "CDS",
+      "regime"                   -> "CDS",
       "acknowledgementReference" -> acknowledgementReference.toString.replace("-", ""),
-      "EORI" -> id
+      "EORI"                     -> id
     )
 
     http.GET[HttpGetResult[EoriDetails]](

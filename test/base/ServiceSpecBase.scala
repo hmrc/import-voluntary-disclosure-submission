@@ -30,7 +30,9 @@ trait ServiceSpecBase extends AnyWordSpec {
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   lazy val fakeRequest: FakeRequest[AnyContentAsEmpty.type] =
-    FakeRequest("GET", "/foo").withSession(SessionKeys.sessionId -> "foo").withCSRFToken.asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
+    FakeRequest("GET", "/foo").withSession(SessionKeys.sessionId -> "foo").withCSRFToken.asInstanceOf[FakeRequest[
+      AnyContentAsEmpty.type
+    ]]
 
   implicit lazy val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
 

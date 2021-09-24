@@ -30,27 +30,26 @@ class EoriDetailsHttpParserSpec extends SpecBase with ReusableValues {
   val eoriDetailsJsonWithoutPostcode: JsObject = Json.obj(
     "subscriptionDisplayResponse" -> Json.obj(
       "responseCommon" -> Json.obj(
-        "status" -> "OK",
-        "statusText" -> "Optional status text from ETMP",
+        "status"         -> "OK",
+        "statusText"     -> "Optional status text from ETMP",
         "processingDate" -> "2016-09-17T19:33:47Z",
         "returnParameters" -> Json.arr(
-          Json.obj("paramName" -> "POSITION",
-            "paramValue" -> "LINK")
+          Json.obj("paramName" -> "POSITION", "paramValue" -> "LINK")
         )
       ),
       "responseDetail" -> Json.obj(
-        "EORINo" -> "GB987654321000",
+        "EORINo"      -> "GB987654321000",
         "CDSFullName" -> "Fast Food ltd",
         "CDSEstablishmentAddress" -> Json.obj(
           "streetAndNumber" -> "99 Avenue Road",
-          "city" -> "Anyold Town",
-          "postalCode" -> "99JZ 1AA",
-          "countryCode" -> "GB"
+          "city"            -> "Anyold Town",
+          "postalCode"      -> "99JZ 1AA",
+          "countryCode"     -> "GB"
         ),
         "VATIDs" -> Json.arr(
           Json.obj(
             "countryCode" -> "GB",
-            "VATID" -> "987654321000"
+            "VATID"       -> "987654321000"
           )
         )
       )
@@ -60,12 +59,11 @@ class EoriDetailsHttpParserSpec extends SpecBase with ReusableValues {
   val detailsNotFoundJson: JsObject = Json.obj(
     "subscriptionDisplayResponse" -> Json.obj(
       "responseCommon" -> Json.obj(
-        "status" -> "OK",
-        "statusText" -> "037 - Mandatory parameters missing or invalid",
+        "status"         -> "OK",
+        "statusText"     -> "037 - Mandatory parameters missing or invalid",
         "processingDate" -> "2016-09-17T19:33:47Z",
         "returnParameters" -> Json.arr(
-          Json.obj("paramName" -> "POSITION",
-            "paramValue" -> "LINK")
+          Json.obj("paramName" -> "POSITION", "paramValue" -> "LINK")
         )
       )
     )
@@ -84,36 +82,36 @@ class EoriDetailsHttpParserSpec extends SpecBase with ReusableValues {
   "Eori Details HttpParser" should {
 
     "the http response status is OK with valid Json" in {
-      EoriDetailsReads.read("", "",
-        HttpResponse(Status.OK, detailsJson, Map.empty[String, Seq[String]])) mustBe Right(eoriDetails)
+      EoriDetailsReads.read("", "", HttpResponse(Status.OK, detailsJson, Map.empty[String, Seq[String]])) mustBe Right(
+        eoriDetails
+      )
     }
 
     "the http response status is OK with valid Json - postcode none" in {
-      EoriDetailsReads.read("", "",
-        HttpResponse(Status.OK, eoriDetailsJsonWithoutPostcode, Map.empty[String, Seq[String]])) mustBe Right(eoriDetailsWithoutPostcode)
+      EoriDetailsReads.read(
+        "",
+        "",
+        HttpResponse(Status.OK, eoriDetailsJsonWithoutPostcode, Map.empty[String, Seq[String]])
+      ) mustBe Right(eoriDetailsWithoutPostcode)
     }
 
     "the http response status is OK but no Eori details returned" in {
-      EoriDetailsReads.read("", "",
-        HttpResponse(Status.OK, detailsNotFoundJson, Map.empty[String, Seq[String]])) mustBe
+      EoriDetailsReads.read("", "", HttpResponse(Status.OK, detailsNotFoundJson, Map.empty[String, Seq[String]])) mustBe
         Left(ErrorModel(Status.NOT_FOUND, "Eori Details not returned on Ok response"))
     }
 
     "return an ErrorModel when invalid Json is returned" in {
-      EoriDetailsReads.read("", "",
-        HttpResponse(Status.OK, Json.obj(), Map.empty[String, Seq[String]])) mustBe
+      EoriDetailsReads.read("", "", HttpResponse(Status.OK, Json.obj(), Map.empty[String, Seq[String]])) mustBe
         Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Invalid Json returned from SUB09 API for EoriDetailsHttpParser"))
     }
 
     "return an ErrorModel when NOT_FOUND is returned" in {
-      EoriDetailsReads.read("", "",
-        HttpResponse(Status.NOT_FOUND, "")) mustBe
+      EoriDetailsReads.read("", "", HttpResponse(Status.NOT_FOUND, "")) mustBe
         Left(ErrorModel(Status.NOT_FOUND, "Eori Details not found"))
     }
 
     "return an ErrorModel when any other status is returned" in {
-      EoriDetailsReads.read("", "",
-        HttpResponse(Status.BAD_REQUEST, "")) mustBe
+      EoriDetailsReads.read("", "", HttpResponse(Status.BAD_REQUEST, "")) mustBe
         Left(ErrorModel(Status.BAD_REQUEST, "Downstream error returned when retrieving EoriDetails model from Sub09"))
     }
   }

@@ -20,16 +20,17 @@ import play.api.libs.json.{Format, Json}
 
 import java.time.LocalDateTime
 
-case class FileTransferAudit(upscanReference: String,
-                             downloadUrl: String,
-                             checksum: String,
-                             fileName: String,
-                             fileMimeType: String,
-                             transferSuccess: Option[Boolean] = None,
-                             transferHttpStatus: Option[Int] = None,
-                             transferredAt: Option[LocalDateTime] = None,
-                             transferError: Option[String] = None
-                            )
+case class FileTransferAudit(
+  upscanReference: String,
+  downloadUrl: String,
+  checksum: String,
+  fileName: String,
+  fileMimeType: String,
+  transferSuccess: Option[Boolean] = None,
+  transferHttpStatus: Option[Int] = None,
+  transferredAt: Option[LocalDateTime] = None,
+  transferError: Option[String] = None
+)
 
 object FileTransferAudit {
   implicit val formats: Format[FileTransferAudit] = Json.format[FileTransferAudit]

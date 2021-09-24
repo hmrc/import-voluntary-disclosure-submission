@@ -27,19 +27,18 @@ import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class AuditService @Inject()(appConfig: AppConfig,
-                             auditConnector: AuditConnector) {
+class AuditService @Inject() (appConfig: AppConfig, auditConnector: AuditConnector) {
 
   def audit(dataSource: JsonAuditModel)(implicit hc: HeaderCarrier, ec: ExecutionContext, request: Request[_]): Unit =
     auditConnector.sendExtendedEvent(toExtendedDataEvent(dataSource, request.path))
 
-  def toExtendedDataEvent(auditModel: JsonAuditModel, path: String)
-                         (implicit hc: HeaderCarrier): ExtendedDataEvent = ExtendedDataEvent(
-    auditSource = appConfig.appName,
-    auditType = auditModel.auditType,
-    tags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags(auditModel.transactionName, path),
-    detail = auditModel.detail
-  )
+  def toExtendedDataEvent(auditModel: JsonAuditModel, path: String)(implicit hc: HeaderCarrier): ExtendedDataEvent =
+    ExtendedDataEvent(
+      auditSource = appConfig.appName,
+      auditType = auditModel.auditType,
+      tags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags(auditModel.transactionName, path),
+      detail = auditModel.detail
+    )
 
 }
 

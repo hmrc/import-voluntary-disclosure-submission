@@ -30,8 +30,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EisConnector @Inject()(http: HttpClient,
-                             implicit val appConfig: AppConfig) {
+class EisConnector @Inject() (http: HttpClient, implicit val appConfig: AppConfig) {
 
   private val httpDateFormat = DateTimeFormatter
     .ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH)
@@ -41,28 +40,30 @@ class EisConnector @Inject()(http: HttpClient,
   private[connectors] lazy val updateCaseUrl = s"${appConfig.eisBaseUrl}/cpr/caserequest/c18/update/v1"
 
   private[connectors] def headers(correlationId: UUID): Seq[(String, String)] = Seq(
-    "Authorization" -> s"Bearer ${appConfig.createCaseToken}",
-    "x-correlation-id" -> correlationId.toString,
+    "Authorization"       -> s"Bearer ${appConfig.createCaseToken}",
+    "x-correlation-id"    -> correlationId.toString,
     "CustomProcessesHost" -> "Digital",
-    "date" -> httpDateFormat.format(ZonedDateTime.now),
-    "accept" -> "application/json"
+    "date"                -> httpDateFormat.format(ZonedDateTime.now),
+    "accept"              -> "application/json"
   )
 
-  def createCase(caseDetails: CreateCase)
-                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[EisError, CreateCaseResponse]] = {
+  def createCase(
+    caseDetails: CreateCase
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[EisError, CreateCaseResponse]] = {
 
     val acknowledgementReference: UUID = UUID.randomUUID()
-    val eisHeaders = headers(acknowledgementReference)
+    val eisHeaders                     = headers(acknowledgementReference)
 
     val request = EisRequest(acknowledgementReference, caseDetails)
     http.POST[EisRequest[CreateCase], Either[EisError, CreateCaseResponse]](createCaseUrl, request, eisHeaders)
   }
 
-  def updateCase(update: UpdateCase)
-                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[UpdateCaseError, UpdateCaseResponse]] = {
+  def updateCase(
+    update: UpdateCase
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[UpdateCaseError, UpdateCaseResponse]] = {
 
     val acknowledgementReference: UUID = UUID.randomUUID()
-    val eisHeaders = headers(acknowledgementReference)
+    val eisHeaders                     = headers(acknowledgementReference)
 
     val request = EisRequest(acknowledgementReference, update)
     http.POST[EisRequest[UpdateCase], Either[UpdateCaseError, UpdateCaseResponse]](updateCaseUrl, request, eisHeaders)

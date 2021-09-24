@@ -28,11 +28,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class CreateCaseController @Inject()(cc: ControllerComponents,
-                                     service: CreateCaseService,
-                                     authAction: AuthorisedAction,
-                                     implicit val ec: ExecutionContext)
-  extends BackendController(cc) {
+class CreateCaseController @Inject() (
+  cc: ControllerComponents,
+  service: CreateCaseService,
+  authAction: AuthorisedAction,
+  implicit val ec: ExecutionContext
+) extends BackendController(cc) {
 
   def onSubmit(): Action[JsValue] =
     (Action(parse.json) andThen authAction).async { implicit request =>
@@ -40,7 +41,7 @@ class CreateCaseController @Inject()(cc: ControllerComponents,
         case JsSuccess(value, _) =>
           service.createCase(value).map {
             case Right(response) => Ok(Json.toJson(response))
-            case Left(_) => InternalServerError(Json.obj())
+            case Left(_)         => InternalServerError(Json.obj())
           }
         case JsError(errors) =>
           val pathsWithErrors: Map[String, String] = errors.map { error =>
@@ -49,7 +50,6 @@ class CreateCaseController @Inject()(cc: ControllerComponents,
           }.toMap
           Future.successful(BadRequest(Json.obj("errors" -> pathsWithErrors)))
       }
-
 
     }
 

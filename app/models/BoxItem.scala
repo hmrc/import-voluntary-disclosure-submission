@@ -25,21 +25,21 @@ case class BoxItem(boxNumber: Int, itemNumber: Int, original: String, amended: S
 object BoxItem {
 
   private val knownBoxNumbers: Seq[Int] = Seq(22, 33, 34, 35, 36, 37, 38, 39, 41, 42, 43, 45, 46, 62, 63, 66, 67, 68)
-  val validBoxNumber: Int => Boolean = number => knownBoxNumbers.contains(number)
+  val validBoxNumber: Int => Boolean    = number => knownBoxNumbers.contains(number)
 
   implicit val reads: Reads[BoxItem] = (
     (__ \ "boxNumber").read[Int](filter(JsonValidationError("Invalid Box Number"))(validBoxNumber)) and
       (__ \ "itemNumber").read[Int] and
       (__ \ "original").read[String] and
       (__ \ "amended").read[String]
-    ) (BoxItem.apply _)
+  )(BoxItem.apply _)
 
   implicit val writes: Writes[BoxItem] = (data: BoxItem) => {
     Json.obj(
-      "BoxNumber" -> data.boxNumber.formatted("%02d"),
+      "BoxNumber"  -> data.boxNumber.formatted("%02d"),
       "ItemNumber" -> data.itemNumber.formatted("%02d"),
-      "EnteredAs" -> data.original,
-      "AmendedTo" -> data.amended
+      "EnteredAs"  -> data.original,
+      "AmendedTo"  -> data.amended
     )
   }
 }

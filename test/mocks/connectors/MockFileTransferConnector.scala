@@ -31,18 +31,20 @@ trait MockFileTransferConnector extends MockFactory {
   val mockFileTransferConnector: FileTransferConnector = mock[FileTransferConnector]
 
   object FileTransferConnector {
-    def transferFile(response: Future[FileTransferResponse]): CallHandler[Future[FileTransferResponse]] = {
+    def transferFile(response: Future[FileTransferResponse]): CallHandler[Future[FileTransferResponse]] =
       (mockFileTransferConnector.transferFile(_: FileTransferRequest)(_: HeaderCarrier, _: ExecutionContext))
         .expects(*, *, *)
         .returns(response)
-    }
 
-    def transferMultipleFiles(response: Future[Either[ErrorModel, Unit]])
-    : CallHandler[Future[Either[ErrorModel, Unit]]] = {
-      (mockFileTransferConnector.transferMultipleFiles(_: MultiFileTransferRequest)(_: HeaderCarrier, _: ExecutionContext))
+    def transferMultipleFiles(
+      response: Future[Either[ErrorModel, Unit]]
+    ): CallHandler[Future[Either[ErrorModel, Unit]]] =
+      (mockFileTransferConnector.transferMultipleFiles(_: MultiFileTransferRequest)(
+        _: HeaderCarrier,
+        _: ExecutionContext
+      ))
         .expects(*, *, *)
         .returns(response)
-    }
   }
 
 }
