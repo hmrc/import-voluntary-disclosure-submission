@@ -60,7 +60,8 @@ class FileTransferService @Inject() (
 
   private def batchTransfer(caseId: String, conversationId: String, files: Seq[SupportingDocument])(implicit
     hc: HeaderCarrier,
-    ec: ExecutionContext
+    ec: ExecutionContext,
+    request: Request[_]
   ): Future[Unit] = {
     val correlationId = UUID.randomUUID().toString
     val req = MultiFileTransferRequest.fromSupportingDocuments(
@@ -76,8 +77,20 @@ class FileTransferService @Inject() (
       connector.transferMultipleFiles(req).flatMap {
         case Left(_) if counter <= MAX_RETRIES =>
           after(1.second * counter, actorSystem.scheduler)(tryTransfer(counter + 1))
-        case failure @ Left(_) =>
-          logger.error(s"All file transfer retries have failed for case $caseId")
+        case failure @ Left(err) =>
+          logger.error(s"The request to submit file transfer for case '$caseId' has failed: ${err.message}")
+          val resps = files.map(file =>
+            FileTransferResponse(
+              upscanReference = file.reference,
+              fileName = file.fileName,
+              fileMimeType = file.fileMimeType,
+              fileTransferSuccess = false,
+              transferredAt = file.uploadTimestamp,
+              duration = 0
+            )
+          )
+          auditFileTransfers(resps, caseId)
+
           Future.successful(failure)
         case Right(res) => Future.successful(res)
       }

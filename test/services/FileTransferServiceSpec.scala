@@ -78,6 +78,10 @@ class FileTransferServiceSpec extends SpecBase with Matchers with MockFactory wi
         )
           .repeat(3)
 
+        AuditService.audit(
+          FilesUploadedAuditEvent(Seq(fileTransferResponse.copy(fileTransferSuccess = false, duration = 0)), "C18123")
+        )
+
         await(service.transferFiles("C18123", "123", Seq(doc))(hc, ec, fakeRequest))
         withExpectations(())
       }
