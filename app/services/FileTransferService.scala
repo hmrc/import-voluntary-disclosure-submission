@@ -78,7 +78,7 @@ class FileTransferService @Inject() (
         case Left(_) if counter <= MAX_RETRIES =>
           after(1.second * counter, actorSystem.scheduler)(tryTransfer(counter + 1))
         case failure @ Left(err) =>
-          logger.error(s"All file transfer retries have failed for case $caseId: ${err.message}")
+          logger.error(s"The request to submit file transfer for case '$caseId' has failed: ${err.message}")
           val resps = files.map(file =>
             FileTransferResponse(
               upscanReference = file.reference,
