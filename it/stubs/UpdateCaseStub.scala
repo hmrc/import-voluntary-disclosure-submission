@@ -43,13 +43,13 @@ object UpdateCaseStub extends WireMockMethods with SampleData {
   }
 
   def invalidCaseError(): StubMapping = {
-    val error = Json.obj("correlationId" -> "some id", "errorCode" -> "400", "errorMessage" -> "03- Invalid Case ID")
+    val error = Json.obj("correlationId" -> "some id", "errorMessage" -> "9xx : 03- Invalid Case ID")
     when(method = POST, uri = authoriseUri)
       .thenReturn(Status.BAD_REQUEST, headers, Json.obj("errorDetail" -> error))
   }
 
   def caseClosedError(): StubMapping = {
-    val error = Json.obj("correlationId" -> "some id", "errorCode" -> "400", "errorMessage" -> "04 - Requested case already closed")
+    val error = Json.obj("correlationId" -> "some id", "errorMessage" -> "9xx : 04 - Requested case already closed")
     when(method = POST, uri = authoriseUri)
       .thenReturn(Status.BAD_REQUEST, headers, Json.obj("errorDetail" -> error))
   }
