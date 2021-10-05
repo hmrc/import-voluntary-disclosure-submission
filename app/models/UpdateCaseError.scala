@@ -28,12 +28,12 @@ object UpdateCaseError {
 
   def fromEisError(error: EisError): UpdateCaseError = {
     error match {
-      case EisError.BackendError(_, Some("9xx : 03- Invalid Case ID")) =>
+      case EisError.BackendError(_, _, Some("9xx : 03- Invalid Case ID")) =>
         UpdateCaseError.InvalidCaseId
-      case EisError.BackendError(_, Some("9xx : 04 - Requested case already closed")) =>
+      case EisError.BackendError(_, _, Some("9xx : 04 - Requested case already closed")) =>
         UpdateCaseError.CaseAlreadyClosed
-      case EisError.BackendError(_, message)        =>
-        UpdateCaseError.UnexpectedError(Status.INTERNAL_SERVER_ERROR, message)
+      case EisError.BackendError(_, code, message) =>
+        UpdateCaseError.UnexpectedError(code.map(_.toInt).getOrElse(Status.INTERNAL_SERVER_ERROR), message)
       case EisError.UnexpectedError(status, reason) =>
         UpdateCaseError.UnexpectedError(status, Some(reason))
     }
@@ -44,6 +44,7 @@ object UpdateCaseError {
       Json.obj("errorCode" -> 1, "errorMessage" -> "Invalid case ID")
     case UpdateCaseError.CaseAlreadyClosed =>
       Json.obj("errorCode" -> 2, "errorMessage" -> "Requested case is already closed")
-    case UpdateCaseError.UnexpectedError(message, _) => Json.obj("errorCode" -> 3, "errorMessage" -> message)
+    case UpdateCaseError.UnexpectedError(message, _) =>
+      Json.obj("errorCode" -> 3, "errorMessage" -> message)
   }
 }

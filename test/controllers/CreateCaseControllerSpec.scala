@@ -85,7 +85,7 @@ class CreateCaseControllerSpec extends SpecBase with Matchers {
 
     "case creation fails in downstream services" should {
 
-      val failedResponse = Left(EisError.BackendError("some id", Some("some error")))
+      val failedResponse = Left(EisError.BackendError("some id", None, Some("some error")))
 
       "return 500 (INTERNAL SERVER ERROR) response" in new Test {
         MockedCreateCaseService.createCase(caseDetails, failedResponse)
