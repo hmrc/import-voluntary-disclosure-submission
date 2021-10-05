@@ -96,10 +96,10 @@ class EisHttpParsersSpec extends SpecBase {
 
     "the response is a specific EIS error" in {
       val error =
-        Json.obj("correlationId" -> correlationId, "errorCode" -> "400", "errorMessage" -> "03- Invalid Case ID")
+        Json.obj("correlationId" -> correlationId, "errorMessage" -> "9xx : 03- Invalid Case ID")
       val response = HttpResponse(Status.BAD_REQUEST, Json.obj("errorDetail" -> error), headers)
       createCaseHttpParser.read("", "", response) mustBe Left(
-        EisError.BackendError(correlationId, "400", Some("03- Invalid Case ID"))
+        EisError.BackendError(correlationId, Some("9xx : 03- Invalid Case ID"))
       )
     }
 
