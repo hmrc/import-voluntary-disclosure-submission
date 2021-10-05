@@ -24,9 +24,12 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.Logger
 
 @Singleton
 class UpdateCaseService @Inject() (connector: EisConnector, fileTransferService: FileTransferService) {
+
+  private val logger = Logger("application." + getClass.getCanonicalName)
 
   def updateCase(updateCase: UpdateCase)(implicit
     hc: HeaderCarrier,
@@ -37,7 +40,11 @@ class UpdateCaseService @Inject() (connector: EisConnector, fileTransferService:
       case success @ Right(details) =>
         fileTransferService.transferFiles(details.id, details.correlationId, updateCase.supportingDocuments)
         success
-      case failure => failure
+      case error @ Left(UpdateCaseError.UnexpectedError(status, message)) =>
+        logger.error(s"Received an unexpected error for update case, cause: ${message.getOrElse("unknown")}, status: $status")
+        error
+      case error @ Left(_) =>
+        error
     }
   }
 
