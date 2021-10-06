@@ -26,11 +26,14 @@ object UpdateCaseError {
   case object CaseAlreadyClosed                                          extends UpdateCaseError
   final case class UnexpectedError(status: Int, message: Option[String]) extends UpdateCaseError
 
+  private val InvalidCaseRegex = ".*03 ?- ?(?i)(Invalid Case ID).*".r
+  private val ClosedCaseRegex  = ".*04 ?- ?(?i)(Requested case already closed).*".r
+
   def fromEisError(error: EisError): UpdateCaseError = {
     error match {
-      case EisError.BackendError(_, _, Some("9xx : 03- Invalid Case ID")) =>
+      case EisError.BackendError(_, _, Some(InvalidCaseRegex(_))) =>
         UpdateCaseError.InvalidCaseId
-      case EisError.BackendError(_, _, Some("9xx : 04 - Requested case already closed")) =>
+      case EisError.BackendError(_, _, Some(ClosedCaseRegex(_))) =>
         UpdateCaseError.CaseAlreadyClosed
       case EisError.BackendError(_, code, message) =>
         UpdateCaseError.UnexpectedError(code.map(_.toInt).getOrElse(Status.INTERNAL_SERVER_ERROR), message)
@@ -44,7 +47,7 @@ object UpdateCaseError {
       Json.obj("errorCode" -> 1, "errorMessage" -> "Invalid case ID")
     case UpdateCaseError.CaseAlreadyClosed =>
       Json.obj("errorCode" -> 2, "errorMessage" -> "Requested case is already closed")
-    case UpdateCaseError.UnexpectedError(message, _) =>
+    case UpdateCaseError.UnexpectedError(_, message) =>
       Json.obj("errorCode" -> 3, "errorMessage" -> message)
   }
 }

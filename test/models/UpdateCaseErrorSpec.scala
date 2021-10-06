@@ -28,13 +28,25 @@ class UpdateCaseErrorSpec extends ModelSpecBase {
     }
 
     "correctly handle CaseAlreadyClosed" in {
-      UpdateCaseError.fromEisError(EisError.BackendError("id", None, Some("9xx : 04 - Requested case already closed"))) shouldBe
-        UpdateCaseError.CaseAlreadyClosed
+      UpdateCaseError.fromEisError(
+        EisError.BackendError("id", None, Some("9xx : 04 - Requested case already closed"))
+      ) shouldBe UpdateCaseError.CaseAlreadyClosed
     }
 
     "correctly handle other, unexpected errors" in {
-      UpdateCaseError.fromEisError(EisError.BackendError("id", Some("400"), Some("9xx : 06 - Invalid request format"))) shouldBe
-        UpdateCaseError.UnexpectedError(Status.BAD_REQUEST, Some("9xx : 06 - Invalid request format"))
+      UpdateCaseError.fromEisError(
+        EisError.BackendError("id", Some("400"), Some("9xx : 06 - Invalid request format"))
+      ) shouldBe UpdateCaseError.UnexpectedError(Status.BAD_REQUEST, Some("9xx : 06 - Invalid request format"))
+    }
+
+    "correctly handle InvalidCaseId without prefix and additional space" in {
+      UpdateCaseError.fromEisError(EisError.BackendError("id", None, Some("03 - Invalid Case ID"))) shouldBe
+        UpdateCaseError.InvalidCaseId
+    }
+
+    "correctly handle InvalidCaseId with a lowercase word" in {
+      UpdateCaseError.fromEisError(EisError.BackendError("id", None, Some("9xx : 03- Invalid case ID"))) shouldBe
+        UpdateCaseError.InvalidCaseId
     }
   }
 }
