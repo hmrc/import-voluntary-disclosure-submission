@@ -47,7 +47,7 @@ object UpdateCaseError {
       Json.obj("errorCode" -> 1, "errorMessage" -> "Invalid case ID")
     case UpdateCaseError.CaseAlreadyClosed =>
       Json.obj("errorCode" -> 2, "errorMessage" -> "Requested case is already closed")
-    case UpdateCaseError.UnexpectedError(message, _) =>
+    case UpdateCaseError.UnexpectedError(_, message) =>
       Json.obj("errorCode" -> 3, "errorMessage" -> message)
   }
 }
