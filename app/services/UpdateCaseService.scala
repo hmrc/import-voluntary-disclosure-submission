@@ -38,10 +38,14 @@ class UpdateCaseService @Inject() (connector: EisConnector, fileTransferService:
   ): Future[Either[UpdateCaseError, UpdateCaseResponse]] = {
     connector.updateCase(updateCase) map {
       case success @ Right(details) =>
-        fileTransferService.transferFiles(details.id, details.correlationId, updateCase.supportingDocuments)
+        if (updateCase.supportingDocuments.nonEmpty) {
+          fileTransferService.transferFiles(details.id, details.correlationId, updateCase.supportingDocuments)
+        }
         success
       case error @ Left(UpdateCaseError.UnexpectedError(status, message)) =>
-        logger.error(s"Received an unexpected error for update case, cause: ${message.getOrElse("unknown")}, status: $status")
+        logger.error(
+          s"Received an unexpected error for update case, cause: ${message.getOrElse("unknown")}, status: $status"
+        )
         error
       case error @ Left(_) =>
         error
