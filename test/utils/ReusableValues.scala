@@ -78,6 +78,7 @@ trait ReusableValues {
       doc.fileMimeType,
       fileTransferSuccess = true,
       doc.uploadTimestamp,
+      Some("123"),
       1
     )
   val multiFileTransferResponse: MultiFileTransferResponse =

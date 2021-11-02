@@ -73,10 +73,15 @@ class FileTransferServiceSpec extends SpecBase with Matchers with MockFactory wi
         override def appConfig: AppConfig = new AppConfigImpl(configuration, servicesConfig) {
           override val multiFileUploadEnabled: Boolean = true
         }
+
+        override lazy val service: FileTransferService =
+          new FileTransferService(system, mockFileTransferConnector, mockAuditService, appConfig) {
+            override def newCorrelationId(): String = "123"
+          }
+
         FileTransferConnector.transferMultipleFiles(
           Future.successful(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "temporary issue")))
-        )
-          .repeat(3)
+        ).repeat(3)
 
         AuditService.audit(
           FilesUploadedAuditEvent(Seq(fileTransferResponse.copy(fileTransferSuccess = false, duration = 0)), "C18123")

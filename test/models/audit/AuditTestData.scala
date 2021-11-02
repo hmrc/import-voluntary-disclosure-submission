@@ -38,6 +38,7 @@ trait AuditTestData {
     fileMimeType = "application/pdf",
     fileTransferSuccess = true,
     transferredAt = LocalDateTime.of(year, month, dayOfMonth, hour, minute, second, nanoOfSecond),
+    correlationId = Some("123"),
     duration = duration,
     fileTransferError = None
   )
@@ -58,6 +59,7 @@ trait AuditTestData {
       |         "fileMimeType":"application/pdf",
       |         "fileTransferSuccess":true,
       |         "transferredAt":"2021-07-21T11:45:36.000000286",
+      |         "correlationId":"123",
       |         "duration":100
       |      }
       |   ]

@@ -86,6 +86,7 @@ class FileTransferProcessor(
         fileMimeType = "",
         fileTransferSuccess = false,
         LocalDateTime.now(),
+        None,
         0,
         fileTransferError = Some(message)
       )
@@ -98,6 +99,7 @@ class FileTransferProcessor(
         fileMimeType = "",
         fileTransferSuccess = false,
         LocalDateTime.now(),
+        None,
         0,
         fileTransferError = Some(error.toString)
       )
