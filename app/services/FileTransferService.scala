@@ -142,11 +142,11 @@ class FileTransferService @Inject() (
     request: Request[_]
   ): Unit = {
     val summaryMessage =
-      s"\nTotal Size: ${results.size} | Success: ${results.count(_.fileTransferSuccess)} | Failed: ${results.count(!_.fileTransferSuccess)}\n\n"
+      s"Case ID: $caseId | Total Size: ${results.size} | Success: ${results.count(_.fileTransferSuccess)} | Failed: ${results.count(!_.fileTransferSuccess)}"
     if (results.forall(_.fileTransferSuccess)) {
-      logger.info(summaryMessage)
+      logger.error(summaryMessage, new Exception(summaryMessage))
     } else {
-      logger.error(summaryMessage)
+      logger.error(summaryMessage, new Exception(summaryMessage))
     }
     auditService.audit(FilesUploadedAuditEvent(results, caseId))
   }
