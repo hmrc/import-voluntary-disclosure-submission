@@ -37,5 +37,14 @@ class UpdateCaseServiceSpec extends ServiceSpecBase with MockFileTransferService
       val service = new UpdateCaseService(mockEisConnector, mockFileTransferService)
       await(service.updateCase(updateCase)(hc, ec, fakeRequest)) mustBe expectedResponse
     }
+
+    "proceed without making a file upload call if the document list is empty" in {
+      val expectedResponse = Right(UpdateCaseResponse("some id", UUID.randomUUID().toString))
+      val request          = updateCase.copy(supportingDocuments = Seq.empty)
+
+      MockedEisConnector.updateCase(request, expectedResponse)
+      val service = new UpdateCaseService(mockEisConnector, mockFileTransferService)
+      await(service.updateCase(request)(hc, ec, fakeRequest)) mustBe expectedResponse
+    }
   }
 }
