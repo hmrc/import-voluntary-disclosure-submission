@@ -47,6 +47,7 @@ class FileUploadCompletionController @Inject() (
             fileMimeType = res.fileMimeType,
             fileTransferSuccess = res.success,
             transferredAt = res.transferredAt,
+            correlationId = Some(res.correlationId),
             duration = res.durationMillis,
             fileTransferError = res.error
           )
@@ -69,13 +70,15 @@ class FileUploadCompletionController @Inject() (
     request: Request[_]
   ): Unit = {
     val summaryMessage =
-      s"""Total Size: ${results.size}
+      s"""Case ID: $caseId
+         |Failed Transfer Correlation IDs: [${results.filter(!_.fileTransferSuccess).map(_.correlationId).mkString(", ")}]
+         |Total Size: ${results.size}
          |Success: ${results.count(_.fileTransferSuccess)}
          |Failed: ${results.count(!_.fileTransferSuccess)}""".stripMargin
     if (results.forall(_.fileTransferSuccess)) {
       logger.info(summaryMessage)
     } else {
-      logger.error(summaryMessage)
+      logger.error("File upload has partially failed", new Exception(summaryMessage))
     }
     auditService.audit(FilesUploadedAuditEvent(results, caseId))
   }

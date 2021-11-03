@@ -57,6 +57,7 @@ class FileTransferConnector @Inject() (val appConfig: AppConfig, val http: HttpC
         fileTransferRequest.fileMimeType,
         isSuccess(response.status),
         LocalDateTime.now(),
+        fileTransferRequest.correlationId,
         Instant.now().toEpochMilli - startTime.toEpochMilli,
         errorMessage(response.status)
       )
@@ -72,6 +73,7 @@ class FileTransferConnector @Inject() (val appConfig: AppConfig, val http: HttpC
         fileTransferRequest.fileMimeType,
         fileTransferSuccess = false,
         LocalDateTime.now(),
+        fileTransferRequest.correlationId,
         Instant.now().toEpochMilli - startTime.toEpochMilli,
         Some(error.getMessage)
       )

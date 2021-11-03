@@ -46,6 +46,9 @@ class FileTransferService @Inject() (
   private val logger = Logger("application." + getClass.getCanonicalName)
   val MAX_RETRIES    = 2
 
+  def newCorrelationId(): String =
+    UUID.randomUUID().toString
+
   def transferFiles(caseId: String, conversationId: String, files: Seq[SupportingDocument])(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext,
@@ -63,7 +66,7 @@ class FileTransferService @Inject() (
     ec: ExecutionContext,
     request: Request[_]
   ): Future[Unit] = {
-    val correlationId = UUID.randomUUID().toString
+    val correlationId = newCorrelationId()
     val req = MultiFileTransferRequest.fromSupportingDocuments(
       caseReferenceNumber = caseId,
       conversationId = conversationId,
@@ -86,6 +89,7 @@ class FileTransferService @Inject() (
               fileMimeType = file.fileMimeType,
               fileTransferSuccess = false,
               transferredAt = file.uploadTimestamp,
+              correlationId = Some(correlationId),
               duration = 0
             )
           )
@@ -142,11 +146,15 @@ class FileTransferService @Inject() (
     request: Request[_]
   ): Unit = {
     val summaryMessage =
-      s"\nTotal Size: ${results.size} | Success: ${results.count(_.fileTransferSuccess)} | Failed: ${results.count(!_.fileTransferSuccess)}\n\n"
+      s"""Case ID: $caseId
+         |Failed Transfer Correlation IDs: [${results.filter(!_.fileTransferSuccess).map(_.correlationId).mkString(", ")}]
+         |Total Size: ${results.size}
+         |Success: ${results.count(_.fileTransferSuccess)}
+         |Failed: ${results.count(!_.fileTransferSuccess)}""".stripMargin
     if (results.forall(_.fileTransferSuccess)) {
       logger.info(summaryMessage)
     } else {
-      logger.error(summaryMessage)
+      logger.error("File upload has partially failed", new Exception(summaryMessage))
     }
     auditService.audit(FilesUploadedAuditEvent(results, caseId))
   }

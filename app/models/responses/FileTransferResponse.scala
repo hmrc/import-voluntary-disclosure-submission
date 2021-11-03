@@ -26,6 +26,7 @@ final case class FileTransferResponse(
   fileMimeType: String,
   fileTransferSuccess: Boolean,
   transferredAt: LocalDateTime,
+  correlationId: Option[String],
   duration: Long,
   fileTransferError: Option[String] = None
 )
