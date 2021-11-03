@@ -147,7 +147,7 @@ class FileTransferService @Inject() (
   ): Unit = {
     val summaryMessage =
       s"""Case ID: $caseId
-         |Failed Transfers: ${results.filter(!_.fileTransferSuccess).map(_.correlationId).mkString(", ")}
+         |Failed Transfer Correlation IDs: [${results.filter(!_.fileTransferSuccess).map(_.correlationId).mkString(", ")}]
          |Total Size: ${results.size}
          |Success: ${results.count(_.fileTransferSuccess)}
          |Failed: ${results.count(!_.fileTransferSuccess)}""".stripMargin
