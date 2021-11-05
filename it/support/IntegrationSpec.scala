@@ -17,6 +17,8 @@
 package support
 
 import org.scalatest._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.http.HeaderNames
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -26,7 +28,7 @@ import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
 import play.api.{Application, Environment, Mode}
 
 trait IntegrationSpec
-    extends WordSpec
+    extends AnyWordSpec
     with EitherValues
     with Matchers
     with FutureAwaits
