@@ -55,9 +55,7 @@ object UnderpaymentDetails {
       (__ \\ "entryNumber").readNullable[String] and
       (__ \\ "entryDate").readNullable[LocalDate] and
       (__ \ "customsProcessingCode").read[String] and
-      (__ \ "declarantContactDetails" \ "fullName").read[
-        String
-      ] and // TODO: needs to come from declarant specific location
+      (__ \ "declarantContactDetails" \ "fullName").read[String] and
       (__ \ "declarantContactDetails" \ "phoneNumber").read[String] and
       (__ \ "defermentType").readNullable[String](
         filter(JsonValidationError("Invalid Deferement Type"))(validDefermentType)
