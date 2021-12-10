@@ -22,7 +22,7 @@ import config.AppConfig
 import connectors.FileTransferConnector
 import models.SupportingDocument
 import models.audit.FilesUploadedAuditEvent
-import models.requests.{FileTransferRequest, MultiFileTransferRequest}
+import models.requests.MultiFileTransferRequest
 import models.responses.FileTransferResponse
 import play.api.Logger
 import play.api.mvc.Request
@@ -33,7 +33,6 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
-import scala.util.{Failure, Success}
 
 @Singleton
 class FileTransferService @Inject() (
@@ -53,13 +52,7 @@ class FileTransferService @Inject() (
     hc: HeaderCarrier,
     ec: ExecutionContext,
     request: Request[_]
-  ): Future[Unit] = {
-    if (config.multiFileUploadEnabled) {
-      batchTransfer(caseId, conversationId, files)
-    } else {
-      simpleTransfer(caseId, conversationId, files)
-    }
-  }
+  ): Future[Unit] = batchTransfer(caseId, conversationId, files)
 
   private def batchTransfer(caseId: String, conversationId: String, files: Seq[SupportingDocument])(implicit
     hc: HeaderCarrier,
@@ -102,44 +95,6 @@ class FileTransferService @Inject() (
     tryTransfer(1)
   }
 
-  private def simpleTransfer(caseId: String, conversationId: String, files: Seq[SupportingDocument])(implicit
-    hc: HeaderCarrier,
-    ec: ExecutionContext,
-    request: Request[_]
-  ): Future[Unit] = {
-
-    val context: ExecutionContext = actorSystem.dispatchers.lookup("offline-dispatchers")
-
-    val requests: Seq[FileTransferRequest] = files.zipWithIndex.map { case (file, index) =>
-      FileTransferRequest.fromSupportingDocument(
-        caseReferenceNumber = caseId,
-        conversationId = conversationId,
-        correlationId = UUID.randomUUID().toString,
-        applicationName = "C18",
-        batchSize = files.size,
-        batchCount = index + 1,
-        uploadedFile = file
-      )
-    }
-
-    actorSystem.scheduler.scheduleOnce(0 milliseconds) {
-      val allResponses: Future[List[FileTransferResponse]] =
-        requests.foldLeft(Future(List.empty[FileTransferResponse])) { (previousResponses, req) ⇒
-          for {
-            responses ← previousResponses
-            response  ← connector.transferFile(req)(hc, implicitly)
-          } yield responses :+ response
-        }
-      allResponses.map(file => auditFileTransfers(file, caseId))
-        .onComplete {
-          case Success(success)      => logger.info("Successfully transferred files")
-          case Failure(errormessage) => logger.error(errormessage.toString)
-        }
-    }(context)
-
-    Future.successful {}
-  }
-
   private def auditFileTransfers(results: Seq[FileTransferResponse], caseId: String)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext,
@@ -147,7 +102,9 @@ class FileTransferService @Inject() (
   ): Unit = {
     val summaryMessage =
       s"""Case ID: $caseId
-         |Failed Transfer Correlation IDs: [${results.filter(!_.fileTransferSuccess).flatMap(_.correlationId).mkString(", ")}]
+         |Failed Transfer Correlation IDs: [${results.filter(!_.fileTransferSuccess).flatMap(_.correlationId).mkString(
+        ", "
+      )}]
          |Total Size: ${results.size}
          |Success: ${results.count(_.fileTransferSuccess)}
          |Failed: ${results.count(!_.fileTransferSuccess)}""".stripMargin
