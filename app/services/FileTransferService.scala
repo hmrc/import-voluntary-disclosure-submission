@@ -32,7 +32,6 @@ import java.util.UUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{ExecutionContext, Future}
-import scala.language.postfixOps
 
 @Singleton
 class FileTransferService @Inject() (
@@ -49,12 +48,6 @@ class FileTransferService @Inject() (
     UUID.randomUUID().toString
 
   def transferFiles(caseId: String, conversationId: String, files: Seq[SupportingDocument])(implicit
-    hc: HeaderCarrier,
-    ec: ExecutionContext,
-    request: Request[_]
-  ): Future[Unit] = batchTransfer(caseId, conversationId, files)
-
-  private def batchTransfer(caseId: String, conversationId: String, files: Seq[SupportingDocument])(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext,
     request: Request[_]

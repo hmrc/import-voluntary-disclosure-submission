@@ -36,78 +36,12 @@ class FileTransferConnectorSpec extends SpecBase with EitherValues {
     lazy val target         = new FileTransferConnector(appConfig, mockHttp)
   }
 
-  val expectedSingleFileUrl = "http://localhost:10003/transfer-file"
-  val expectedMultiFileUrl  = "http://localhost:10003/transfer-multiple-files"
+  val expectedMultiFileUrl = "http://localhost:10003/transfer-multiple-files"
 
   "transferFile" should {
 
     "return the correct URLs" in new Test {
-      target.singleFileUrl shouldBe expectedSingleFileUrl
       target.multiFileUrl shouldBe expectedMultiFileUrl
-    }
-
-  }
-
-  "transferFile" when {
-
-    val upscanReference = "some reference"
-    val request = FileTransferRequest(
-      conversationId = "conversation ID",
-      caseReferenceNumber = "case reference",
-      applicationName = "C18",
-      upscanReference = upscanReference,
-      downloadUrl = "some url",
-      checksum = "file checksum",
-      fileName = "file name",
-      fileMimeType = "file MIME type",
-      batchSize = 1,
-      batchCount = 1
-    )
-
-    "a success response is returned from the file transfer microservice" should {
-
-      "return a success FileTransferResponse" in new Test {
-        MockedHttp.post[FileTransferRequest, HttpResponse](expectedSingleFileUrl, HttpResponse(Status.ACCEPTED, ""))
-
-        private val result = await(target.transferFile(request))
-
-        result.fileTransferSuccess shouldBe true
-        result.upscanReference shouldBe upscanReference
-        result.fileTransferError shouldBe None
-      }
-
-    }
-
-    "an error response is returned from the file transfer microservice" should {
-
-      "return a failed FileTransferResponse" in new Test {
-        MockedHttp.post[FileTransferRequest, HttpResponse](
-          expectedSingleFileUrl,
-          HttpResponse(Status.INTERNAL_SERVER_ERROR, "")
-        )
-
-        private val result = await(target.transferFile(request))
-
-        result.fileTransferSuccess shouldBe false
-        result.upscanReference shouldBe upscanReference
-        result.fileTransferError shouldBe Some("HTTP response status 500")
-      }
-
-    }
-
-    "an error occurs whilst calling the file transfer microservice" should {
-
-      "return a failed FileTransferResponse" in new Test {
-        val timeoutException = new TimeoutException("took too long")
-        MockedHttp.postError[FileTransferRequest, HttpResponse](expectedSingleFileUrl, timeoutException)
-
-        private val result = await(target.transferFile(request))
-
-        result.fileTransferSuccess shouldBe false
-        result.upscanReference shouldBe upscanReference
-        result.fileTransferError shouldBe Some("took too long")
-      }
-
     }
 
   }
