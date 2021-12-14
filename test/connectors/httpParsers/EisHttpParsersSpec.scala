@@ -50,6 +50,13 @@ class EisHttpParsersSpec extends SpecBase {
         createCaseHttpParser.read("", "", response) mustBe Right(CreateCaseResponse("C18-101", correlationId))
       }
 
+      "return the Case ID with SEE OTHER" in {
+        val resp = HttpResponse(Status.SEE_OTHER, body, headers)
+        createCaseHttpParser.read("", "", resp) mustBe Left(
+          EisError.UnexpectedError(Status.SEE_OTHER, "Non-success response code")
+        )
+      }
+
     }
 
     "the update case response is valid" should {

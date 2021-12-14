@@ -46,9 +46,6 @@ class FileTransferServiceSpec extends SpecBase with Matchers with MockFactory wi
   "Attempting a file transfer" when {
     "the multiFileUpload feature is on" should {
       "make a batch request with supplied files" in new Test {
-        override def appConfig: AppConfig = new AppConfigImpl(configuration, servicesConfig) {
-          override val multiFileUploadEnabled: Boolean = true
-        }
         FileTransferConnector.transferMultipleFiles(Future.successful(Right(())))
 
         await(service.transferFiles("C18123", "123", Seq(doc))(hc, ec, fakeRequest))
@@ -56,9 +53,6 @@ class FileTransferServiceSpec extends SpecBase with Matchers with MockFactory wi
       }
 
       "succeed even after 2 requests fail" in new Test {
-        override def appConfig: AppConfig = new AppConfigImpl(configuration, servicesConfig) {
-          override val multiFileUploadEnabled: Boolean = true
-        }
         FileTransferConnector.transferMultipleFiles(
           Future.successful(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "temporary issue")))
         )
@@ -70,10 +64,6 @@ class FileTransferServiceSpec extends SpecBase with Matchers with MockFactory wi
       }
 
       "give up after 3 failed attempts" in new Test {
-        override def appConfig: AppConfig = new AppConfigImpl(configuration, servicesConfig) {
-          override val multiFileUploadEnabled: Boolean = true
-        }
-
         override lazy val service: FileTransferService =
           new FileTransferService(system, mockFileTransferConnector, mockAuditService, appConfig) {
             override def newCorrelationId(): String = "123"
@@ -92,21 +82,5 @@ class FileTransferServiceSpec extends SpecBase with Matchers with MockFactory wi
       }
     }
 
-    "the multiFileUpload feature is off" should {
-      "make individual requests with supplied files" in new Test {
-        override def appConfig: AppConfig = new AppConfigImpl(configuration, servicesConfig) {
-          override val multiFileUploadEnabled: Boolean = false
-        }
-        FileTransferConnector.transferFile(Future.successful(fileTransferResponse))
-        AuditService.audit(FilesUploadedAuditEvent(Seq(fileTransferResponse), "C18123"))
-
-        service.transferFiles("C18123", "123", Seq(doc))(hc, ec, fakeRequest)
-        // files are uploaded asynchronously, so we have to wait
-        eventually {
-          Thread.sleep(100)
-          withExpectations(())
-        }
-      }
-    }
   }
 }
