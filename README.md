@@ -1,4 +1,4 @@
 
 # import-voluntary-disclosure-submission
 
-This is a placeholder README.md for a new repository
+See Wiki page https://github.com/hmrc/import-voluntary-disclosure-submission/wiki
