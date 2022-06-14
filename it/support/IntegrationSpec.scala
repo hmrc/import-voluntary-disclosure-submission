@@ -46,11 +46,11 @@ trait IntegrationSpec
   private val servicesPath = "microservice.services"
 
   def overriddenConfig: Map[String, Any] = Map(
-    s"$servicesPath.auth.host" -> mockHost,
-    s"$servicesPath.auth.port" -> mockPort,
-    s"$servicesPath.eis.port" -> mockPort,
+    s"$servicesPath.auth.host"                          -> mockHost,
+    s"$servicesPath.auth.port"                          -> mockPort,
+    s"$servicesPath.eis.port"                           -> mockPort,
     s"$servicesPath.file-transmission-synchronous.port" -> mockPort,
-    "auditing.consumer.baseUri.port" -> mockPort
+    "auditing.consumer.baseUri.port"                    -> mockPort
   )
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()

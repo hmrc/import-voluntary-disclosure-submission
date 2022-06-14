@@ -31,10 +31,10 @@ object CreateCaseStub extends WireMockMethods with SampleData {
 
   val headers: Map[String, String] = Map("x-correlation-id" -> UUID.randomUUID().toString)
   val body: JsObject = Json.obj(
-    "CaseID" -> "C18-101",
+    "CaseID"         -> "C18-101",
     "ProcessingDate" -> Instant.now().toString,
-    "Status" -> "Success",
-    "StatusText" -> "Case created successfully"
+    "Status"         -> "Success",
+    "StatusText"     -> "Case created successfully"
   )
 
   def success(): StubMapping =

@@ -30,8 +30,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class FileTransferConnector @Inject() (val appConfig: AppConfig, val http: HttpClient) {
 
-  private[connectors] lazy val multiFileUrl  = s"${appConfig.fileTransferUrl}/transfer-multiple-files"
-  private val logger                         = Logger("application." + getClass.getCanonicalName)
+  private[connectors] lazy val multiFileUrl = s"${appConfig.fileTransferUrl}/transfer-multiple-files"
+  private val logger                        = Logger("application." + getClass.getCanonicalName)
   def transferMultipleFiles(
     fileTransferRequest: MultiFileTransferRequest
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ErrorModel, Unit]] = {

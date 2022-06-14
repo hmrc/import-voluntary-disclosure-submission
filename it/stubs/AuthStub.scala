@@ -35,4 +35,3 @@ object AuthStub extends WireMockMethods {
   def unauthorised(): StubMapping =
     when(method = POST, uri = authoriseUri).thenReturn(status = UNAUTHORIZED)
 }
-

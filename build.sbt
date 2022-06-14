@@ -6,7 +6,7 @@ val appName = "import-voluntary-disclosure-submission"
 val silencerVersion = "1.7.6"
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
+  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin)
   .settings(
     majorVersion := 0,
     scalaVersion := "2.12.15",
@@ -30,11 +30,11 @@ lazy val microservice = Project(appName, file("."))
   val codeStyleIntegrationTest = taskKey[Unit]("enforce code style then integration test")
   Project.inConfig(IntegrationTest)(ScalastylePlugin.rawScalastyleSettings()) ++
   Seq(
-    scalastyleConfig in IntegrationTest := (scalastyleConfig in scalastyle).value,
-    scalastyleTarget in IntegrationTest := target.value / "scalastyle-it-results.xml",
-    scalastyleFailOnError in IntegrationTest := (scalastyleFailOnError in scalastyle).value,
-    (scalastyleFailOnWarning in IntegrationTest) := (scalastyleFailOnWarning in scalastyle).value,
-    scalastyleSources in IntegrationTest := (unmanagedSourceDirectories in IntegrationTest).value,
-    codeStyleIntegrationTest := scalastyle.in(IntegrationTest).toTask("").value,
-    (test in IntegrationTest) := ((test in IntegrationTest) dependsOn codeStyleIntegrationTest).value
+    IntegrationTest / scalastyleConfig := (scalastyle / scalastyleConfig).value,
+    IntegrationTest / scalastyleTarget := target.value / "scalastyle-it-results.xml",
+    IntegrationTest / scalastyleFailOnError := (scalastyle / scalastyleFailOnError).value,
+    (IntegrationTest / scalastyleFailOnWarning) := (scalastyle / scalastyleFailOnWarning).value,
+    IntegrationTest / scalastyleSources := (IntegrationTest / unmanagedSourceDirectories).value,
+    codeStyleIntegrationTest := (IntegrationTest / scalastyle).toTask("").value,
+    (IntegrationTest / test) := ((IntegrationTest / test) dependsOn codeStyleIntegrationTest).value
   )

@@ -43,4 +43,3 @@ class CreateCaseEndpointSpec extends IntegrationSpec with SampleData {
 
   }
 }
-
