@@ -33,7 +33,7 @@ class UpdateCaseEndpointSpec extends IntegrationSpec with SampleData {
       UpdateCaseStub.success()
       FileTransferStub.success()
 
-      val request: WSRequest = buildRequest("/update-case")
+      val request: WSRequest   = buildRequest("/update-case")
       val response: WSResponse = await(request.post(updateCaseJson))
 
       response.status shouldBe Status.OK
@@ -45,7 +45,7 @@ class UpdateCaseEndpointSpec extends IntegrationSpec with SampleData {
       UpdateCaseStub.invalidCaseError()
       FileTransferStub.success()
 
-      val request: WSRequest = buildRequest("/update-case")
+      val request: WSRequest   = buildRequest("/update-case")
       val response: WSResponse = await(request.post(updateCaseJson))
 
       response.status shouldBe Status.BAD_REQUEST
@@ -58,7 +58,7 @@ class UpdateCaseEndpointSpec extends IntegrationSpec with SampleData {
       UpdateCaseStub.caseClosedError()
       FileTransferStub.success()
 
-      val request: WSRequest = buildRequest("/update-case")
+      val request: WSRequest   = buildRequest("/update-case")
       val response: WSResponse = await(request.post(updateCaseJson))
 
       response.status shouldBe Status.BAD_REQUEST
@@ -66,4 +66,3 @@ class UpdateCaseEndpointSpec extends IntegrationSpec with SampleData {
     }
   }
 }
-

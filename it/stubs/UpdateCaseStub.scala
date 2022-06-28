@@ -33,10 +33,10 @@ object UpdateCaseStub extends WireMockMethods with SampleData {
 
   def success(): StubMapping = {
     val body: JsObject = Json.obj(
-      "CaseID" -> "C18-101",
+      "CaseID"         -> "C18-101",
       "ProcessingDate" -> Instant.now().toString,
-      "Status" -> "Success",
-      "StatusText" -> "Case updated successfully"
+      "Status"         -> "Success",
+      "StatusText"     -> "Case updated successfully"
     )
     when(method = POST, uri = authoriseUri)
       .thenReturn(Status.OK, headers, body)
