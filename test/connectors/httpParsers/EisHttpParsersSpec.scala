@@ -44,16 +44,32 @@ class EisHttpParsersSpec extends SpecBase {
         "StatusText"     -> "Case created successfully"
       )
 
+      val error: JsObject = Json.obj("correlationId" -> correlationId, "errorMessage" -> "Unknown error")
+
       val response = HttpResponse(Status.OK, body, headers)
 
       "return the Case ID" in {
         createCaseHttpParser.read("", "", response) mustBe Right(CreateCaseResponse("C18-101", correlationId))
       }
 
-      "return the Case ID with SEE OTHER" in {
+      "return Eis error SEE_OTHER with unexpected status code and response body" in {
         val resp = HttpResponse(Status.SEE_OTHER, body, headers)
         createCaseHttpParser.read("", "", resp) mustBe Left(
-          EisError.UnexpectedError(Status.SEE_OTHER, "Received an unexpected error response")
+          EisError.UnexpectedError(Status.SEE_OTHER, "Received an error response with unexpected status code and response body")
+        )
+      }
+
+      "return Eis error INTERNAL_SERVER_ERROR with unexpected status code and expected response body" in {
+        val resp = HttpResponse(Status.INTERNAL_SERVER_ERROR, Json.obj("errorDetail" -> error), headers)
+        createCaseHttpParser.read("", "", resp) mustBe Left(
+          EisError.UnexpectedError(Status.INTERNAL_SERVER_ERROR, "Received an error response with unexpected status code and expected response body")
+        )
+      }
+
+      "return Eis error SERVICE_UNAVAILABLE with empty error response" in {
+        val resp = HttpResponse(Status.SERVICE_UNAVAILABLE, "", headers)
+        createCaseHttpParser.read("", "", resp) mustBe Left(
+          EisError.UnexpectedError(Status.SERVICE_UNAVAILABLE, "Non-success response code with empty response body")
         )
       }
 

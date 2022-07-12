@@ -86,16 +86,15 @@ object EisHttpParsers {
           case status =>
             if (response.body.nonEmpty) {
               response.json.validate[EisError] match {
-                case JsSuccess(value, _) => {
+                case JsSuccess(_, _) =>
                   logger.error(errorMessage(apiName, correlationId, "Non-success response returned when attempting to create a case with expected error json",
                     response.status, Seq(), Some(response.body)))
-                  Left(value)
-                }
+                  Left(EisError.UnexpectedError(status, "Received an error response with unexpected status code and expected response body"))
                 case JsError(errors) =>
                   logger.error(errorMessage(apiName, correlationId,
                     "Non-success response returned when attempting to create a case with unexpected error json.",
                     response.status, errors))
-                  Left(EisError.UnexpectedError(status, "Received an unexpected error response"))
+                  Left(EisError.UnexpectedError(status, "Received an error response with unexpected status code and response body"))
               }
             } else {
               logger.error(errorMessage(apiName, correlationId,
