@@ -53,7 +53,7 @@ class EisHttpParsersSpec extends SpecBase {
       "return the Case ID with SEE OTHER" in {
         val resp = HttpResponse(Status.SEE_OTHER, body, headers)
         createCaseHttpParser.read("", "", resp) mustBe Left(
-          EisError.UnexpectedError(Status.SEE_OTHER, "Non-success response code")
+          EisError.UnexpectedError(Status.SEE_OTHER, "Received an unexpected error response")
         )
       }
 

@@ -34,7 +34,7 @@ object EoriDetailsHttpParser {
         case Status.OK =>
           response.json.validate[Sub09Response](Sub09Response.reads).fold(
             invalid => {
-              logger.error("Failed to parse Sub09 response: " + invalid)
+              logger.error("Received 200 response but failed to parse Sub09 response: " + invalid)
               Left(
                 ErrorModel(
                   Status.INTERNAL_SERVER_ERROR,
@@ -45,10 +45,10 @@ object EoriDetailsHttpParser {
             okResponse => handleOkResponse(okResponse)
           )
         case Status.NOT_FOUND =>
-          logger.error("Eori Details not found.")
+          logger.error(s"Received 400 response for GET Eori Details. Response body: ${response.body}")
           Left(ErrorModel(Status.NOT_FOUND, "Eori Details not found"))
         case status =>
-          logger.error("Error: " + status + " body: " + response.body)
+          logger.error(s"Unexpected response received from downstream. Status code: $status, body: ${response.body}")
           Left(ErrorModel(status, "Downstream error returned when retrieving EoriDetails model from Sub09"))
       }
     }
@@ -57,7 +57,7 @@ object EoriDetailsHttpParser {
       response.eoriDetails match {
         case Some(details) => Right(details)
         case _ =>
-          logger.error("Eori Details not returned on Ok response. Body: " + response.eoriStatus)
+          logger.error("Received 200 response but Eori Details not returned. Response body: " + response.eoriStatus)
           Left(ErrorModel(Status.NOT_FOUND, "Eori Details not returned on Ok response"))
       }
     }
