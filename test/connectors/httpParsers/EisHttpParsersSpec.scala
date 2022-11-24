@@ -55,14 +55,20 @@ class EisHttpParsersSpec extends SpecBase {
       "return Eis error SEE_OTHER with unexpected status code and response body" in {
         val resp = HttpResponse(Status.SEE_OTHER, body, headers)
         createCaseHttpParser.read("", "", resp) mustBe Left(
-          EisError.UnexpectedError(Status.SEE_OTHER, "Received an error response with unexpected status code and response body")
+          EisError.UnexpectedError(
+            Status.SEE_OTHER,
+            "Received an error response with unexpected status code and response body"
+          )
         )
       }
 
       "return Eis error INTERNAL_SERVER_ERROR with unexpected status code and expected response body" in {
         val resp = HttpResponse(Status.INTERNAL_SERVER_ERROR, Json.obj("errorDetail" -> error), headers)
         createCaseHttpParser.read("", "", resp) mustBe Left(
-          EisError.UnexpectedError(Status.INTERNAL_SERVER_ERROR, "Received an error response with unexpected status code and expected response body")
+          EisError.UnexpectedError(
+            Status.INTERNAL_SERVER_ERROR,
+            "Received an error response with unexpected status code and expected response body"
+          )
         )
       }
 
