@@ -26,24 +26,23 @@ import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 object EisHttpParsers {
 
   implicit val createCaseHttpParser: HttpReads[Either[EisError, CreateCaseResponse]] =
-    jsonParser("IVD - Create Case") { correlationId =>
-      json =>
-        (json \ "CaseID").validate[String].map(CreateCaseResponse(_, correlationId))
+    jsonParser("IVD - Create Case") { correlationId => json =>
+      (json \ "CaseID").validate[String].map(CreateCaseResponse(_, correlationId))
     }
 
   implicit val updateCaseHttpParser: HttpReads[Either[UpdateCaseError, UpdateCaseResponse]] =
-    jsonParser("IVD - Update Case") { correlationId =>
-      json =>
-        (json \ "CaseID").validate[String].map(UpdateCaseResponse(_, correlationId))
+    jsonParser("IVD - Update Case") { correlationId => json =>
+      (json \ "CaseID").validate[String].map(UpdateCaseResponse(_, correlationId))
     }.map(_.left.map(UpdateCaseError.fromEisError))
 
-  private def errorMessage(apiName: String,
-                           correlationId: String,
-                           problem: String,
-                           status: Int,
-                           details: Seq[(JsPath, Seq[JsonValidationError])] = Seq(),
-                           body: Option[String] = None
-                          ): String = {
+  private def errorMessage(
+    apiName: String,
+    correlationId: String,
+    problem: String,
+    status: Int,
+    details: Seq[(JsPath, Seq[JsonValidationError])] = Seq(),
+    body: Option[String] = None
+  ): String = {
     if (body.isDefined) {
       s"""API: $apiName
          |Correlation ID: $correlationId
@@ -68,38 +67,93 @@ object EisHttpParsers {
           case Status.OK =>
             response.json.validate(reads(correlationId)).fold(
               invalid => {
-                logger.error(errorMessage(apiName, correlationId, "Failed to parse JSON for a successful response.", response.status, invalid))
+                logger.error(
+                  errorMessage(
+                    apiName,
+                    correlationId,
+                    "Failed to parse JSON for a successful response.",
+                    response.status,
+                    invalid
+                  )
+                )
                 Left(EisError.UnexpectedError(Status.OK, "Received invalid JSON"))
               },
               caseId => Right(caseId)
             )
           case Status.BAD_REQUEST =>
             response.json.validate[EisError] match {
-              case JsSuccess(value, _) => {
-                logger.error(errorMessage(apiName, correlationId, "Received 400 response from backend", response.status, Seq(), Some(response.body)))
+              case JsSuccess(value, _) =>
+                logger.error(
+                  errorMessage(
+                    apiName,
+                    correlationId,
+                    "Received 400 response from backend",
+                    response.status,
+                    Seq(),
+                    Some(response.body)
+                  )
+                )
                 Left(value)
-              }
               case JsError(errors) =>
-                logger.error(errorMessage(apiName, correlationId, "Failed to parse JSON for an error response.", response.status, errors))
+                logger.error(
+                  errorMessage(
+                    apiName,
+                    correlationId,
+                    "Failed to parse JSON for an error response.",
+                    response.status,
+                    errors
+                  )
+                )
                 Left(EisError.UnexpectedError(Status.BAD_REQUEST, "Received an unexpected error response"))
             }
           case status =>
             if (response.body.nonEmpty) {
               response.json.validate[EisError] match {
                 case JsSuccess(_, _) =>
-                  logger.error(errorMessage(apiName, correlationId, "Non-success response returned when attempting to create a case with expected error json",
-                    response.status, Seq(), Some(response.body)))
-                  Left(EisError.UnexpectedError(status, "Received an error response with unexpected status code and expected response body"))
+                  logger.error(
+                    errorMessage(
+                      apiName,
+                      correlationId,
+                      "Non-success response returned when attempting to create a case with expected error json",
+                      response.status,
+                      Seq(),
+                      Some(response.body)
+                    )
+                  )
+                  Left(
+                    EisError.UnexpectedError(
+                      status,
+                      "Received an error response with unexpected status code and expected response body"
+                    )
+                  )
                 case JsError(errors) =>
-                  logger.error(errorMessage(apiName, correlationId,
-                    "Non-success response returned when attempting to create a case with unexpected error json.",
-                    response.status, errors))
-                  Left(EisError.UnexpectedError(status, "Received an error response with unexpected status code and response body"))
+                  logger.error(
+                    errorMessage(
+                      apiName,
+                      correlationId,
+                      "Non-success response returned when attempting to create a case with unexpected error json.",
+                      response.status,
+                      errors
+                    )
+                  )
+                  Left(
+                    EisError.UnexpectedError(
+                      status,
+                      "Received an error response with unexpected status code and response body"
+                    )
+                  )
               }
             } else {
-              logger.error(errorMessage(apiName, correlationId,
-                "Non-success response returned when attempting to create a case with empty response body.",
-                response.status, Seq(), Some("")))
+              logger.error(
+                errorMessage(
+                  apiName,
+                  correlationId,
+                  "Non-success response returned when attempting to create a case with empty response body.",
+                  response.status,
+                  Seq(),
+                  Some("")
+                )
+              )
               Left(EisError.UnexpectedError(status, "Non-success response code with empty response body"))
             }
         }

@@ -36,3 +36,18 @@ The following downstream services are used:
 
 * **EIS CPR**
   used to submit new and updated cases through to the Pega CMS service
+
+### Scalafmt
+This repository uses [Scalafmt](https://scalameta.org/scalafmt/), a code formatter for Scala. The formatting rules configured for this repository are defined within [.scalafmt.conf](.scalafmt.conf).
+
+To apply formatting to this repository using the configured rules in [.scalafmt.conf](.scalafmt.conf) execute:
+
+ ```
+ sbt scalafmtAll
+ ```
+
+To check files have been formatted as expected execute:
+
+ ```
+ sbt scalafmtCheckAll scalafmtSbtCheck
+ ```
