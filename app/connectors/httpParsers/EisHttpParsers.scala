@@ -40,7 +40,7 @@ object EisHttpParsers {
     correlationId: String,
     problem: String,
     status: Int,
-    details: Seq[(JsPath, Seq[JsonValidationError])] = Seq(),
+    details: Seq[(JsPath, Seq[JsonValidationError])],
     body: Option[String] = None
   ): String = {
     if (body.isDefined) {

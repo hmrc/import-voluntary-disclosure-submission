@@ -36,8 +36,8 @@ object BoxItem {
 
   implicit val writes: Writes[BoxItem] = (data: BoxItem) => {
     Json.obj(
-      "BoxNumber"  -> data.boxNumber.formatted("%02d"),
-      "ItemNumber" -> data.itemNumber.formatted("%02d"),
+      "BoxNumber"  -> "%02d".format(data.boxNumber),
+      "ItemNumber" -> "%02d".format(data.itemNumber),
       "EnteredAs"  -> data.original,
       "AmendedTo"  -> data.amended
     )
