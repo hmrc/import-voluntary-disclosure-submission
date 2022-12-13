@@ -40,7 +40,7 @@ object EisHttpParsers {
     correlationId: String,
     problem: String,
     status: Int,
-    details: Seq[(JsPath, Seq[JsonValidationError])],
+    details: scala.collection.Seq[(JsPath, scala.collection.Seq[JsonValidationError])],
     body: Option[String] = None
   ): String = {
     if (body.isDefined) {
@@ -65,7 +65,7 @@ object EisHttpParsers {
 
         response.status match {
           case Status.OK =>
-            response.json.validate(reads(correlationId)).fold(
+            response.json.validate(reads(correlationId)) fold (
               invalid => {
                 logger.error(
                   errorMessage(
