@@ -7,7 +7,7 @@ object AppDependencies {
 
   val compile = Seq(
     "uk.gov.hmrc"                  %% "bootstrap-backend-play-28" % bootstrapVersion,
-    "com.fasterxml.jackson.module" %% "jackson-module-scala"      % "2.16.1"
+    "com.fasterxml.jackson.module" %% "jackson-module-scala"      % "2.13.3"
   )
 
   val test = Seq(
