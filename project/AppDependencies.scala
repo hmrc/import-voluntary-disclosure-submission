@@ -6,8 +6,7 @@ object AppDependencies {
   val bootstrapVersion = "8.4.0"
 
   val compile: Seq[ModuleID] = Seq(
-    "uk.gov.hmrc"                  %% "bootstrap-backend-play-30" % bootstrapVersion,
-    "com.fasterxml.jackson.module" %% "jackson-module-scala"      % "2.14.2"
+    "uk.gov.hmrc" %% "bootstrap-backend-play-30" % bootstrapVersion
   )
 
   val test: Seq[ModuleID] = Seq(
