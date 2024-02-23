@@ -20,9 +20,23 @@ lazy val microservice = Project(appName, file("."))
   )
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(CodeCoverageSettings.settings: _*)
+  .configs(Test)
+
+val codeStyleIntegrationTest = taskKey[Unit]("enforce code style then integration test")
 
 lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
   .settings(DefaultBuildSettings.itSettings())
   .settings(libraryDependencies ++= AppDependencies.test)
+  .settings(
+    inConfig(Test)(ScalastylePlugin.rawScalastyleSettings()) ++ Seq(
+      Test / scalastyleConfig          := (scalastyle / scalastyleConfig).value,
+      Test / scalastyleTarget          := target.value / "scalastyle-it-results.xml",
+      Test / scalastyleFailOnError     := (scalastyle / scalastyleFailOnError).value,
+      (Test / scalastyleFailOnWarning) := (scalastyle / scalastyleFailOnWarning).value,
+      Test / scalastyleSources         := (Test / unmanagedSourceDirectories).value,
+      codeStyleIntegrationTest         := (Test / scalastyle).toTask("").value,
+      (Test / test)                    := ((Test / test) dependsOn codeStyleIntegrationTest).value
+    )
+  )
