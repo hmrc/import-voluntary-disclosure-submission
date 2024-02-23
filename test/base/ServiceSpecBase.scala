@@ -34,6 +34,6 @@ trait ServiceSpecBase extends AnyWordSpec {
       AnyContentAsEmpty.type
     ]]
 
-  implicit lazy val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
+  implicit lazy val ec: ExecutionContext = injector().instanceOf[ExecutionContext]
 
 }

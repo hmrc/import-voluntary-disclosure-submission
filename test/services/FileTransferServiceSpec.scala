@@ -16,7 +16,7 @@
 
 package services
 
-import akka.actor.ActorSystem
+import org.apache.pekko.actor.ActorSystem
 import base.SpecBase
 import config.{AppConfig, AppConfigImpl}
 import mocks.connectors.MockFileTransferConnector
@@ -37,8 +37,8 @@ import scala.concurrent.Future
 class FileTransferServiceSpec extends SpecBase with Matchers with MockFactory with Waiters {
 
   trait Test extends MockFileTransferConnector with MockAuditService with ReusableValues with Eventually {
-    val system: ActorSystem            = injector.instanceOf[ActorSystem]
-    val servicesConfig: ServicesConfig = injector.instanceOf[ServicesConfig]
+    val system: ActorSystem            = injector().instanceOf[ActorSystem]
+    val servicesConfig: ServicesConfig = injector().instanceOf[ServicesConfig]
     def appConfig: AppConfig           = new AppConfigImpl(configuration, servicesConfig)
     lazy val service = new FileTransferService(system, mockFileTransferConnector, mockAuditService, appConfig)
   }

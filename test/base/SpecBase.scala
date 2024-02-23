@@ -38,12 +38,12 @@ trait SpecBase extends AnyWordSpec with MockFactory {
   val env: Environment             = Environment.simple()
   val configuration: Configuration = Configuration.load(env)
 
-  val appConfig: AppConfig = injector.instanceOf[AppConfig]
+  val appConfig: AppConfig = injector().instanceOf[AppConfig]
 
   val controllerComponents: ControllerComponents = Helpers.stubControllerComponents()
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  implicit lazy val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
+  implicit lazy val ec: ExecutionContext = injector().instanceOf[ExecutionContext]
 
 }
