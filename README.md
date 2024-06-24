@@ -1,14 +1,15 @@
-
-# import-voluntary-disclosure-submission
-
 # Import Voluntary Disclosure Submission
 
 ## Purpose
 This is the backend service for the IVD frontend. It provides endpoints to the downstream services that call out the off platform.
 
+Other related C18 services:
+- Frontend service: [Import-Voluntary-Disclosure-Frontend](https://github.com/hmrc/import-voluntary-disclosure-frontend)
+- Stub: [Import-Voluntary-Disclosure-Stub](https://github.com/hmrc/import-voluntary-disclosure-stub)
+
 ## Running the service
 ### Service manager
-`sm --start IMPORT_VOLUNTARY_DISCLOSURE_SUBMISSION -r`
+`sm2 --start IMPORT_VOLUNTARY_DISCLOSURE_SUBMISSION`
 ### Locally
 `sbt run` or `sbt 'run 7951'`
 
