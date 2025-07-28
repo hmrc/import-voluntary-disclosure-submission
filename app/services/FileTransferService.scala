@@ -16,15 +16,15 @@
 
 package services
 
-import org.apache.pekko.actor.ActorSystem
-import org.apache.pekko.pattern.after
 import config.AppConfig
 import connectors.FileTransferConnector
 import models.SupportingDocument
 import models.audit.FilesUploadedAuditEvent
 import models.requests.MultiFileTransferRequest
 import models.responses.FileTransferResponse
-import play.api.Logger
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.pattern.after
+import play.api.Logging
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -39,10 +39,9 @@ class FileTransferService @Inject() (
   connector: FileTransferConnector,
   auditService: AuditService,
   config: AppConfig
-) {
+) extends Logging {
 
-  private val logger = Logger("application." + getClass.getCanonicalName)
-  val MAX_RETRIES    = 2
+  val MAX_RETRIES = 2
 
   def newCorrelationId(): String =
     UUID.randomUUID().toString

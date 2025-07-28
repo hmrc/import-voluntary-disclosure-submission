@@ -19,17 +19,15 @@ package services
 import connectors.EisConnector
 import models.responses.UpdateCaseResponse
 import models.{UpdateCase, UpdateCaseError}
+import play.api.Logging
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import play.api.Logger
 
 @Singleton
-class UpdateCaseService @Inject() (connector: EisConnector, fileTransferService: FileTransferService) {
-
-  private val logger = Logger("application." + getClass.getCanonicalName)
+class UpdateCaseService @Inject() (connector: EisConnector, fileTransferService: FileTransferService) extends Logging {
 
   def updateCase(updateCase: UpdateCase)(implicit
     hc: HeaderCarrier,
