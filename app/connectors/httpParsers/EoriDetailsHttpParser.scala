@@ -27,7 +27,7 @@ object EoriDetailsHttpParser {
 
   implicit object EoriDetailsReads extends HttpReads[HttpGetResult[EoriDetails]] {
 
-    private val logger = Logger("application." + getClass.getCanonicalName)
+    private val logger = Logger(getClass)
 
     override def read(method: String, url: String, response: HttpResponse): HttpGetResult[EoriDetails] = {
       response.status match {
