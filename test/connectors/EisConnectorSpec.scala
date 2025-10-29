@@ -50,7 +50,8 @@ class EisConnectorSpec extends SpecBase {
 
     "generate the correct CustomProcessesHost header required for EIS" in new Test {
       private val headers = target.headers(correlationId)
-      headers should contain("CustomProcessesHost" -> "Digital")
+      private val customProcessesHost = "Digital"
+      headers should contain("CustomProcessesHost" -> customProcessesHost)
     }
 
     "generate the correct Accept header required for EIS" in new Test {

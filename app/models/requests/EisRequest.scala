@@ -23,11 +23,14 @@ import java.util.UUID
 case class EisRequest[A](acknowledgementReference: UUID, content: A)
 
 object EisRequest {
+  private val originatingSystem = "Digital"
+  private val applicationType = "C18"
+
   implicit def writes[A: Writes]: Writes[EisRequest[A]] = (data: EisRequest[A]) =>
     Json.obj(
       "AcknowledgementReference" -> data.acknowledgementReference.toString.replace("-", ""),
-      "OriginatingSystem"        -> "Digital",
-      "ApplicationType"          -> "C18",
+      "OriginatingSystem"        -> originatingSystem,
+      "ApplicationType"          -> applicationType,
       "Content"                  -> data.content
     )
 }

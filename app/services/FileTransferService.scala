@@ -52,11 +52,12 @@ class FileTransferService @Inject() (
     request: Request[_]
   ): Future[Unit] = {
     val correlationId = newCorrelationId()
+    val applicationName = "C18"
     val req = MultiFileTransferRequest.fromSupportingDocuments(
       caseReferenceNumber = caseId,
       conversationId = conversationId,
       correlationId = correlationId,
-      applicationName = "C18",
+      applicationName = applicationName,
       uploadedFiles = files,
       callbackUrl = config.fileUploadCallbackUrl
     )
