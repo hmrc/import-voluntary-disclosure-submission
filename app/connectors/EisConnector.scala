@@ -32,6 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class EisConnector @Inject() (http: HttpClient, implicit val appConfig: AppConfig) {
 
+  private val customProcessesHost = "Digital"
   private val httpDateFormat = DateTimeFormatter
     .ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH)
     .withZone(ZoneId.of("GMT"))
@@ -42,7 +43,7 @@ class EisConnector @Inject() (http: HttpClient, implicit val appConfig: AppConfi
   private[connectors] def headers(correlationId: UUID): Seq[(String, String)] = Seq(
     "Authorization"       -> s"Bearer ${appConfig.createCaseToken}",
     "x-correlation-id"    -> correlationId.toString,
-    "CustomProcessesHost" -> "Digital",
+    "CustomProcessesHost" -> customProcessesHost,
     "date"                -> httpDateFormat.format(ZonedDateTime.now),
     "accept"              -> "application/json"
   )

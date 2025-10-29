@@ -25,8 +25,10 @@ import java.util.UUID
 
 class EisRequestSpec extends ModelSpecBase with SampleData {
 
-  val acknowledgementReference: UUID = UUID.randomUUID()
-  val model: EisRequest[CreateCase]  = EisRequest(acknowledgementReference, caseDetails)
+  private val acknowledgementReference: UUID = UUID.randomUUID()
+  private val model: EisRequest[CreateCase]  = EisRequest(acknowledgementReference, caseDetails)
+  private val originatingSystem              = "Digital"
+  private val applicationType                = "C18"
 
   "Serialising a create case request" should {
 
@@ -34,8 +36,8 @@ class EisRequestSpec extends ModelSpecBase with SampleData {
 
     lazy val resultingJson = Json.obj(
       "AcknowledgementReference" -> acknowledgementReference.toString.replace("-", ""),
-      "OriginatingSystem"        -> "Digital",
-      "ApplicationType"          -> "C18",
+      "OriginatingSystem"        -> originatingSystem,
+      "ApplicationType"          -> applicationType,
       "Content"                  -> outgoingJson
     )
 
