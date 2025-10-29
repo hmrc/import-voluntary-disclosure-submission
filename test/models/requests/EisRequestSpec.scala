@@ -27,8 +27,8 @@ class EisRequestSpec extends ModelSpecBase with SampleData {
 
   private val acknowledgementReference: UUID = UUID.randomUUID()
   private val model: EisRequest[CreateCase]  = EisRequest(acknowledgementReference, caseDetails)
-  private val originatingSystem = "Digital"
-  private val applicationType = "C18"
+  private val originatingSystem              = "Digital"
+  private val applicationType                = "C18"
 
   "Serialising a create case request" should {
 

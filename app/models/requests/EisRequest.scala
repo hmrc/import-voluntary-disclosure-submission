@@ -24,7 +24,7 @@ case class EisRequest[A](acknowledgementReference: UUID, content: A)
 
 object EisRequest {
   private val originatingSystem = "Digital"
-  private val applicationType = "C18"
+  private val applicationType   = "C18"
 
   implicit def writes[A: Writes]: Writes[EisRequest[A]] = (data: EisRequest[A]) =>
     Json.obj(
