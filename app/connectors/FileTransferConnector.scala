@@ -21,21 +21,24 @@ import models.ErrorModel
 import models.requests.MultiFileTransferRequest
 import play.api.Logger
 import play.api.http.Status
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import play.api.libs.json.Json
+import uk.gov.hmrc.http.HttpReads.Implicits.*
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FileTransferConnector @Inject() (val appConfig: AppConfig, val http: HttpClient) {
+class FileTransferConnector @Inject() (val appConfig: AppConfig, val http: HttpClientV2) {
 
   private[connectors] lazy val multiFileUrl = s"${appConfig.fileTransferUrl}/transfer-multiple-files"
   private val logger                        = Logger(getClass)
   def transferMultipleFiles(
     fileTransferRequest: MultiFileTransferRequest
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ErrorModel, Unit]] = {
-    http.POST[MultiFileTransferRequest, HttpResponse](multiFileUrl, fileTransferRequest).map { response =>
+    http.post(url"$multiFileUrl").withBody(Json.toJson(fileTransferRequest)).execute[HttpResponse].map { response =>
       if (isSuccess(response.status)) {
         logger.info(
           s"[FILE TRANSFER SUCCESS][CORRELATION ID: ${fileTransferRequest.correlationId}][CONVERSATION ID: ${fileTransferRequest.conversationId}]"

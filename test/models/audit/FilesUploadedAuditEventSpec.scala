@@ -17,7 +17,7 @@
 package models.audit
 
 import base.SpecBase
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers.mustBe
 import play.api.libs.json.Json
 
 class FilesUploadedAuditEventSpec extends SpecBase with AuditTestData {

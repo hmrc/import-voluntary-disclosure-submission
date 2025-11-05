@@ -21,7 +21,7 @@ import data.SampleData
 import mocks.connectors.MockEisConnector
 import mocks.services.MockFileTransferService
 import models.responses.CreateCaseResponse
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers.mustBe
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 import java.util.UUID

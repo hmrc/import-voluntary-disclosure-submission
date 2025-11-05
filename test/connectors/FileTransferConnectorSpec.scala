@@ -19,12 +19,13 @@ package connectors
 import base.SpecBase
 import data.SampleData
 import mocks.MockHttp
-import models.requests._
+import models.requests.*
 import org.scalatest.EitherValues
-import org.scalatest.matchers.should.Matchers._
+import org.scalatest.matchers.should.Matchers.*
 import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import java.util.UUID
 import scala.concurrent.TimeoutException
@@ -32,8 +33,9 @@ import scala.concurrent.TimeoutException
 class FileTransferConnectorSpec extends SpecBase with EitherValues {
 
   trait Test extends MockHttp with SampleData {
-    val correlationId: UUID = UUID.randomUUID()
-    lazy val target         = new FileTransferConnector(appConfig, mockHttp)
+    val correlationId: UUID          = UUID.randomUUID()
+    val mockHttpClient: HttpClientV2 = mock[HttpClientV2]
+    lazy val target                  = new FileTransferConnector(appConfig, mockHttpClient)
   }
 
   val expectedMultiFileUrl = "http://localhost:10003/transfer-multiple-files"
@@ -49,7 +51,7 @@ class FileTransferConnectorSpec extends SpecBase with EitherValues {
   "transferMultipleFiles" when {
 
     val upscanReference = "XYZ0123456789"
-    val request = MultiFileTransferRequest(
+    val request         = MultiFileTransferRequest(
       conversationId = "074c3823-c941-417e-a08b-e47b08e9a9b7",
       caseReferenceNumber = "C18123",
       applicationName = "C18",

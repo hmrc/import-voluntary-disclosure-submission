@@ -21,7 +21,8 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.mvc.{AnyContentAsEmpty, ControllerComponents}
 import play.api.test.CSRFTokenHelper.CSRFRequest
-import play.api.test.Helpers.baseApplicationBuilder.injector
+import play.api.inject.guice.GuiceInjectorBuilder
+import play.api.inject.Injector
 import play.api.test.{FakeRequest, Helpers}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
@@ -38,12 +39,13 @@ trait SpecBase extends AnyWordSpec with MockFactory {
   val env: Environment             = Environment.simple()
   val configuration: Configuration = Configuration.load(env)
 
-  val appConfig: AppConfig = injector().instanceOf[AppConfig]
+  val injector: Injector   = new GuiceInjectorBuilder().injector()
+  val appConfig: AppConfig = injector.instanceOf[AppConfig]
 
   val controllerComponents: ControllerComponents = Helpers.stubControllerComponents()
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  implicit lazy val ec: ExecutionContext = injector().instanceOf[ExecutionContext]
+  implicit lazy val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
 
 }

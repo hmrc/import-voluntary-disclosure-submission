@@ -27,7 +27,8 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent.{Eventually, Waiters}
 import org.scalatest.matchers.must.Matchers
 import play.api.http.Status
-import play.api.test.Helpers.baseApplicationBuilder.injector
+import play.api.inject.guice.GuiceInjectorBuilder
+import play.api.inject.Injector
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import utils.ReusableValues
@@ -37,8 +38,9 @@ import scala.concurrent.Future
 class FileTransferServiceSpec extends SpecBase with Matchers with MockFactory with Waiters {
 
   trait Test extends MockFileTransferConnector with MockAuditService with ReusableValues with Eventually {
-    val system: ActorSystem            = injector().instanceOf[ActorSystem]
-    val servicesConfig: ServicesConfig = injector().instanceOf[ServicesConfig]
+    val injector: Injector             = new GuiceInjectorBuilder().injector()
+    val system: ActorSystem            = injector.instanceOf[ActorSystem]
+    val servicesConfig: ServicesConfig = injector.instanceOf[ServicesConfig]
     def appConfig: AppConfig           = new AppConfigImpl(configuration, servicesConfig)
     lazy val service = new FileTransferService(system, mockFileTransferConnector, mockAuditService, appConfig)
   }
