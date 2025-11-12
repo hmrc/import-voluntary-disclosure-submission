@@ -18,6 +18,7 @@ package endpoint
 
 import data.SampleData
 import play.api.http.Status
+import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
 import play.api.libs.ws.{WSRequest, WSResponse}
 import stubs.{AuditStub, AuthStub, CreateCaseStub, FileTransferStub}
 import support.IntegrationSpec

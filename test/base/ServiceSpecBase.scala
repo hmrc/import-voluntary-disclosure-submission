@@ -17,11 +17,11 @@
 package base
 
 import org.scalatest.wordspec.AnyWordSpec
+import play.api.inject.Injector
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.FakeRequest
-import play.api.inject.Injector
-import play.api.inject.guice.GuiceInjectorBuilder
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 
 import scala.concurrent.ExecutionContext
@@ -35,7 +35,7 @@ trait ServiceSpecBase extends AnyWordSpec {
       .withSession(SessionKeys.sessionId -> "foo")
       .withCSRFToken.asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
 
-  val injector: Injector = new GuiceInjectorBuilder().injector()
+  val injector: Injector = new GuiceApplicationBuilder().injector()
 
   implicit lazy val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
 

@@ -20,13 +20,14 @@ import models.responses.UpdateCaseResponse
 import models.{UpdateCase, UpdateCaseError}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.mvc.Request
 import services.UpdateCaseService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockUpdateCaseService extends MockFactory {
+trait MockUpdateCaseService extends AnyWordSpec with MockFactory {
 
   val mockUpdateCaseService: UpdateCaseService = mock[UpdateCaseService]
 

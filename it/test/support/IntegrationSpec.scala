@@ -16,7 +16,7 @@
 
 package support
 
-import org.scalatest._
+import org.scalatest.*
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
@@ -25,7 +25,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
-import play.api.{Application, Environment, Mode}
+import play.api.{Application, Configuration, Environment, Mode}
 
 trait IntegrationSpec
     extends AnyWordSpec
@@ -55,6 +55,7 @@ trait IntegrationSpec
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))
+    .loadConfig(env => Configuration.load(env))
     .configure(overriddenConfig)
     .build()
 

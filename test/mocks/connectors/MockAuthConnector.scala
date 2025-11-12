@@ -18,6 +18,7 @@ package mocks.connectors
 
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.wordspec.AnyWordSpec
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
@@ -25,13 +26,13 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockAuthConnector extends MockFactory {
+trait MockAuthConnector extends AnyWordSpec with MockFactory {
 
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
 
   object MockedAuthConnector {
-    def authorise(response: Future[_]): CallHandler[Future[Any]] =
-      (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+    def authorise(response: Future[Option[String]]): CallHandler[Future[Option[String]]] =
+      (mockAuthConnector.authorise[Option[String]](_: Predicate, _: Retrieval[Option[String]])(_: HeaderCarrier, _: ExecutionContext))
         .expects(*, *, *, *)
         .returns(response)
   }

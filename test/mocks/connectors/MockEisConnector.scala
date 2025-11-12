@@ -21,11 +21,12 @@ import models.responses.{CreateCaseResponse, UpdateCaseResponse}
 import models.{CreateCase, EisError, UpdateCase, UpdateCaseError}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.wordspec.AnyWordSpec
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockEisConnector extends MockFactory {
+trait MockEisConnector extends AnyWordSpec with MockFactory {
 
   val mockEisConnector: EisConnector = mock[EisConnector]
 

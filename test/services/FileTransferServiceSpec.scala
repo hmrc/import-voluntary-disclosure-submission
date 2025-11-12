@@ -16,19 +16,19 @@
 
 package services
 
-import org.apache.pekko.actor.ActorSystem
 import base.SpecBase
 import config.{AppConfig, AppConfigImpl}
 import mocks.connectors.MockFileTransferConnector
 import mocks.services.MockAuditService
 import models.ErrorModel
 import models.audit.FilesUploadedAuditEvent
+import org.apache.pekko.actor.ActorSystem
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent.{Eventually, Waiters}
 import org.scalatest.matchers.must.Matchers
 import play.api.http.Status
-import play.api.inject.guice.GuiceInjectorBuilder
 import play.api.inject.Injector
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import utils.ReusableValues
@@ -38,7 +38,7 @@ import scala.concurrent.Future
 class FileTransferServiceSpec extends SpecBase with Matchers with MockFactory with Waiters {
 
   trait Test extends MockFileTransferConnector with MockAuditService with ReusableValues with Eventually {
-    val injector: Injector             = new GuiceInjectorBuilder().injector()
+    val injector: Injector             = new GuiceApplicationBuilder().injector()
     val system: ActorSystem            = injector.instanceOf[ActorSystem]
     val servicesConfig: ServicesConfig = injector.instanceOf[ServicesConfig]
     def appConfig: AppConfig           = new AppConfigImpl(configuration, servicesConfig)

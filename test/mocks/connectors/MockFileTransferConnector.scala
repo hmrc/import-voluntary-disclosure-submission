@@ -21,11 +21,12 @@ import models.ErrorModel
 import models.requests.MultiFileTransferRequest
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.wordspec.AnyWordSpec
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockFileTransferConnector extends MockFactory {
+trait MockFileTransferConnector extends AnyWordSpec with MockFactory {
 
   val mockFileTransferConnector: FileTransferConnector = mock[FileTransferConnector]
 

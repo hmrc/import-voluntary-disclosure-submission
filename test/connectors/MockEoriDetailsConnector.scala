@@ -19,11 +19,12 @@ package connectors
 import models.{EoriDetails, ErrorModel}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.wordspec.AnyWordSpec
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockEoriDetailsConnector extends MockFactory {
+trait MockEoriDetailsConnector extends AnyWordSpec with MockFactory {
 
   val mockEoriDetailsConnector: EoriDetailsConnector = mock[EoriDetailsConnector]
 

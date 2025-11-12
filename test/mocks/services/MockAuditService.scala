@@ -18,13 +18,14 @@ package mocks.services
 
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.mvc.Request
 import services.{AuditService, JsonAuditModel}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext
 
-trait MockAuditService extends MockFactory {
+trait MockAuditService extends AnyWordSpec with MockFactory {
 
   val mockAuditService: AuditService = mock[AuditService]
 

@@ -81,7 +81,7 @@ class FileTransferService @Inject() (
           )
           auditFileTransfers(resps, caseId)
 
-          Future.successful(failure)
+          Future.successful(Left(failure))
         case Right(res) => Future.successful(res)
       }
 

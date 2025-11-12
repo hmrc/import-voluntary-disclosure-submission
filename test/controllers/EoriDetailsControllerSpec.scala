@@ -21,10 +21,12 @@ import mocks.services.MockEoriDetailsService
 import models.ErrorModel
 import org.scalatest.matchers.must.Matchers.mustEqual
 import play.api.http.Status
+import play.api.inject.guice.GuiceInjectorBuilder
 import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 import utils.ReusableValues
 
 class EoriDetailsControllerSpec extends SpecBase with MockEoriDetailsService with ReusableValues {
+  GuiceInjectorBuilder().injector()
 
   object Controller extends EoriDetailsController(controllerComponents, mockEoriDetailsService, ec)
 

@@ -18,24 +18,25 @@ package connectors
 
 import base.SpecBase
 import data.SampleData
-import mocks.MockHttp
 import models.requests.*
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatest.EitherValues
 import org.scalatest.matchers.should.Matchers.*
 import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.HttpResponse
-import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 
 import java.util.UUID
-import scala.concurrent.TimeoutException
+import scala.concurrent.{Future, TimeoutException}
 
 class FileTransferConnectorSpec extends SpecBase with EitherValues {
 
-  trait Test extends MockHttp with SampleData {
-    val correlationId: UUID          = UUID.randomUUID()
-    val mockHttpClient: HttpClientV2 = mock[HttpClientV2]
-    lazy val target                  = new FileTransferConnector(appConfig, mockHttpClient)
+  trait Test extends SampleData {
+    val correlationId: UUID            = UUID.randomUUID()
+    val mockHttpClient: HttpClientV2   = mock[HttpClientV2]
+    val requestBuilder: RequestBuilder = mock[RequestBuilder]
+    lazy val target                    = new FileTransferConnector(appConfig, mockHttpClient)
   }
 
   val expectedMultiFileUrl = "http://localhost:10003/transfer-multiple-files"
@@ -70,7 +71,11 @@ class FileTransferConnectorSpec extends SpecBase with EitherValues {
     "a success response is returned from the file transfer microservice" should {
 
       "return a success MultiFileTransferResponse" in new Test {
-        MockedHttp.post[MultiFileTransferRequest, HttpResponse](expectedMultiFileUrl, HttpResponse(Status.ACCEPTED, ""))
+        when(mockHttpClient.post(any())(any())).thenReturn(requestBuilder)
+        when(requestBuilder.withBody(any())(any())).thenReturn(requestBuilder)
+        when(requestBuilder.execute(any())).thenReturn(Future.successful(Status.ACCEPTED, ""))
+
+//        MockedHttp.post[MultiFileTransferRequest, HttpResponse](expectedMultiFileUrl, HttpResponse(Status.ACCEPTED, ""))
 
         private val resp = await(target.transferMultipleFiles(request))
         resp shouldBe Right(())
@@ -81,10 +86,14 @@ class FileTransferConnectorSpec extends SpecBase with EitherValues {
     "an error response is returned from the file transfer microservice" should {
 
       "return a failed response" in new Test {
-        MockedHttp.post[MultiFileTransferRequest, HttpResponse](
-          expectedMultiFileUrl,
-          HttpResponse(Status.INTERNAL_SERVER_ERROR, "")
-        )
+        when(mockHttpClient.post(any())(any())).thenReturn(requestBuilder)
+        when(requestBuilder.withBody(any())(any())).thenReturn(requestBuilder)
+        when(requestBuilder.execute(any())).thenReturn(Future.successful(Status.INTERNAL_SERVER_ERROR, ""))
+
+//        MockedHttp.post[MultiFileTransferRequest, HttpResponse](
+//          expectedMultiFileUrl,
+//          HttpResponse(Status.INTERNAL_SERVER_ERROR, "")
+//        )
 
         private val resp = await(target.transferMultipleFiles(request)).left.value
 
@@ -98,7 +107,12 @@ class FileTransferConnectorSpec extends SpecBase with EitherValues {
 
       "return a failed response" in new Test {
         val timeoutException = new TimeoutException("took too long")
-        MockedHttp.postError[MultiFileTransferRequest, HttpResponse](expectedMultiFileUrl, timeoutException)
+
+        when(mockHttpClient.post(any())(any())).thenReturn(requestBuilder)
+        when(requestBuilder.withBody(any())(any())).thenReturn(requestBuilder)
+        when(requestBuilder.execute(any())).thenReturn(Future.failed(timeoutException))
+
+//        MockedHttp.postError[MultiFileTransferRequest, HttpResponse](expectedMultiFileUrl, timeoutException)
 
         private val resp = await(target.transferMultipleFiles(request)).left.value
         resp.message shouldBe "java.util.concurrent.TimeoutException: took too long"
