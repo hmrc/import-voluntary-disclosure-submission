@@ -18,7 +18,6 @@ package connectors
 
 import base.SpecBase
 import data.SampleData
-import mocks.MockHttp
 import models.EoriDetails
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -33,9 +32,9 @@ import java.util.{Locale, UUID}
 import scala.concurrent.Future
 import scala.util.Try
 
-class EoriDetailsConnectorSpec extends SpecBase with MockHttp with ReusableValues {
+class EoriDetailsConnectorSpec extends SpecBase with ReusableValues {
 
-  trait Test extends MockHttp with SampleData {
+  trait Test extends SampleData {
     val expectedCorrelationId               = "effd019b-0d2e-42a2-bb98-1e8e14738b59"
     val correlationId: UUID                 = UUID.fromString(expectedCorrelationId)
     val mockHttpClient: HttpClientV2        = mock[HttpClientV2]
@@ -55,7 +54,7 @@ class EoriDetailsConnectorSpec extends SpecBase with MockHttp with ReusableValue
   "headers" should {
 
     "generate the correct Date header format required for sub09" in new Test {
-      val dateFormat = DateTimeFormatter
+      val dateFormat: DateTimeFormatter = DateTimeFormatter
         .ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH)
         .withZone(ZoneId.of("GMT"))
 

@@ -18,7 +18,6 @@ package connectors
 
 import base.SpecBase
 import data.SampleData
-import mocks.MockHttp
 import models.responses.{CreateCaseResponse, UpdateCaseResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -32,7 +31,7 @@ import scala.concurrent.Future
 
 class EisConnectorSpec extends SpecBase {
 
-  trait Test extends MockHttp with SampleData {
+  trait Test extends SampleData {
     val correlationId: UUID            = UUID.randomUUID()
     val mockHttpClient: HttpClientV2   = mock[HttpClientV2]
     val requestBuilder: RequestBuilder = mock[RequestBuilder]
@@ -88,10 +87,8 @@ class EisConnectorSpec extends SpecBase {
 
         when(mockHttpClient.post(any())(any())).thenReturn(requestBuilder)
         when(requestBuilder.setHeader(any())).thenReturn(requestBuilder)
-        when(requestBuilder.withBody(any())(any())).thenReturn(requestBuilder)
+        when(requestBuilder.withBody(any())(any(), any(), any())).thenReturn(requestBuilder)
         when(requestBuilder.execute(any(), any())).thenReturn(Future.successful(response))
-
-//        MockedHttp.post[EisRequest[CreateCase], ExternalResponse[CreateCaseResponse]](expectedCreateCaseUrl, response)
 
         await(target.createCase(caseDetails)) shouldBe response
       }
@@ -101,10 +98,8 @@ class EisConnectorSpec extends SpecBase {
 
         when(mockHttpClient.post(any())(any())).thenReturn(requestBuilder)
         when(requestBuilder.setHeader(any())).thenReturn(requestBuilder)
-        when(requestBuilder.withBody(any())(any())).thenReturn(requestBuilder)
+        when(requestBuilder.withBody(any())(any(), any(), any())).thenReturn(requestBuilder)
         when(requestBuilder.execute(any(), any())).thenReturn(Future.successful(response))
-
-//        MockedHttp.post[EisRequest[CreateCase], ExternalResponse[UpdateCaseResponse]](expectedCreateCaseUrl, response)
 
         await(target.createCase(caseDetails)) shouldBe response
       }

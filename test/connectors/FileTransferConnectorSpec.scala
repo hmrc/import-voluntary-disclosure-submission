@@ -25,6 +25,7 @@ import org.scalatest.EitherValues
 import org.scalatest.matchers.should.Matchers.*
 import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 
 import java.util.UUID
@@ -72,10 +73,8 @@ class FileTransferConnectorSpec extends SpecBase with EitherValues {
 
       "return a success MultiFileTransferResponse" in new Test {
         when(mockHttpClient.post(any())(any())).thenReturn(requestBuilder)
-        when(requestBuilder.withBody(any())(any())).thenReturn(requestBuilder)
-        when(requestBuilder.execute(any())).thenReturn(Future.successful(Status.ACCEPTED, ""))
-
-//        MockedHttp.post[MultiFileTransferRequest, HttpResponse](expectedMultiFileUrl, HttpResponse(Status.ACCEPTED, ""))
+        when(requestBuilder.withBody(any())(any(), any(), any())).thenReturn(requestBuilder)
+        when(requestBuilder.execute(any(), any())).thenReturn(Future.successful(HttpResponse(Status.ACCEPTED, "")))
 
         private val resp = await(target.transferMultipleFiles(request))
         resp shouldBe Right(())
@@ -87,13 +86,10 @@ class FileTransferConnectorSpec extends SpecBase with EitherValues {
 
       "return a failed response" in new Test {
         when(mockHttpClient.post(any())(any())).thenReturn(requestBuilder)
-        when(requestBuilder.withBody(any())(any())).thenReturn(requestBuilder)
-        when(requestBuilder.execute(any())).thenReturn(Future.successful(Status.INTERNAL_SERVER_ERROR, ""))
-
-//        MockedHttp.post[MultiFileTransferRequest, HttpResponse](
-//          expectedMultiFileUrl,
-//          HttpResponse(Status.INTERNAL_SERVER_ERROR, "")
-//        )
+        when(requestBuilder.withBody(any())(any(), any(), any())).thenReturn(requestBuilder)
+        when(requestBuilder.execute(any(), any())).thenReturn(
+          Future.successful(HttpResponse(Status.INTERNAL_SERVER_ERROR, ""))
+        )
 
         private val resp = await(target.transferMultipleFiles(request)).left.value
 
@@ -109,10 +105,8 @@ class FileTransferConnectorSpec extends SpecBase with EitherValues {
         val timeoutException = new TimeoutException("took too long")
 
         when(mockHttpClient.post(any())(any())).thenReturn(requestBuilder)
-        when(requestBuilder.withBody(any())(any())).thenReturn(requestBuilder)
-        when(requestBuilder.execute(any())).thenReturn(Future.failed(timeoutException))
-
-//        MockedHttp.postError[MultiFileTransferRequest, HttpResponse](expectedMultiFileUrl, timeoutException)
+        when(requestBuilder.withBody(any())(any(), any(), any())).thenReturn(requestBuilder)
+        when(requestBuilder.execute(any(), any())).thenReturn(Future.failed(timeoutException))
 
         private val resp = await(target.transferMultipleFiles(request)).left.value
         resp.message shouldBe "java.util.concurrent.TimeoutException: took too long"
