@@ -61,8 +61,8 @@ object TraderDetails {
     }
 
     val mandatoryData: JsObject = Json.obj(
-      "EORI" -> data.eori,
-      "Name" -> data.name,
+      "EORI"                 -> data.eori,
+      "Name"                 -> data.name,
       "EstablishmentAddress" -> Json.obj(
         "AddressLine1"    -> data.addressLine1,
         "City"            -> data.city,

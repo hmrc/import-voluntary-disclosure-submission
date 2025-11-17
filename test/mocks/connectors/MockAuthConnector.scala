@@ -32,7 +32,10 @@ trait MockAuthConnector extends AnyWordSpec with MockFactory {
 
   object MockedAuthConnector {
     def authorise(response: Future[Option[String]]): CallHandler[Future[Option[String]]] =
-      (mockAuthConnector.authorise[Option[String]](_: Predicate, _: Retrieval[Option[String]])(_: HeaderCarrier, _: ExecutionContext))
+      (mockAuthConnector.authorise[Option[String]](_: Predicate, _: Retrieval[Option[String]])(
+        _: HeaderCarrier,
+        _: ExecutionContext
+      ))
         .expects(*, *, *, *)
         .returns(response)
   }

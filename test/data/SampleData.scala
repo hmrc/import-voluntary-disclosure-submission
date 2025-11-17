@@ -136,12 +136,12 @@ trait SampleData {
     "isBulkEntry"         -> false,
     "isEuropeanUnionDuty" -> false,
     "additionalInfo"      -> "Not Applicable",
-    "entryDetails" -> Json.obj(
+    "entryDetails"        -> Json.obj(
       "epu"         -> "123",
       "entryNumber" -> "123456A",
       "entryDate"   -> date
     ),
-    "customsProcessingCode" -> "4000C09",
+    "customsProcessingCode"   -> "4000C09",
     "declarantContactDetails" -> Json.obj(
       "fullName"    -> "John Smith",
       "email"       -> "test@test.com",
@@ -174,7 +174,7 @@ trait SampleData {
     "defermentType"                    -> "D",
     "defermentAccountNumber"           -> "1234567",
     "additionalDefermentAccountNumber" -> "C1234567",
-    "amendedItems" -> Json.arr(
+    "amendedItems"                     -> Json.arr(
       Json.obj(
         "boxNumber"  -> 62,
         "itemNumber" -> 0,
@@ -199,7 +199,7 @@ trait SampleData {
       )
     ),
     "importer" -> Json.obj(
-      "eori" -> "GB000000000000001",
+      "eori"           -> "GB000000000000001",
       "contactDetails" -> Json.obj(
         "fullName"    -> "Importer Inc",
         "phoneNumber" -> "000000000",
@@ -215,7 +215,7 @@ trait SampleData {
       "vatNumber" -> "123456789"
     ),
     "representative" -> Json.obj(
-      "eori" -> "GB000000000000002",
+      "eori"           -> "GB000000000000002",
       "contactDetails" -> Json.obj(
         "fullName"    -> "Representative Inc",
         "email"       -> "test@test.com",
@@ -232,8 +232,8 @@ trait SampleData {
   )
 
   val updateCaseJson: JsObject = Json.obj(
-    "caseId"         -> "C18",
-    "additionalInfo" -> "Additional Info",
+    "caseId"              -> "C18",
+    "additionalInfo"      -> "Additional Info",
     "supportingDocuments" -> Json.arr(
       Json.obj(
         "reference"       -> "file-reference",
@@ -247,11 +247,11 @@ trait SampleData {
   )
 
   val bulkIncomingJson: JsObject = Json.obj(
-    "userType"              -> "representative",
-    "isBulkEntry"           -> true,
-    "isEuropeanUnionDuty"   -> true,
-    "additionalInfo"        -> "Not Applicable",
-    "customsProcessingCode" -> "VARIOUS",
+    "userType"                -> "representative",
+    "isBulkEntry"             -> true,
+    "isEuropeanUnionDuty"     -> true,
+    "additionalInfo"          -> "Not Applicable",
+    "customsProcessingCode"   -> "VARIOUS",
     "declarantContactDetails" -> Json.obj(
       "fullName"    -> "John Smith",
       "email"       -> "test@test.com",
@@ -280,7 +280,7 @@ trait SampleData {
     "defermentType"                    -> "D",
     "defermentAccountNumber"           -> "1234567",
     "additionalDefermentAccountNumber" -> "C1234567",
-    "amendedItems" -> Json.arr(
+    "amendedItems"                     -> Json.arr(
       Json.obj(
         "boxNumber"  -> 62,
         "itemNumber" -> 0,
@@ -305,7 +305,7 @@ trait SampleData {
       )
     ),
     "importer" -> Json.obj(
-      "eori" -> "GB000000000000001",
+      "eori"           -> "GB000000000000001",
       "contactDetails" -> Json.obj(
         "fullName"    -> "Importer Inc",
         "phoneNumber" -> "000000000",
@@ -321,7 +321,7 @@ trait SampleData {
       "vatNumber" -> "123456789"
     ),
     "representative" -> Json.obj(
-      "eori" -> "GB000000000000002",
+      "eori"           -> "GB000000000000002",
       "contactDetails" -> Json.obj(
         "fullName"    -> "Representative Inc",
         "email"       -> "test@test.com",
@@ -383,9 +383,9 @@ trait SampleData {
     ),
     "TraderList" -> Json.arr(
       Json.obj(
-        "Type" -> "02",
-        "EORI" -> "GB000000000000002",
-        "Name" -> "Representative Inc",
+        "Type"                 -> "02",
+        "EORI"                 -> "GB000000000000002",
+        "Name"                 -> "Representative Inc",
         "EstablishmentAddress" -> Json.obj(
           "AddressLine1"    -> "99",
           "AddressLine2"    -> "Avenue Road",
@@ -397,9 +397,9 @@ trait SampleData {
         )
       ),
       Json.obj(
-        "Type" -> "01",
-        "EORI" -> "GB000000000000001",
-        "Name" -> "Importer Inc",
+        "Type"                 -> "01",
+        "EORI"                 -> "GB000000000000001",
+        "Name"                 -> "Importer Inc",
         "EstablishmentAddress" -> Json.obj(
           "AddressLine1"    -> "99",
           "AddressLine2"    -> "Avenue Road",
@@ -470,9 +470,9 @@ trait SampleData {
     ),
     "TraderList" -> Json.arr(
       Json.obj(
-        "Type" -> "02",
-        "EORI" -> "GB000000000000002",
-        "Name" -> "Representative Inc",
+        "Type"                 -> "02",
+        "EORI"                 -> "GB000000000000002",
+        "Name"                 -> "Representative Inc",
         "EstablishmentAddress" -> Json.obj(
           "AddressLine1"    -> "99",
           "AddressLine2"    -> "Avenue Road",
@@ -484,9 +484,9 @@ trait SampleData {
         )
       ),
       Json.obj(
-        "Type" -> "01",
-        "EORI" -> "GB000000000000001",
-        "Name" -> "Importer Inc",
+        "Type"                 -> "01",
+        "EORI"                 -> "GB000000000000001",
+        "Name"                 -> "Importer Inc",
         "EstablishmentAddress" -> Json.obj(
           "AddressLine1"    -> "99",
           "AddressLine2"    -> "Avenue Road",
@@ -520,7 +520,7 @@ trait SampleData {
       "conversationId"      -> "074c3823-c941-417e-a08b-e47b08e9a9b7",
       "caseReferenceNumber" -> "C18123",
       "applicationName"     -> "C18",
-      "results" -> Json.arr(
+      "results"             -> Json.arr(
         fileUploadResultJson,
         Json.obj(
           "upscanReference" -> "XYZ0123456789",

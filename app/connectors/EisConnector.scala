@@ -81,7 +81,7 @@ class EisConnector @Inject() (http: HttpClientV2, implicit val appConfig: AppCon
       .setHeader(eisHeaders: _*)
       .withBody(Json.toJson(request))
       .execute[Either[UpdateCaseError, UpdateCaseResponse]]
-    
+
   }
 
 }

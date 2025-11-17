@@ -37,11 +37,10 @@ class UserTypesSpec extends ModelSpecBase {
 
     "invalid data exists" should {
 
-      "fail to parse" in {
+      "fail to parse" in
         intercept[JsResultException] {
           JsString("Unknown").as[UserType]
         }
-      }
     }
   }
 

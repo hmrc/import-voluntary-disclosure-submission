@@ -83,9 +83,8 @@ class UnderpaymentDetailsSpec extends ModelSpecBase with SampleData {
 
       val json: JsObject = incomingJson ++ Json.obj("defermentType" -> "X")
 
-      "throw an exception" in {
+      "throw an exception" in
         intercept[JsResultException](json.as[UnderpaymentDetails])
-      }
     }
 
   }

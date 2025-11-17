@@ -53,7 +53,7 @@ class FileTransferService @Inject() (
   ): Future[Unit] = {
     val correlationId   = newCorrelationId()
     val applicationName = "C18"
-    val req = MultiFileTransferRequest.fromSupportingDocuments(
+    val req             = MultiFileTransferRequest.fromSupportingDocuments(
       caseReferenceNumber = caseId,
       conversationId = conversationId,
       correlationId = correlationId,
