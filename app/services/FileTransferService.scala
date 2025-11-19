@@ -66,7 +66,7 @@ class FileTransferService @Inject() (
       connector.transferMultipleFiles(req).flatMap {
         case Left(_) if counter <= MAX_RETRIES =>
           after(1.second * counter, actorSystem.scheduler)(tryTransfer(counter + 1))
-        case failure @ Left(err) =>
+        case _ @ Left(err) =>
           logger.error(s"The request to submit file transfer for case '$caseId' has failed: ${err.message}")
           val resps = files.map(file =>
             FileTransferResponse(
@@ -81,7 +81,7 @@ class FileTransferService @Inject() (
           )
           auditFileTransfers(resps, caseId)
 
-          Future.successful(Left(failure))
+          Future.successful(())
         case Right(res) => Future.successful(res)
       }
 
