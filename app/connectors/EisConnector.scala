@@ -40,7 +40,6 @@ class EisConnector @Inject() (http: HttpClientV2, implicit val appConfig: AppCon
   private val httpDateFormat      = DateTimeFormatter
     .ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH)
     .withZone(ZoneId.of("GMT"))
-  val acknowledgementReference: UUID = UUID.randomUUID()
 
   private[connectors] lazy val createCaseUrl = s"${appConfig.eisBaseUrl}/cpr/caserequest/c18/create/v1"
   private[connectors] lazy val updateCaseUrl = s"${appConfig.eisBaseUrl}/cpr/caserequest/c18/update/v1"
@@ -56,10 +55,9 @@ class EisConnector @Inject() (http: HttpClientV2, implicit val appConfig: AppCon
   def createCase(
     caseDetails: CreateCase
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[EisError, CreateCaseResponse]] = {
-
-    val eisHeaders = headers(acknowledgementReference)
-
-    val request = EisRequest(acknowledgementReference, caseDetails)
+    val acknowledgementReference: UUID = UUID.randomUUID()
+    val eisHeaders                     = headers(acknowledgementReference)
+    val request                        = EisRequest(acknowledgementReference, caseDetails)
 
     http.post(url"$createCaseUrl")
       .setHeader(eisHeaders*)
@@ -71,10 +69,9 @@ class EisConnector @Inject() (http: HttpClientV2, implicit val appConfig: AppCon
   def updateCase(
     update: UpdateCase
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[UpdateCaseError, UpdateCaseResponse]] = {
-
-    val eisHeaders = headers(acknowledgementReference)
-
-    val request = EisRequest(acknowledgementReference, update)
+    val acknowledgementReference: UUID = UUID.randomUUID()
+    val eisHeaders                     = headers(acknowledgementReference)
+    val request                        = EisRequest(acknowledgementReference, update)
 
     http.post(url"$updateCaseUrl")
       .setHeader(eisHeaders*)
