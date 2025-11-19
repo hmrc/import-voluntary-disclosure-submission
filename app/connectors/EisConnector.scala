@@ -17,11 +17,15 @@
 package connectors
 
 import config.AppConfig
-import connectors.httpParsers.EisHttpParsers._
+import connectors.httpParsers.EisHttpParsers.*
 import models.requests.EisRequest
 import models.responses.{CreateCaseResponse, UpdateCaseResponse}
 import models.{CreateCase, EisError, UpdateCase, UpdateCaseError}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import play.api.libs.json.*
+import play.api.libs.json.Format.GenericFormat
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import java.time.format.DateTimeFormatter
 import java.time.{ZoneId, ZonedDateTime}
@@ -30,10 +34,10 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EisConnector @Inject() (http: HttpClient, implicit val appConfig: AppConfig) {
+class EisConnector @Inject() (http: HttpClientV2, implicit val appConfig: AppConfig) {
 
   private val customProcessesHost = "Digital"
-  private val httpDateFormat = DateTimeFormatter
+  private val httpDateFormat      = DateTimeFormatter
     .ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH)
     .withZone(ZoneId.of("GMT"))
 
@@ -51,23 +55,29 @@ class EisConnector @Inject() (http: HttpClient, implicit val appConfig: AppConfi
   def createCase(
     caseDetails: CreateCase
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[EisError, CreateCaseResponse]] = {
-
     val acknowledgementReference: UUID = UUID.randomUUID()
     val eisHeaders                     = headers(acknowledgementReference)
+    val request                        = EisRequest(acknowledgementReference, caseDetails)
 
-    val request = EisRequest(acknowledgementReference, caseDetails)
-    http.POST[EisRequest[CreateCase], Either[EisError, CreateCaseResponse]](createCaseUrl, request, eisHeaders)
+    http.post(url"$createCaseUrl")
+      .setHeader(eisHeaders*)
+      .withBody(Json.toJson(request))
+      .execute[Either[EisError, CreateCaseResponse]]
+
   }
 
   def updateCase(
     update: UpdateCase
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[UpdateCaseError, UpdateCaseResponse]] = {
-
     val acknowledgementReference: UUID = UUID.randomUUID()
     val eisHeaders                     = headers(acknowledgementReference)
+    val request                        = EisRequest(acknowledgementReference, update)
 
-    val request = EisRequest(acknowledgementReference, update)
-    http.POST[EisRequest[UpdateCase], Either[UpdateCaseError, UpdateCaseResponse]](updateCaseUrl, request, eisHeaders)
+    http.post(url"$updateCaseUrl")
+      .setHeader(eisHeaders*)
+      .withBody(Json.toJson(request))
+      .execute[Either[UpdateCaseError, UpdateCaseResponse]]
+
   }
 
 }

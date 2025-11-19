@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import mocks.services.MockEoriDetailsService
 import models.ErrorModel
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers.mustEqual
 import play.api.http.Status
 import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 import utils.ReusableValues

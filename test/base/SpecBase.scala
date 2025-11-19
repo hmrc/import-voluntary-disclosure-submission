@@ -17,18 +17,19 @@
 package base
 
 import config.AppConfig
-import org.scalamock.scalatest.MockFactory
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.mockito.MockitoSugar
+import play.api.inject.Injector
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContentAsEmpty, ControllerComponents}
 import play.api.test.CSRFTokenHelper.CSRFRequest
-import play.api.test.Helpers.baseApplicationBuilder.injector
 import play.api.test.{FakeRequest, Helpers}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 
 import scala.concurrent.ExecutionContext
 
-trait SpecBase extends AnyWordSpec with MockFactory {
+trait SpecBase extends AnyWordSpec with MockitoSugar {
 
   val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/foo")
     .withSession(SessionKeys.sessionId -> "foo")
@@ -38,12 +39,13 @@ trait SpecBase extends AnyWordSpec with MockFactory {
   val env: Environment             = Environment.simple()
   val configuration: Configuration = Configuration.load(env)
 
-  val appConfig: AppConfig = injector().instanceOf[AppConfig]
+  val injector: Injector   = new GuiceApplicationBuilder().injector()
+  val appConfig: AppConfig = injector.instanceOf[AppConfig]
 
   val controllerComponents: ControllerComponents = Helpers.stubControllerComponents()
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  implicit lazy val ec: ExecutionContext = injector().instanceOf[ExecutionContext]
+  implicit lazy val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
 
 }

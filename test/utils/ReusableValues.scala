@@ -89,16 +89,16 @@ trait ReusableValues {
   val detailsJson: JsObject = Json.obj(
     "subscriptionDisplayResponse" -> Json.obj(
       "responseCommon" -> Json.obj(
-        "status"         -> "OK",
-        "statusText"     -> "Optional status text from ETMP",
-        "processingDate" -> "2016-09-17T19:33:47Z",
+        "status"           -> "OK",
+        "statusText"       -> "Optional status text from ETMP",
+        "processingDate"   -> "2016-09-17T19:33:47Z",
         "returnParameters" -> Json.arr(
           Json.obj("paramName" -> "POSITION", "paramValue" -> "LINK")
         )
       ),
       "responseDetail" -> Json.obj(
-        "EORINo"      -> "GB987654321000",
-        "CDSFullName" -> "Fast Food ltd",
+        "EORINo"                  -> "GB987654321000",
+        "CDSFullName"             -> "Fast Food ltd",
         "CDSEstablishmentAddress" -> Json.obj(
           "streetAndNumber" -> "99 Avenue Road",
           "city"            -> "Anyold Town",

@@ -17,23 +17,25 @@
 package connectors
 
 import base.SpecBase
-import connectors.httpParsers.ResponseHttpParser.ExternalResponse
 import data.SampleData
-import mocks.MockHttp
-import models.CreateCase
-import models.requests.EisRequest
 import models.responses.{CreateCaseResponse, UpdateCaseResponse}
-import org.scalatest.matchers.should.Matchers._
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.scalatest.matchers.should.Matchers.*
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.mvc.Http.HeaderNames
+import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 
 import java.util.UUID
+import scala.concurrent.Future
 
 class EisConnectorSpec extends SpecBase {
 
-  trait Test extends MockHttp with SampleData {
-    val correlationId: UUID = UUID.randomUUID()
-    lazy val target         = new EisConnector(mockHttp, appConfig)
+  trait Test extends SampleData {
+    val correlationId: UUID            = UUID.randomUUID()
+    val mockHttpClient: HttpClientV2   = mock[HttpClientV2]
+    val requestBuilder: RequestBuilder = mock[RequestBuilder]
+    lazy val target                    = new EisConnector(mockHttpClient, appConfig)
   }
 
   val expectedCreateCaseUrl = "http://localhost:7952/cpr/caserequest/c18/create/v1"
@@ -82,14 +84,22 @@ class EisConnectorSpec extends SpecBase {
 
       "return a CreateCaseResponse" in new Test {
         val response = Right(CreateCaseResponse("some case ID", UUID.randomUUID().toString))
-        MockedHttp.post[EisRequest[CreateCase], ExternalResponse[CreateCaseResponse]](expectedCreateCaseUrl, response)
+
+        when(mockHttpClient.post(any())(any())).thenReturn(requestBuilder)
+        when(requestBuilder.setHeader(any())).thenReturn(requestBuilder)
+        when(requestBuilder.withBody(any())(any(), any(), any())).thenReturn(requestBuilder)
+        when(requestBuilder.execute(any(), any())).thenReturn(Future.successful(response))
 
         await(target.createCase(caseDetails)) shouldBe response
       }
 
       "return a CreateUpdateResponse" in new Test {
         val response = Right(UpdateCaseResponse("some case ID", UUID.randomUUID().toString))
-        MockedHttp.post[EisRequest[CreateCase], ExternalResponse[UpdateCaseResponse]](expectedCreateCaseUrl, response)
+
+        when(mockHttpClient.post(any())(any())).thenReturn(requestBuilder)
+        when(requestBuilder.setHeader(any())).thenReturn(requestBuilder)
+        when(requestBuilder.withBody(any())(any(), any(), any())).thenReturn(requestBuilder)
+        when(requestBuilder.execute(any(), any())).thenReturn(Future.successful(response))
 
         await(target.createCase(caseDetails)) shouldBe response
       }

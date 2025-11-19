@@ -17,31 +17,32 @@
 package services
 
 import base.SpecBase
-import org.scalamock.scalatest.MockFactory
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.scalatest.matchers.must.Matchers.mustBe
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
-import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 
-class AuditServiceSpec extends SpecBase with MockFactory {
+class AuditServiceSpec extends SpecBase with MockitoSugar {
 
   "audit" should {
     "call the audit connector" in {
       val mockAuditConnector = mock[AuditConnector]
-      (mockAuditConnector.sendExtendedEvent(_: ExtendedDataEvent)(_: HeaderCarrier, _: ExecutionContext))
-        .expects(*, *, *)
-        .once()
-
-      val service = new AuditService(appConfig, mockAuditConnector)
+      val service            = new AuditService(appConfig, mockAuditConnector)
 
       val auditModel: JsonAuditModel = new JsonAuditModel {
         override val auditType: String       = "SomeEvent"
         override val transactionName: String = "some-event"
         override val detail: JsObject        = Json.obj("name" -> "test name")
       }
+
+      when(
+        mockAuditConnector.sendExtendedEvent(any())(any(), any())
+      ).thenReturn(Future.successful(auditModel))
 
       service.audit(auditModel)(implicitly, implicitly, fakeRequest)
     }

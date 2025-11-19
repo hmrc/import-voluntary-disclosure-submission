@@ -96,7 +96,7 @@ class TraderDetailsSpec extends ModelSpecBase with SampleData {
   "Writing trader details without a VAT number JSON" should {
 
     val model: TraderDetails = importer.copy(vatNumber = None)
-    val json: JsObject = (outgoingJson \ "TraderList")
+    val json: JsObject       = (outgoingJson \ "TraderList")
       .as[JsArray]
       .apply(1) // importer is the last item in the array
       .as[JsObject] - "Type" - "VATNumber"

@@ -19,13 +19,14 @@ package mocks.services
 import models.SupportingDocument
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.mvc.Request
 import services.FileTransferService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockFileTransferService extends MockFactory {
+trait MockFileTransferService extends AnyWordSpec with MockFactory {
 
   val mockFileTransferService: FileTransferService = mock[FileTransferService]
 

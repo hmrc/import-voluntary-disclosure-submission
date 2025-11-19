@@ -56,7 +56,7 @@ object EoriDetailsHttpParser {
     private def handleOkResponse(response: Sub09Response): HttpGetResult[EoriDetails] = {
       response.eoriDetails match {
         case Some(details) => Right(details)
-        case _ =>
+        case _             =>
           logger.error("Received 200 response but Eori Details not returned. Response body: " + response.eoriStatus)
           Left(ErrorModel(Status.NOT_FOUND, "Eori Details not returned on Ok response"))
       }

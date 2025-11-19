@@ -63,9 +63,8 @@ class BoxItemSpec extends ModelSpecBase {
         "amended"    -> "2"
       )
 
-      "throw an exception" in {
+      "throw an exception" in
         intercept[JsResultException](json.as[BoxItem])
-      }
     }
   }
 

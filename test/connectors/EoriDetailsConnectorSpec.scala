@@ -17,25 +17,29 @@
 package connectors
 
 import base.SpecBase
-import connectors.httpParsers.ResponseHttpParser.ExternalResponse
 import data.SampleData
-import mocks.MockHttp
 import models.EoriDetails
-import org.scalatest.matchers.should.Matchers._
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.scalatest.matchers.should.Matchers.*
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import utils.ReusableValues
 
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.{Locale, UUID}
+import scala.concurrent.Future
 import scala.util.Try
 
-class EoriDetailsConnectorSpec extends SpecBase with MockHttp with ReusableValues {
+class EoriDetailsConnectorSpec extends SpecBase with ReusableValues {
 
-  trait Test extends MockHttp with SampleData {
+  trait Test extends SampleData {
     val expectedCorrelationId               = "effd019b-0d2e-42a2-bb98-1e8e14738b59"
     val correlationId: UUID                 = UUID.fromString(expectedCorrelationId)
-    lazy val target                         = new EoriDetailsConnector(mockHttp, appConfig)
+    val mockHttpClient: HttpClientV2        = mock[HttpClientV2]
+    val requestBuilder: RequestBuilder      = mock[RequestBuilder]
+    lazy val target                         = new EoriDetailsConnector(mockHttpClient, appConfig)
     lazy val headers: Seq[(String, String)] = target.headers(correlationId)
   }
 
@@ -50,7 +54,7 @@ class EoriDetailsConnectorSpec extends SpecBase with MockHttp with ReusableValue
   "headers" should {
 
     "generate the correct Date header format required for sub09" in new Test {
-      val dateFormat = DateTimeFormatter
+      val dateFormat: DateTimeFormatter = DateTimeFormatter
         .ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH)
         .withZone(ZoneId.of("GMT"))
 
@@ -88,7 +92,9 @@ class EoriDetailsConnectorSpec extends SpecBase with MockHttp with ReusableValue
             Some("987654321000")
           )
         )
-        MockedHttp.get[ExternalResponse[EoriDetails]](expectedEoriDetailsUrl, response)
+        when(mockHttpClient.get(any())(any())).thenReturn(requestBuilder)
+        when(requestBuilder.setHeader(any())).thenReturn(requestBuilder)
+        when(requestBuilder.execute(any(), any())).thenReturn(Future.successful(response))
 
         await(target.getEoriDetails("GB987654321000")) shouldBe response
       }

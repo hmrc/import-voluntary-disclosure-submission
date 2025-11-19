@@ -44,13 +44,13 @@ object CreateCase {
 
   implicit val writes: Writes[CreateCase] = (o: CreateCase) => {
 
-    val importer = Some(Json.toJson(o.importer).as[JsObject] ++ Json.obj("Type" -> TraderTypes.Importer))
+    val importer       = Some(Json.toJson(o.importer).as[JsObject] ++ Json.obj("Type" -> TraderTypes.Importer))
     val representative = o.representative.map { rep =>
       Json.toJson(rep).as[JsObject] ++ Json.obj("Type" -> TraderTypes.Representative)
     }
 
     val traders: Seq[JsObject] = Seq(representative, importer).flatten
-    val importInfoList =
+    val importInfoList         =
       if (o.underpaymentDetails.isBulkEntry) Json.obj() else Json.obj("ImportInfoList" -> o.amendedItems)
 
     Json.obj(

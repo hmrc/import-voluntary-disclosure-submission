@@ -20,7 +20,8 @@ import config.AppConfig
 import connectors.httpParsers.EoriDetailsHttpParser.EoriDetailsReads
 import connectors.httpParsers.ResponseHttpParser.HttpGetResult
 import models.EoriDetails
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import java.time.format.DateTimeFormatter
 import java.time.{ZoneId, ZonedDateTime}
@@ -29,7 +30,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EoriDetailsConnector @Inject() (val http: HttpClient, implicit val config: AppConfig) {
+class EoriDetailsConnector @Inject() (val http: HttpClientV2, implicit val config: AppConfig) {
 
   private[connectors] val httpDateFormat = DateTimeFormatter
     .ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH)
@@ -57,11 +58,9 @@ class EoriDetailsConnector @Inject() (val http: HttpClient, implicit val config:
       "EORI"                     -> id
     )
 
-    http.GET[HttpGetResult[EoriDetails]](
-      url = getEoriDetailsUrl,
-      queryParams = parameters,
-      headers = headers(acknowledgementReference)
-    )
+    http.get(url"$getEoriDetailsUrl?$parameters")
+      .setHeader(headers(acknowledgementReference): _*)
+      .execute[HttpGetResult[EoriDetails]]
   }
 
 }

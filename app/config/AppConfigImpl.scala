@@ -32,11 +32,11 @@ class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesCo
 
   val graphiteHost: String = config.get[String]("microservice.metrics.graphite.host")
 
-  lazy val sub09: String            = servicesConfig.baseUrl("mdg")
-  lazy val eisBaseUrl: String       = servicesConfig.baseUrl("eis")
-  lazy val fileTransferUrl: String  = servicesConfig.baseUrl("file-transmission-synchronous")
-  lazy val createCaseToken: String  = config.get[String]("microservice.services.eis.tokens.create")
-  lazy val eoriDetailsToken: String = config.get[String]("microservice.services.mdg.tokens.eoriDetails")
+  override val sub09: String            = servicesConfig.baseUrl("mdg")
+  override val eisBaseUrl: String       = servicesConfig.baseUrl("eis")
+  override val fileTransferUrl: String  = servicesConfig.baseUrl("file-transmission-synchronous")
+  override val createCaseToken: String  = config.get[String]("microservice.services.eis.tokens.create")
+  override val eoriDetailsToken: String = config.get[String]("microservice.services.mdg.tokens.eoriDetails")
 
   val fileUploadCallbackUrl: String = config.get[String]("file-upload.callback-url")
 }

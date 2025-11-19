@@ -20,13 +20,14 @@ import models.responses.CreateCaseResponse
 import models.{CreateCase, EisError}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.mvc.Request
 import services.CreateCaseService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockCreateCaseService extends MockFactory {
+trait MockCreateCaseService extends AnyWordSpec with MockFactory {
 
   val mockCreateCaseService: CreateCaseService = mock[CreateCaseService]
 

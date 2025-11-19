@@ -19,7 +19,7 @@ package services
 import base.ServiceSpecBase
 import connectors.MockEoriDetailsConnector
 import models.ErrorModel
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers.mustBe
 import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import utils.ReusableValues

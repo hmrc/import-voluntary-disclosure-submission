@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.httpParsers.EisHttpParsers._
 import models.EisError
 import models.responses.{CreateCaseResponse, UpdateCaseResponse}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers.mustBe
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HttpResponse
@@ -37,7 +37,7 @@ class EisHttpParsersSpec extends SpecBase {
     "the create case response is valid" should {
 
       val headers: Map[String, Seq[String]] = Map("x-correlation-id" -> Seq(correlationId))
-      val body: JsObject = Json.obj(
+      val body: JsObject                    = Json.obj(
         "CaseID"         -> "C18-101",
         "ProcessingDate" -> Instant.now().toString,
         "Status"         -> "Success",
@@ -84,7 +84,7 @@ class EisHttpParsersSpec extends SpecBase {
     "the update case response is valid" should {
 
       val headers: Map[String, Seq[String]] = Map("x-correlation-id" -> Seq(correlationId))
-      val body: JsObject = Json.obj(
+      val body: JsObject                    = Json.obj(
         "CaseID"         -> "C18-101",
         "ProcessingDate" -> Instant.now().toString,
         "Status"         -> "Success",
@@ -102,7 +102,7 @@ class EisHttpParsersSpec extends SpecBase {
     "the response does not contain a case ID" should {
 
       val headers: Map[String, Seq[String]] = Map("x-correlation-id" -> Seq(correlationId))
-      val body: JsObject = Json.obj(
+      val body: JsObject                    = Json.obj(
         "ProcessingDate" -> Instant.now().toString,
         "Status"         -> "Success",
         "StatusText"     -> "Case created successfully"

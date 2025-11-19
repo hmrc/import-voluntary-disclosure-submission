@@ -18,21 +18,22 @@ package mocks.services
 
 import base.SpecBase
 import models.{EoriDetails, ErrorModel}
-import org.scalamock.scalatest.MockFactory
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar
 import services.EoriDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockEoriDetailsService extends SpecBase with MockFactory {
+trait MockEoriDetailsService extends SpecBase with MockitoSugar {
 
   val mockEoriDetailsService: EoriDetailsService = mock[EoriDetailsService]
 
   type RetrieveEoriDetailsResponse = Either[ErrorModel, EoriDetails]
 
   def setupMockRetrieveEoriDetails(response: RetrieveEoriDetailsResponse): Unit =
-    (mockEoriDetailsService.retrieveEoriDetails(_: String)(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*, *, *)
-      .returns(Future.successful(response))
+    when(mockEoriDetailsService.retrieveEoriDetails(any[String])(any[HeaderCarrier], any[ExecutionContext]))
+      .thenReturn(Future.successful(response))
 
 }

@@ -26,7 +26,7 @@ case class FilesUploadedAuditEvent(
 ) extends JsonAuditModel {
   override val auditType: String       = "SupportingDocumentationTransfers"
   override val transactionName: String = "supporting-documentation-transfers"
-  override val detail: JsValue = Json.obj(
+  override val detail: JsValue         = Json.obj(
     fields = "summary" -> Json.obj(
       fields = "caseID" -> caseId,
       "totalFiles"                   -> fileTransferResponse.length,
